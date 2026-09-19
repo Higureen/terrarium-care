@@ -25,7 +25,7 @@ Kiekvienas terariumas turės individualias temperatūros ir drėgmės ribas, pas
 
 ### Administratorius
 - Gali atlikti visus vadovui leidžiamus veiksmus.
-- Gali kurti ir išjungti naudotojų paskyras.
+- Gali kurti ir panaikinti naudotojų paskyras.
 - Gali keisti naudotojų roles.
 
 ## Pasirinktos technologijos
