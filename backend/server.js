@@ -1,11 +1,22 @@
+const swaggerUi = require("swagger-ui-express");
+const openapi = require("./openapi.json");
 const express = require("express");
 const pool = require("./db");
 const petRoutes = require("./routes/pets");
+const careRecordRoutes = require("./routes/careRecords");
 const app = express();
 const port = process.env.PORT || 3000;
 
 app.use(express.json());
+
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(openapi));
+
+app.get("/openapi.json", (req, res) => {
+  res.json(openapi);
+});
+
 app.use("/pets", petRoutes);
+app.use("/care-records", careRecordRoutes);
 
 app.put("/terrariums/:id", async (req, res) => {
     const id = Number(req.params.id);
@@ -430,6 +441,51 @@ app.use((error, req, res, next) => {
     }
 
     next(error);
+});
+//hierarchinis get metodas
+app.get("/terrariums/:id/pets", async (req, res) => {
+  const id = Number(req.params.id);
+
+  if (
+    !/^[1-9]\d*$/.test(req.params.id) ||
+    !Number.isSafeInteger(id) ||
+    id > 2147483647
+  ) {
+    return res.status(400).json({
+      error: "Netinkamas terariumo ID."
+    });
+  }
+
+  try {
+    const terrarium = await pool.query(
+      "SELECT id FROM terrariums WHERE id = $1",
+      [id]
+    );
+
+    if (terrarium.rows.length === 0) {
+      return res.status(404).json({
+        error: "Terariumas nerastas."
+      });
+    }
+
+    const result = await pool.query(
+      `SELECT id, terrarium_id, name, species,
+              to_char(arrival_date, 'YYYY-MM-DD') AS arrival_date,
+              notes
+       FROM pets
+       WHERE terrarium_id = $1
+       ORDER BY id`,
+      [id]
+    );
+
+    return res.status(200).json(result.rows);
+  } catch (error) {
+    console.error("Failed to fetch terrarium pets:", error.message);
+
+    return res.status(500).json({
+      error: "Nepavyko gauti terariumo augintinių."
+    });
+  }
 });
 
 app.listen(port, "127.0.0.1", () => {

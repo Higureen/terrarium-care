@@ -1,0 +1,1173 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "TerraCare API",
+    "version": "1.0.0",
+    "description": "Terariumų, augintinių ir jų priežiūros valdymo API."
+  },
+  "servers": [
+    {
+      "url": "/",
+      "description": "Dabartinis serveris"
+    }
+  ],
+  "paths": {
+    "/terrariums/{id}": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "description": "Terariumo ID",
+          "schema": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 2147483647
+          }
+        }
+      ],
+      "get": {
+        "tags": [
+          "Terariumai"
+        ],
+        "summary": "Gauti terariumą pagal ID",
+        "responses": {
+          "200": {
+            "description": "Terariumo informacija",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Terrarium"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Netinkamas terariumo ID",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Terariumas nerastas",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Terariumas nerastas."
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/paths/~1terrariums/get/responses/500"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Terariumai"
+        ],
+        "summary": "Atnaujinti terariumą",
+        "description": "Pakeičia terariumo informaciją. Reikia pateikti pavadinimą ir visas temperatūros bei drėgmės ribas. Nepateikus last_cleaned ar notes, jie nustatomi į null.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TerrariumInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Terariumas atnaujintas",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Terrarium"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Netinkamas ID arba netaisyklingas JSON",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/paths/~1terrariums~1{id}/get/responses/404"
+          },
+          "422": {
+            "$ref": "#/paths/~1terrariums/post/responses/422"
+          },
+          "500": {
+            "$ref": "#/paths/~1terrariums/get/responses/500"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Terariumai"
+        ],
+        "summary": "Ištrinti terariumą",
+        "description": "Galima ištrinti tik terariumą, kuriame nėra augintinių.",
+        "responses": {
+          "204": {
+            "description": "Terariumas ištrintas. Atsakymo turinio nėra."
+          },
+          "400": {
+            "$ref": "#/paths/~1terrariums~1{id}/get/responses/400"
+          },
+          "404": {
+            "$ref": "#/paths/~1terrariums~1{id}/get/responses/404"
+          },
+          "409": {
+            "description": "Terariume yra augintinių",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Terariumo ištrinti negalima, nes jame yra augintinių."
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/paths/~1terrariums/get/responses/500"
+          }
+        }
+      }
+    },
+    "/terrariums/{id}/pets": {
+      "get": {
+        "tags": [
+          "Terariumai"
+        ],
+        "summary": "Gauti konkretaus terariumo augintinius",
+        "description": "Hierarchinis metodas. Jei terariumas egzistuoja, bet neturi augintinių, grąžinamas tuščias masyvas. Jei terariumo nėra, grąžinamas 404.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Terariumo ID",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 2147483647
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Pasirinkto terariumo augintinių sąrašas",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Pet"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/paths/~1terrariums~1{id}/get/responses/400"
+          },
+          "404": {
+            "$ref": "#/paths/~1terrariums~1{id}/get/responses/404"
+          },
+          "500": {
+            "description": "Serverio klaida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Nepavyko gauti terariumo augintinių."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/terrariums": {
+      "get": {
+        "tags": [
+          "Terariumai"
+        ],
+        "summary": "Gauti visų terariumų sąrašą",
+        "responses": {
+          "200": {
+            "description": "Terariumų sąrašas. Jei terariumų nėra, grąžinamas tuščias masyvas.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Terrarium"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Serverio klaida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Terariumai"
+        ],
+        "summary": "Sukurti terariumą",
+        "description": "Temperatūros ir drėgmės minimumai negali viršyti maksimumų. Nepateikus datos ar pastabų, jos nustatomos į null.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TerrariumInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Terariumas sukurtas",
+            "headers": {
+              "Location": {
+                "description": "Sukurto terariumo adresas",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Terrarium"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Netaisyklingas JSON formatas",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Netaisyklingas JSON formatas."
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Netinkami duomenys: trūksta laukų, netinkami jų tipai, ribos arba data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Serverio klaida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/care-records/{id}": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "description": "Priežiūros įrašo ID",
+          "schema": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 2147483647
+          }
+        }
+      ],
+      "get": {
+        "tags": [
+          "Priežiūros įrašai"
+        ],
+        "summary": "Gauti priežiūros įrašą pagal ID",
+        "responses": {
+          "200": {
+            "description": "Priežiūros įrašo informacija",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CareRecord"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Netinkamas priežiūros įrašo ID",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Netinkamas priežiūros įrašo ID."
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Priežiūros įrašas nerastas",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Priežiūros įrašas nerastas."
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Serverio klaida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Nepavyko gauti priežiūros įrašo."
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Priežiūros įrašai"
+        ],
+        "summary": "Atnaujinti priežiūros įrašą",
+        "description": "Būtina pateikti pet_id, care_type ir notes. Įrašo laikas nekeičiamas.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CareRecordInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Priežiūros įrašas atnaujintas",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CareRecord"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Netinkamas ID arba netaisyklingas JSON",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Netinkamas priežiūros įrašo ID."
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/paths/~1care-records~1{id}/get/responses/404"
+          },
+          "422": {
+            "$ref": "#/paths/~1care-records/post/responses/422"
+          },
+          "500": {
+            "description": "Serverio klaida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Nepavyko atnaujinti priežiūros įrašo."
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Priežiūros įrašai"
+        ],
+        "summary": "Ištrinti priežiūros įrašą",
+        "responses": {
+          "204": {
+            "description": "Priežiūros įrašas ištrintas. Atsakymo turinio nėra."
+          },
+          "400": {
+            "$ref": "#/paths/~1care-records~1{id}/get/responses/400"
+          },
+          "404": {
+            "$ref": "#/paths/~1care-records~1{id}/get/responses/404"
+          },
+          "500": {
+            "description": "Serverio klaida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Nepavyko ištrinti priežiūros įrašo."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/care-records": {
+      "get": {
+        "tags": [
+          "Priežiūros įrašai"
+        ],
+        "summary": "Gauti visus priežiūros įrašus",
+        "description": "Įrašai pateikiami nuo naujausio. Jei įrašų nėra, grąžinamas tuščias masyvas.",
+        "responses": {
+          "200": {
+            "description": "Priežiūros įrašų sąrašas",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CareRecord"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Serverio klaida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Nepavyko gauti priežiūros įrašų."
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Priežiūros įrašai"
+        ],
+        "summary": "Sukurti priežiūros įrašą",
+        "description": "Įrašas priskiriamas egzistuojančiam augintiniui. Laikas nustatomas automatiškai.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CareRecordInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Priežiūros įrašas sukurtas",
+            "headers": {
+              "Location": {
+                "description": "Sukurto priežiūros įrašo adresas",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CareRecord"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Netaisyklingas JSON formatas",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Netaisyklingas JSON formatas."
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Netinkami duomenys arba augintinis neegzistuoja",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Nurodytas augintinis neegzistuoja."
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Serverio klaida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Nepavyko sukurti priežiūros įrašo."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/pets/{id}": {
+      "put": {
+        "tags": [
+          "Augintiniai"
+        ],
+        "summary": "Atnaujinti augintinį",
+        "description": "Pakeičia augintinio kortelę. Nepateikus arrival_date arba notes, šie laukai nustatomi į null.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 2147483647
+            }
+          }
+        ],
+        "requestBody": {
+          "$ref": "#/paths/~1pets/post/requestBody"
+        },
+        "responses": {
+          "200": {
+            "description": "Augintinis atnaujintas",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Pet"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Netinkamas ID arba netaisyklingas JSON",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Netinkamas augintinio ID."
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Augintinis nerastas",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Augintinis nerastas."
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Netinkami duomenys arba nurodytas terariumas neegzistuoja",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Nurodytas terariumas neegzistuoja."
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Serverio klaida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Nepavyko atnaujinti augintinio."
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Augintiniai"
+        ],
+        "summary": "Ištrinti augintinį",
+        "description": "Augintinį galima ištrinti tik tada, kai jis neturi priežiūros įrašų.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 2147483647
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Augintinis ištrintas. Atsakymo turinio nėra."
+          },
+          "400": {
+            "description": "Netinkamas augintinio ID",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Netinkamas augintinio ID."
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Augintinis nerastas",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Augintinis nerastas."
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Augintinis turi priežiūros įrašų",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Augintinio ištrinti negalima, nes jis turi priežiūros įrašų."
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Serverio klaida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Nepavyko ištrinti augintinio."
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Augintiniai"
+        ],
+        "summary": "Gauti augintinį pagal ID",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Augintinio ID",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 2147483647
+            },
+            "example": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Augintinio informacija",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Pet"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Netinkamas augintinio ID",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Augintinio ID turi būti teigiamas sveikasis skaičius."
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Augintinis nerastas",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Augintinis nerastas."
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Serverio klaida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Nepavyko gauti augintinio."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/pets": {
+      "post": {
+        "tags": [
+          "Augintiniai"
+        ],
+        "summary": "Sukurti augintinį",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "terrarium_id",
+                  "name",
+                  "species"
+                ],
+                "properties": {
+                  "terrarium_id": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 2147483647
+                  },
+                  "name": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 100,
+                    "description": "Vardas negali būti sudarytas tik iš tarpų."
+                  },
+                  "species": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 150,
+                    "description": "Rūšis negali būti sudaryta tik iš tarpų."
+                  },
+                  "arrival_date": {
+                    "type": "string",
+                    "format": "date",
+                    "nullable": true
+                  },
+                  "notes": {
+                    "type": "string",
+                    "nullable": true
+                  }
+                }
+              },
+              "example": {
+                "terrarium_id": 1,
+                "name": "Mėta",
+                "species": "Litoria caerulea",
+                "arrival_date": "2026-10-03",
+                "notes": "Aktyvi vakare."
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Augintinis sukurtas",
+            "headers": {
+              "Location": {
+                "description": "Sukurto augintinio adresas",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Pet"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Netaisyklingas JSON formatas",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Netinkami duomenys arba nurodytas terariumas neegzistuoja",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Serverio klaida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Augintiniai"
+        ],
+        "summary": "Gauti visų augintinių sąrašą",
+        "responses": {
+          "200": {
+            "description": "Augintinių sąrašas. Jei augintinių nėra, grąžinamas tuščias masyvas.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Pet"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Serverio klaida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Terrarium": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 1
+          },
+          "name": {
+            "type": "string",
+            "example": "Varlių terariumas"
+          },
+          "temperature_min": {
+            "type": "string",
+            "example": "22.00"
+          },
+          "temperature_max": {
+            "type": "string",
+            "example": "26.00"
+          },
+          "humidity_min": {
+            "type": "string",
+            "example": "60.00"
+          },
+          "humidity_max": {
+            "type": "string",
+            "example": "80.00"
+          },
+          "last_cleaned": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          },
+          "notes": {
+            "type": "string",
+            "nullable": true,
+            "example": "Demonstracinis terariumas."
+          }
+        }
+      },
+      "TerrariumInput": {
+        "type": "object",
+        "required": [
+          "name",
+          "temperature_min",
+          "temperature_max",
+          "humidity_min",
+          "humidity_max"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100,
+            "description": "Pavadinimas negali būti sudarytas tik iš tarpų.",
+            "example": "Demo terariumas"
+          },
+          "temperature_min": {
+            "type": "number",
+            "minimum": -999.99,
+            "maximum": 999.99,
+            "description": "Minimali temperatūra °C. Negali viršyti maksimalios.",
+            "example": 22
+          },
+          "temperature_max": {
+            "type": "number",
+            "minimum": -999.99,
+            "maximum": 999.99,
+            "description": "Maksimali temperatūra °C.",
+            "example": 26
+          },
+          "humidity_min": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 100,
+            "description": "Minimali drėgmė procentais. Negali viršyti maksimalios.",
+            "example": 60
+          },
+          "humidity_max": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 100,
+            "description": "Maksimali drėgmė procentais.",
+            "example": 80
+          },
+          "last_cleaned": {
+            "type": "string",
+            "format": "date",
+            "nullable": true,
+            "example": "2026-10-03"
+          },
+          "notes": {
+            "type": "string",
+            "nullable": true,
+            "example": "Demonstracinis terariumas."
+          }
+        }
+      },
+      "CareRecord": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 1
+          },
+          "pet_id": {
+            "type": "integer",
+            "example": 1
+          },
+          "care_type": {
+            "type": "string",
+            "enum": [
+              "feeding",
+              "observation",
+              "other"
+            ]
+          },
+          "performed_at": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true,
+            "description": "Laiką automatiškai nustato serveris."
+          },
+          "notes": {
+            "type": "string",
+            "example": "Augintinis aktyvus, pakitimų nepastebėta."
+          }
+        }
+      },
+      "CareRecordInput": {
+        "type": "object",
+        "required": [
+          "pet_id",
+          "care_type",
+          "notes"
+        ],
+        "properties": {
+          "pet_id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 2147483647,
+            "example": 1
+          },
+          "care_type": {
+            "type": "string",
+            "enum": [
+              "feeding",
+              "observation",
+              "other"
+            ],
+            "example": "observation"
+          },
+          "notes": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Pastabos negali būti sudarytos tik iš tarpų.",
+            "example": "Augintinis aktyvus, pakitimų nepastebėta."
+          }
+        }
+      },
+      "Pet": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 1
+          },
+          "terrarium_id": {
+            "type": "integer",
+            "example": 1
+          },
+          "name": {
+            "type": "string",
+            "example": "Pupa"
+          },
+          "species": {
+            "type": "string",
+            "example": "Litoria caerulea"
+          },
+          "arrival_date": {
+            "type": "string",
+            "format": "date",
+            "nullable": true,
+            "example": "2026-09-01"
+          },
+          "notes": {
+            "type": "string",
+            "nullable": true,
+            "example": "Aktyvi vakare."
+          }
+        }
+      },
+      "Error": {
+        "type": "object",
+        "required": [
+          "error"
+        ],
+        "properties": {
+          "error": {
+            "type": "string",
+            "example": "Nepavyko gauti augintinių sąrašo."
+          }
+        }
+      }
+    }
+  }
+}
