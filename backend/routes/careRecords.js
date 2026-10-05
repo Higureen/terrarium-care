@@ -3,15 +3,142 @@ const pool = require("../db");
 
 const router = express.Router();
 
+//prieziuros irasu sarasui pridedamas puslapiavimas ir filter pagal prieziuros tipa ir augintini
 router.get("/", async (req, res) => {
+  const { page = "1", limit = "5", care_type, pet_id } = req.query;
+
+  if (
+    typeof page !== "string" ||
+    typeof limit !== "string" ||
+    !/^[1-9]\d*$/.test(page) ||
+    !/^[1-9]\d*$/.test(limit)
+  ) {
+    return res.status(400).json({
+      error: "page ir limit turi būti teigiami sveikieji skaičiai."
+    });
+  }
+
+  const pageNumber = Number(page);
+  const pageSize = Number(limit);
+  const offset = (pageNumber - 1) * pageSize;
+
+  if (
+    !Number.isSafeInteger(pageNumber) ||
+    !Number.isSafeInteger(pageSize) ||
+    pageSize > 100 ||
+    !Number.isSafeInteger(offset)
+  ) {
+    return res.status(400).json({
+      error: "Netinkamas puslapis arba limit. limit negali viršyti 100."
+    });
+  }
+
+  if (
+    care_type !== undefined &&
+    !["feeding", "observation", "other"].includes(care_type)
+  ) {
+    return res.status(400).json({
+      error: "Priežiūros tipas turi būti feeding, observation arba other."
+    });
+  }
+
+  let petId = null;
+
+  if (pet_id !== undefined) {
+    if (
+      typeof pet_id !== "string" ||
+      !/^[1-9]\d*$/.test(pet_id) ||
+      !Number.isSafeInteger(Number(pet_id)) ||
+      Number(pet_id) > 2147483647
+    ) {
+      return res.status(400).json({
+        error: "Netinkamas augintinio ID filtras."
+      });
+    }
+
+    petId = Number(pet_id);
+  }
+
+  const conditions = [];
+  const values = [];
+
+  if (care_type !== undefined) {
+    values.push(care_type);
+    conditions.push(`care_type = $${values.length}`);
+  }
+
+  if (petId !== null) {
+    values.push(petId);
+    conditions.push(`pet_id = $${values.length}`);
+  }
+
+  const filterSql = conditions.length > 0
+    ? `WHERE ${conditions.join(" AND ")}`
+    : "";
+
   try {
+    const countResult = await pool.query(
+      `SELECT COUNT(*) AS total FROM care_records ${filterSql}`,
+      values
+    );
+
+    const total = Number(countResult.rows[0].total);
+    const totalPages = Math.ceil(total / pageSize);
+
+    const limitPosition = values.length + 1;
+    const offsetPosition = values.length + 2;
+
     const result = await pool.query(
       `SELECT id, pet_id, care_type, performed_at, notes
        FROM care_records
-       ORDER BY performed_at DESC, id DESC`
+       ${filterSql}
+       ORDER BY performed_at DESC, id DESC
+       LIMIT $${limitPosition}
+       OFFSET $${offsetPosition}`,
+      [...values, pageSize, offset]
     );
 
-    return res.status(200).json(result.rows);
+    const pageLink = (targetPage) => {
+      const params = new URLSearchParams({
+        page: String(targetPage),
+        limit: String(pageSize)
+      });
+
+      if (care_type !== undefined) {
+        params.set("care_type", care_type);
+      }
+
+      if (petId !== null) {
+        params.set("pet_id", String(petId));
+      }
+
+      return `/care-records?${params.toString()}`;
+    };
+
+    const data = result.rows.map(record => ({
+      ...record,
+      _links: {
+        self: `/care-records/${record.id}`,
+        pet: `/pets/${record.pet_id}`,
+        profile: `/pets/${record.pet_id}/profile`
+      }
+    }));
+
+    return res.status(200).json({
+      data,
+      pagination: {
+        page: pageNumber,
+        limit: pageSize,
+        total,
+        totalPages
+      },
+      _links: {
+        self: pageLink(pageNumber),
+        first: pageLink(1),
+        previous: pageNumber > 1 ? pageLink(pageNumber - 1) : null,
+        next: pageNumber < totalPages ? pageLink(pageNumber + 1) : null
+      }
+    });
   } catch (error) {
     console.error("Failed to fetch care records:", error.message);
 

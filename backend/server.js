@@ -226,30 +226,128 @@ app.get("/health", async (req, res) => {
         });
     }
 });
+//pridedamas filter pagal pavad ir puslapiavimas
 app.get("/terrariums", async (req, res) => {
-    try {
-        const result = await pool.query(`
-            SELECT
-                id,
-                name,
-                temperature_min,
-                temperature_max,
-                humidity_min,
-                humidity_max,
-                to_char(last_cleaned, 'YYYY-MM-DD') AS last_cleaned,
-                notes
-            FROM terrariums
-            ORDER BY id
-        `);
+  const { page = "1", limit = "5", name } = req.query;
 
-        res.status(200).json(result.rows);
-    } catch (error) {
-        console.error("Failed to fetch terrariums:", error.message);
+  if (
+    typeof page !== "string" ||
+    typeof limit !== "string" ||
+    !/^[1-9]\d*$/.test(page) ||
+    !/^[1-9]\d*$/.test(limit)
+  ) {
+    return res.status(400).json({
+      error: "page ir limit turi būti teigiami sveikieji skaičiai."
+    });
+  }
 
-        res.status(500).json({
-            error: "Nepavyko gauti terariumų sąrašo."
-        });
-    }
+  const pageNumber = Number(page);
+  const pageSize = Number(limit);
+  const offset = (pageNumber - 1) * pageSize;
+
+  if (
+    !Number.isSafeInteger(pageNumber) ||
+    !Number.isSafeInteger(pageSize) ||
+    pageSize > 100 ||
+    !Number.isSafeInteger(offset)
+  ) {
+    return res.status(400).json({
+      error: "Netinkamas puslapis arba limit. limit negali viršyti 100."
+    });
+  }
+
+  if (
+    name !== undefined &&
+    (
+      typeof name !== "string" ||
+      name.trim().length === 0 ||
+      name.trim().length > 100 ||
+      name.includes("\u0000")
+    )
+  ) {
+    return res.status(400).json({
+      error: "Pavadinimo filtras turi būti tekstas nuo 1 iki 100 simbolių."
+    });
+  }
+
+  const nameFilter = name === undefined ? null : name.trim();
+
+  //ieskom pavadinimo dalies neatsizvelgiant i raidziu dydi
+  const filterSql = nameFilter === null
+    ? ""
+    : "WHERE strpos(LOWER(name), LOWER($1)) > 0";
+
+  const filterValues = nameFilter === null ? [] : [nameFilter];
+
+  try {
+    const countResult = await pool.query(
+      `SELECT COUNT(*) AS total FROM terrariums ${filterSql}`,
+      filterValues
+    );
+
+    const total = Number(countResult.rows[0].total);
+    const totalPages = Math.ceil(total / pageSize);
+
+    const limitPosition = filterValues.length + 1;
+    const offsetPosition = filterValues.length + 2;
+
+    const result = await pool.query(
+      `SELECT id, name,
+              temperature_min, temperature_max,
+              humidity_min, humidity_max,
+              to_char(last_cleaned, 'YYYY-MM-DD') AS last_cleaned,
+              notes
+       FROM terrariums
+       ${filterSql}
+       ORDER BY id
+       LIMIT $${limitPosition}
+       OFFSET $${offsetPosition}`,
+      [...filterValues, pageSize, offset]
+    );
+
+    const pageLink = (targetPage) => {
+      const params = new URLSearchParams({
+        page: String(targetPage),
+        limit: String(pageSize)
+      });
+
+      if (nameFilter !== null) {
+        params.set("name", nameFilter);
+      }
+
+      return `/terrariums?${params.toString()}`;
+    };
+
+    const data = result.rows.map(terrarium => ({
+      ...terrarium,
+      _links: {
+        self: `/terrariums/${terrarium.id}`,
+        pets: `/terrariums/${terrarium.id}/pets`
+      }
+    }));
+
+    return res.status(200).json({
+      data,
+      pagination: {
+        page: pageNumber,
+        limit: pageSize,
+        total,
+        totalPages
+      },
+      _links: {
+        self: pageLink(pageNumber),
+        first: pageLink(1),
+        previous: pageNumber > 1 ? pageLink(pageNumber - 1) : null,
+        next: pageNumber < totalPages ? pageLink(pageNumber + 1) : null
+      }
+    });
+  } catch (error) {
+    console.error("Failed to fetch terrariums:", error.message);
+
+    return res.status(500).json({
+      error: "Nepavyko gauti terariumų sąrašo."
+    });
+  }
 });
 
 app.get("/terrariums/:id", async (req, res) => {
@@ -488,6 +586,75 @@ app.get("/terrariums/:id/pets", async (req, res) => {
   }
 });
 
+app.get(
+  "/terrariums/:terrariumId/pets/:petId/care-records",
+  async (req, res) => {
+    const { terrariumId: rawTerrariumId, petId: rawPetId } = req.params;
+
+    const terrariumId = Number(rawTerrariumId);
+    const petId = Number(rawPetId);
+
+    const isValidId = (raw, value) =>
+      /^[1-9]\d*$/.test(raw) &&
+      Number.isSafeInteger(value) &&
+      value <= 2147483647;
+
+    if (
+      !isValidId(rawTerrariumId, terrariumId) ||
+      !isValidId(rawPetId, petId)
+    ) {
+      return res.status(400).json({
+        error: "Terariumo ir augintinio ID turi būti teigiami sveikieji skaičiai."
+      });
+    }
+
+    try {
+      const terrarium = await pool.query(
+        "SELECT id FROM terrariums WHERE id = $1",
+        [terrariumId]
+      );
+
+      if (terrarium.rows.length === 0) {
+        return res.status(404).json({
+          error: "Terariumas nerastas."
+        });
+      }
+
+      //tikrinam ar augintinis priklauso butent tam terariumui
+      const pet = await pool.query(
+        `SELECT id
+         FROM pets
+         WHERE id = $1 AND terrarium_id = $2`,
+        [petId, terrariumId]
+      );
+
+      if (pet.rows.length === 0) {
+        return res.status(404).json({
+          error: "Augintinis šiame terariume nerastas."
+        });
+      }
+
+      const records = await pool.query(
+        `SELECT id, pet_id, care_type, performed_at, notes
+         FROM care_records
+         WHERE pet_id = $1
+         ORDER BY performed_at DESC, id DESC`,
+        [petId]
+      );
+
+      return res.status(200).json(records.rows);
+    } catch (error) {
+      console.error(
+        "Failed to fetch scoped care records:",
+        error.message
+      );
+
+      return res.status(500).json({
+        error: "Nepavyko gauti augintinio priežiūros įrašų."
+      });
+    }
+  }
+);
 app.listen(port, "127.0.0.1", () => {
     console.log(`TerraCare API: http://localhost:${port}`);
 });

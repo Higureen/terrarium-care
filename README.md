@@ -157,3 +157,15 @@ Trukmė gali skirtis priklausomai nuo aplinkos.
 
 Terariumo negalima ištrinti, kol jame yra augintinių.
 Augintinio negalima ištrinti, kol jis turi priežiūros įrašų.
+
+## API testavimas
+
+1. Paleisti serverį: `cd backend` ir `node server.js`.
+2. Į Postman importuoti `postman/TerraCare.postman_collection.json`.
+3. Pasirinkti kolekciją „TerraCare API – demonstracija“ ir spausti „Run“.
+4. Paleisti visas užklausas jų nustatyta tvarka.
+
+Testai tikrina CRUD operacijas, puslapiavimą, filtravimą,
+hierarchinius ryšius, augintinio profilį ir klaidų atsakymus.
+Testavimui duomenų bazėje turi būti bent du „Litoria caerulea“
+rūšies augintiniai.

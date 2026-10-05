@@ -12,6 +12,225 @@
     }
   ],
   "paths": {
+    "/pets/{id}/profile": {
+      "get": {
+        "tags": [
+          "Augintiniai"
+        ],
+        "summary": "Gauti augintinio profilį",
+        "description": "Viename atsakyme sujungiama augintinio informacija, jo terariumas ir priežiūros istorija. Jei priežiūros įrašų nėra, care_records yra tuščias masyvas.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "Augintinio ID.",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 2147483647
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Augintinio profilis iš trijų susijusių esybių",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "pet",
+                    "terrarium",
+                    "care_records"
+                  ],
+                  "properties": {
+                    "pet": {
+                      "$ref": "#/components/schemas/Pet"
+                    },
+                    "terrarium": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer"
+                        },
+                        "name": {
+                          "type": "string"
+                        },
+                        "temperature_min": {
+                          "type": "number"
+                        },
+                        "temperature_max": {
+                          "type": "number"
+                        },
+                        "humidity_min": {
+                          "type": "number"
+                        },
+                        "humidity_max": {
+                          "type": "number"
+                        },
+                        "last_cleaned": {
+                          "type": "string",
+                          "format": "date",
+                          "nullable": true
+                        },
+                        "notes": {
+                          "type": "string",
+                          "nullable": true
+                        }
+                      }
+                    },
+                    "care_records": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/CareRecord"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Netinkamas augintinio ID",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Netinkamas augintinio ID."
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Augintinis nerastas",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Augintinis nerastas."
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Serverio klaida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Nepavyko gauti augintinio profilio."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/terrariums/{terrariumId}/pets/{petId}/care-records": {
+      "get": {
+        "tags": [
+          "Priežiūros įrašai"
+        ],
+        "summary": "Gauti terariumo augintinio priežiūros įrašus",
+        "description": "Tikrinama, ar terariumas egzistuoja ir ar augintinis priklauso būtent jam. Grąžinama augintinio priežiūros istorija nuo naujausių įrašų. Jei istorija tuščia, grąžinamas tuščias masyvas.",
+        "parameters": [
+          {
+            "name": "terrariumId",
+            "in": "path",
+            "required": true,
+            "description": "Terariumo ID.",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 2147483647
+            }
+          },
+          {
+            "name": "petId",
+            "in": "path",
+            "required": true,
+            "description": "Šiam terariumui priklausančio augintinio ID.",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 2147483647
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Augintinio priežiūros įrašų sąrašas",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CareRecord"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Netinkamas terariumo arba augintinio ID",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Terariumo ir augintinio ID turi būti teigiami sveikieji skaičiai."
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Terariumas nerastas arba augintinis šiame terariume nerastas",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "terrariumNotFound": {
+                    "summary": "Terariumas neegzistuoja",
+                    "value": {
+                      "error": "Terariumas nerastas."
+                    }
+                  },
+                  "petNotInTerrarium": {
+                    "summary": "Augintinis neegzistuoja arba priklauso kitam terariumui",
+                    "value": {
+                      "error": "Augintinis šiame terariume nerastas."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Serverio klaida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Nepavyko gauti augintinio priežiūros įrašų."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/terrariums/{id}": {
       "parameters": [
         {
@@ -214,17 +433,104 @@
         "tags": [
           "Terariumai"
         ],
-        "summary": "Gauti visų terariumų sąrašą",
+        "summary": "Gauti terariumų sąrašą",
+        "description": "Grąžina vieną sąrašo puslapį. Galima ieškoti pagal pavadinimo dalį, neatsižvelgiant į raidžių dydį. Nesant rezultatų, data yra tuščias masyvas.",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Puslapio numeris nuo 1. Pernelyg didelis page ir limit derinys atmetamas su 400.",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991,
+              "default": 1
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Įrašų skaičius puslapyje.",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 5
+            }
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "description": "Terariumo pavadinimo dalis. Negali būti vien tarpai arba turėti nulinį simbolį.",
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 100
+            },
+            "example": "ekspozicija"
+          }
+        ],
         "responses": {
           "200": {
-            "description": "Terariumų sąrašas. Jei terariumų nėra, grąžinamas tuščias masyvas.",
+            "description": "Terariumų sąrašo puslapis su navigacijos nuorodomis",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Terrarium"
+                  "type": "object",
+                  "required": [
+                    "data",
+                    "pagination",
+                    "_links"
+                  ],
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "allOf": [
+                          {
+                            "$ref": "#/components/schemas/Terrarium"
+                          },
+                          {
+                            "type": "object",
+                            "properties": {
+                              "_links": {
+                                "type": "object",
+                                "properties": {
+                                  "self": {
+                                    "type": "string",
+                                    "example": "/terrariums/1"
+                                  },
+                                  "pets": {
+                                    "type": "string",
+                                    "example": "/terrariums/1/pets"
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    "pagination": {
+                      "$ref": "#/components/schemas/Pagination"
+                    },
+                    "_links": {
+                      "$ref": "#/components/schemas/PageLinks"
+                    }
                   }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Netinkami puslapiavimo arba filtravimo parametrai",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "page ir limit turi būti teigiami sveikieji skaičiai."
                 }
               }
             }
@@ -235,6 +541,9 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Nepavyko gauti terariumų sąrašo."
                 }
               }
             }
@@ -480,18 +789,120 @@
         "tags": [
           "Priežiūros įrašai"
         ],
-        "summary": "Gauti visus priežiūros įrašus",
-        "description": "Įrašai pateikiami nuo naujausio. Jei įrašų nėra, grąžinamas tuščias masyvas.",
+        "summary": "Gauti priežiūros įrašų sąrašą",
+        "description": "Grąžina vieną sąrašo puslapį nuo naujausių įrašų. Galima filtruoti pagal priežiūros tipą ir augintinį. Abu filtrai gali būti naudojami kartu. Nesant rezultatų, data yra tuščias masyvas.",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Puslapio numeris nuo 1. Pernelyg didelis page ir limit derinys atmetamas su 400.",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991,
+              "default": 1
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Įrašų skaičius puslapyje.",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 5
+            }
+          },
+          {
+            "name": "care_type",
+            "in": "query",
+            "description": "Priežiūros įrašo tipas.",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "feeding",
+                "observation",
+                "other"
+              ]
+            }
+          },
+          {
+            "name": "pet_id",
+            "in": "query",
+            "description": "Augintinio ID. Jei atitinkančių įrašų nėra, grąžinamas tuščias sąrašas.",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 2147483647
+            }
+          }
+        ],
         "responses": {
           "200": {
-            "description": "Priežiūros įrašų sąrašas",
+            "description": "Priežiūros įrašų sąrašo puslapis su navigacijos nuorodomis",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/CareRecord"
+                  "type": "object",
+                  "required": [
+                    "data",
+                    "pagination",
+                    "_links"
+                  ],
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "allOf": [
+                          {
+                            "$ref": "#/components/schemas/CareRecord"
+                          },
+                          {
+                            "type": "object",
+                            "properties": {
+                              "_links": {
+                                "type": "object",
+                                "properties": {
+                                  "self": {
+                                    "type": "string",
+                                    "example": "/care-records/1"
+                                  },
+                                  "pet": {
+                                    "type": "string",
+                                    "example": "/pets/1"
+                                  },
+                                  "profile": {
+                                    "type": "string",
+                                    "example": "/pets/1/profile"
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    "pagination": {
+                      "$ref": "#/components/schemas/Pagination"
+                    },
+                    "_links": {
+                      "$ref": "#/components/schemas/PageLinks"
+                    }
                   }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Netinkami puslapiavimo arba filtravimo parametrai",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Priežiūros tipas turi būti feeding, observation arba other."
                 }
               }
             }
@@ -934,17 +1345,82 @@
         "tags": [
           "Augintiniai"
         ],
-        "summary": "Gauti visų augintinių sąrašą",
+        "summary": "Gauti augintinių sąrašą",
+        "description": "Grąžina vieną sąrašo puslapį. Galima filtruoti pagal tikslų rūšies pavadinimą, neatsižvelgiant į raidžių dydį. Nesant rezultatų, data yra tuščias masyvas.",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Puslapio numeris nuo 1.",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991,
+              "default": 1
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Įrašų skaičius puslapyje. Pernelyg didelis page ir limit derinys atmetamas su 400.",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 5
+            }
+          },
+          {
+            "name": "species",
+            "in": "query",
+            "description": "Tikslus rūšies pavadinimas. Negali būti vien tarpai arba turėti nulinį simbolį.",
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 150
+            },
+            "example": "Litoria caerulea"
+          }
+        ],
         "responses": {
           "200": {
-            "description": "Augintinių sąrašas. Jei augintinių nėra, grąžinamas tuščias masyvas.",
+            "description": "Augintinių sąrašo puslapis su navigacijos nuorodomis",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Pet"
+                  "type": "object",
+                  "required": [
+                    "data",
+                    "pagination",
+                    "_links"
+                  ],
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/PetListItem"
+                      }
+                    },
+                    "pagination": {
+                      "$ref": "#/components/schemas/Pagination"
+                    },
+                    "_links": {
+                      "$ref": "#/components/schemas/PageLinks"
+                    }
                   }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Netinkami puslapiavimo arba filtravimo parametrai",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "page ir limit turi būti teigiami sveikieji skaičiai."
                 }
               }
             }
@@ -955,6 +1431,9 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "error": "Nepavyko gauti augintinių sąrašo."
                 }
               }
             }
@@ -965,6 +1444,79 @@
   },
   "components": {
     "schemas": {
+      "Pagination": {
+        "type": "object",
+        "properties": {
+          "page": {
+            "type": "integer",
+            "example": 1
+          },
+          "limit": {
+            "type": "integer",
+            "example": 5
+          },
+          "total": {
+            "type": "integer",
+            "example": 12
+          },
+          "totalPages": {
+            "type": "integer",
+            "example": 3
+          }
+        }
+      },
+      "PageLinks": {
+        "type": "object",
+        "properties": {
+          "self": {
+            "type": "string"
+          },
+          "first": {
+            "type": "string"
+          },
+          "previous": {
+            "type": "string",
+            "nullable": true
+          },
+          "next": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "PetListItem": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Pet"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "_links": {
+                "type": "object",
+                "properties": {
+                  "self": {
+                    "type": "string",
+                    "example": "/pets/1"
+                  },
+                  "profile": {
+                    "type": "string",
+                    "example": "/pets/1/profile"
+                  },
+                  "terrarium": {
+                    "type": "string",
+                    "example": "/terrariums/1"
+                  },
+                  "care_records": {
+                    "type": "string",
+                    "example": "/terrariums/1/pets/1/care-records"
+                  }
+                }
+              }
+            }
+          }
+        ]
+      },
       "Terrarium": {
         "type": "object",
         "properties": {
