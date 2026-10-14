@@ -8,6 +8,8 @@ Kiekvienas terariumas turės individualias temperatūros ir drėgmės ribas, pas
 
 ## Funkciniai reikalavimai
 
+Toliau aprašytos planuojamos visos sistemos funkcijos. Pirmajame laboratoriniame darbe realizuota API; prisijungimas, rolių tikrinimas ir Vue naudotojo sąsaja dar nerealizuoti.
+
 ### Darbuotojas
 - Gali prisijungti ir atsijungti.
 - Gali peržiūrėti terariumų sąrašą, jų laikymo sąlygas ir augintinius.
@@ -41,8 +43,7 @@ Realizuota terariumų, augintinių ir priežiūros įrašų REST API.
 Kiekvienam objektui sukurti penki metodai: kūrimas, sąrašo gavimas,
 vieno objekto gavimas, atnaujinimas ir trynimas.
 
-Papildomai realizuotas hierarchinis metodas:
-`GET /terrariums/{id}/pets` – konkretaus terariumo augintinių sąrašas.
+Papildomai realizuoti trys metodai: terariumo augintinių sąrašas, augintinio profilis ir hierarchinis priežiūros įrašų sąrašas. Iš viso yra 18 taikomosios srities API metodų.
 
 Duomenys saugomi PostgreSQL duomenų bazėje.
 Užklausų ir atsakymų turiniui naudojamas JSON.
@@ -102,7 +103,27 @@ Serveriui sustabdyti naudojama Ctrl + C.
 | Augintiniai | GET /pets | GET /pets/{id} | POST /pets | PUT /pets/{id} | DELETE /pets/{id} |
 | Priežiūros įrašai | GET /care-records | GET /care-records/{id} | POST /care-records | PUT /care-records/{id} | DELETE /care-records/{id} |
 
-Hierarchinis metodas: `GET /terrariums/{id}/pets`.
+### Papildomi API metodai
+
+| Metodas | Paskirtis |
+|---|---|
+| GET /terrariums/{id}/pets | Konkretaus terariumo augintiniai. |
+| GET /pets/{id}/profile | Augintinio profilis: augintinis, jo terariumas ir priežiūros įrašai. |
+| GET /terrariums/{terrariumId}/pets/{petId}/care-records | Konkretaus terariumo konkretaus augintinio priežiūros įrašai. |
+
+Hierarchija: **terariumas → augintinis → priežiūros įrašas**. Abu ryšiai yra vienas su daug. Hierarchinis metodas patikrina, ar augintinis priklauso nurodytam terariumui; jei nepriklauso, grąžina 404.
+
+### Puslapiavimas, filtravimas ir nuorodos
+
+Pagrindiniai sąrašų metodai priima `page` ir `limit` parametrus. Numatyta `page=1`, `limit=5`, didžiausias `limit=100`.
+
+- `/terrariums` – filtravimas pagal `name` (pavadinimo dalį).
+- `/pets` – filtravimas pagal `species`.
+- `/care-records` – filtravimas pagal `care_type` ir `pet_id`.
+
+Pavyzdys: `GET /pets?species=Litoria%20caerulea&page=1&limit=5`.
+
+Šių metodų atsakyme `data` pateikia įrašus, `pagination` – puslapiavimo informaciją, `_links` – nuorodas į puslapius. Įrašų `_links` pateikia nuorodas į pačius resursus ir susijusius duomenis.
 
 ### Automatinė demonstracija su Postman
 
@@ -111,45 +132,31 @@ Hierarchinis metodas: `GET /terrariums/{id}/pets`.
 3. Kolekcijos kintamąjį `baseUrl` nustatyti į `http://localhost:3000`.
 4. Atidaryti kolekcijos Runner.
 5. Nustatyti vieną iteraciją ir 0 ms delsą.
-6. Patikrinti žemiau pateiktą užklausų eilę ir paleisti kolekciją.
+6. Paleisti visas 29 užklausas kolekcijoje nustatyta numeruota tvarka.
 
-Vykdymo tvarka:
+Kolekcijoje yra **29 užklausos**, kurios tikrina **18 skirtingų taikomosios srities API metodų** ir papildomus jų veikimo atvejus. Viena užklausa gali turėti kelis testus.
 
-1. POST /terrariums
-2. GET /terrariums/{id}
-3. GET /terrariums
-4. PUT /terrariums/{id}
-5. POST /pets
-6. GET /pets/{id}
-7. GET /pets
-8. GET /terrariums/{id}/pets
-9. PUT /pets/{id}
-10. POST /care-records
-11. GET /care-records/{id}
-12. GET /care-records
-13. PUT /care-records/{id}
-14. DELETE /care-records/{id}
-15. DELETE /pets/{id}
-16. DELETE /terrariums/{id}
-17. GET ištrinto terariumo – tikimasi 404.
-18. POST terariumo su netinkama drėgme – tikimasi 422.
-19. POST terariumo su netaisyklingu JSON – tikimasi 400.
+Tikrinama:
 
-Kūrimo užklausos automatiškai išsaugo sukurtų objektų ID.
-Tolesnės užklausos naudoja `terrariumId`, `petId` ir `careRecordId`
-kolekcijos kintamuosius. Sėkmingo paleidimo pabaigoje demonstracijos
-metu sukurti objektai ištrinami.
+- Visų trijų objektų CRUD ir sąrašų gavimas.
+- Filtravimas, puslapiavimas ir perėjimas į kitą puslapį.
+- Augintinio profilis ir hierarchinis priežiūros įrašų gavimas.
+- 404, kai augintinis nepriklauso terariumui arba terariumas ištrintas.
+- 422, kai pateikta netinkama drėgmė.
+- 400, kai JSON netaisyklingas arba puslapiavimo ir filtro parametrai netinkami.
 
-2026-10-03 vietinio paleidimo rezultatas:
-61 sėkmingas testas, 0 nepavykusių testų, trukmė – 2,412 s.
-Trukmė gali skirtis priklausomai nuo aplinkos.
+Kūrimo užklausos automatiškai išsaugo sukurtų objektų ID kolekcijos kintamuosiuose. Sėkmingo paleidimo pabaigoje demonstracijos metu sukurti objektai ištrinami: pirmiausia priežiūros įrašas, tada augintinis ir terariumas.
+
+Puslapiavimo testui duomenų bazėje turi būti bent du `Litoria caerulea` rūšies augintiniai. Pradinius duomenis paruošia `backend/database/seed.sql`.
+
+Runner lange patikrinti, kad nėra nepavykusių testų ir demonstracijos trukmė neviršija maždaug 15 sekundžių. Trukmė priklauso nuo aplinkos.
 
 ### Atsakymų kodai
 
 - 200 – sėkmingas gavimas arba atnaujinimas.
 - 201 – objektas sukurtas.
 - 204 – objektas ištrintas.
-- 400 – netinkamas ID arba netaisyklingas JSON.
+- 400 – netinkamas ID, puslapiavimo ar filtro parametras arba netaisyklingas JSON.
 - 404 – objektas nerastas.
 - 409 – objekto negalima ištrinti dėl susijusių įrašų.
 - 422 – netinkami pateikti duomenys.
@@ -158,14 +165,3 @@ Trukmė gali skirtis priklausomai nuo aplinkos.
 Terariumo negalima ištrinti, kol jame yra augintinių.
 Augintinio negalima ištrinti, kol jis turi priežiūros įrašų.
 
-## API testavimas
-
-1. Paleisti serverį: `cd backend` ir `node server.js`.
-2. Į Postman importuoti `postman/TerraCare.postman_collection.json`.
-3. Pasirinkti kolekciją „TerraCare API – demonstracija“ ir spausti „Run“.
-4. Paleisti visas užklausas jų nustatyta tvarka.
-
-Testai tikrina CRUD operacijas, puslapiavimą, filtravimą,
-hierarchinius ryšius, augintinio profilį ir klaidų atsakymus.
-Testavimui duomenų bazėje turi būti bent du „Litoria caerulea“
-rūšies augintiniai.
