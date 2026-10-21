@@ -1,13 +1,17 @@
+require("dotenv").config();
 const swaggerUi = require("swagger-ui-express");
 const openapi = require("./openapi.json");
 const express = require("express");
 const pool = require("./db");
 const petRoutes = require("./routes/pets");
 const careRecordRoutes = require("./routes/careRecords");
+const authRouter = require("./routes/auth");
 const app = express();
 const port = process.env.PORT || 3000;
 
 app.use(express.json());
+
+app.use("/auth", authRouter);
 
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(openapi));
 
