@@ -6,6 +6,8 @@ const pool = require("./db");
 const petRoutes = require("./routes/pets");
 const careRecordRoutes = require("./routes/careRecords");
 const authRouter = require("./routes/auth");
+const authenticate = require("./middleware/authenticate");
+const authorize = require("./middleware/authorize");
 const app = express();
 const port = process.env.PORT || 3000;
 
@@ -19,10 +21,11 @@ app.get("/openapi.json", (req, res) => {
   res.json(openapi);
 });
 
-app.use("/pets", petRoutes);
-app.use("/care-records", careRecordRoutes);
+app.use("/terrariums", authenticate);
+app.use("/pets", authenticate, petRoutes);
+app.use("/care-records", authenticate, careRecordRoutes);
 
-app.put("/terrariums/:id", async (req, res) => {
+app.put("/terrariums/:id", authorize("manager", "admin"), async (req, res) => {
     const id = Number(req.params.id);
 
     if (
@@ -170,7 +173,7 @@ app.put("/terrariums/:id", async (req, res) => {
     }
 });
 
-app.delete("/terrariums/:id", async (req, res) => {
+app.delete("/terrariums/:id", authorize("manager", "admin"), async (req, res) => {
     const id = Number(req.params.id);
 
     if (
@@ -400,7 +403,7 @@ app.get("/terrariums/:id", async (req, res) => {
     }
 });
 
-app.post("/terrariums", async (req, res) => {
+app.post("/terrariums", authorize("manager", "admin"), async (req, res) => {
     const body = req.body;
 
     if (!body || typeof body !== "object" || Array.isArray(body)) {

@@ -211,4 +211,132 @@ router.get("/me", authenticate, (req, res) => {
   return res.status(200).json(req.user);
 });
 
+router.post("/refresh", async (req, res) => {
+  res.set("Cache-Control", "no-store");
+
+  const { refreshToken } = req.body ?? {};
+
+  if (
+    typeof refreshToken !== "string" ||
+    !/^[a-f0-9]{64}$/.test(refreshToken)
+  ) {
+    return res.status(422).json({
+      error: "Pateikite tinkamo formato refreshToken."
+    });
+  }
+
+  try {
+    const tokenHash = crypto
+      .createHash("sha256")
+      .update(refreshToken)
+      .digest("hex");
+
+    const result = await pool.query(
+      `SELECT s.id AS session_id, u.id, u.name, u.email, u.role
+       FROM auth_sessions s
+       JOIN users u ON u.id = s.user_id
+       WHERE s.refresh_token_hash = $1
+         AND s.revoked_at IS NULL
+         AND s.expires_at > CURRENT_TIMESTAMP
+         AND u.is_active = TRUE`,
+      [tokenHash]
+    );
+
+    const user = result.rows[0];
+
+    if (!user) {
+      return res.status(401).json({
+        error: "Atnaujinimo žetonas netinkamas arba nebegalioja."
+      });
+    }
+
+    const secret = process.env.JWT_SECRET;
+
+    if (!secret || secret.length < 64) {
+      throw new Error("Netinkama JWT konfigūracija.");
+    }
+
+    const newRefreshToken = crypto.randomBytes(32).toString("hex");
+
+    const newRefreshTokenHash = crypto
+      .createHash("sha256")
+      .update(newRefreshToken)
+      .digest("hex");
+
+    const accessToken = jwt.sign(
+      {
+        role: user.role,
+        sid: user.session_id
+      },
+      secret,
+      {
+        algorithm: "HS256",
+        subject: String(user.id),
+        expiresIn: process.env.JWT_ACCESS_TTL ?? "15m",
+        issuer: "terracare-api",
+        audience: "terracare-client"
+      }
+    );
+
+    // pakeiciame tik vis dar galiojanti, dar nepanaudota zetona
+    const updated = await pool.query(
+      `UPDATE auth_sessions
+       SET refresh_token_hash = $1
+       WHERE id = $2
+         AND refresh_token_hash = $3
+         AND revoked_at IS NULL
+         AND expires_at > CURRENT_TIMESTAMP
+       RETURNING id`,
+      [newRefreshTokenHash, user.session_id, tokenHash]
+    );
+
+    if (updated.rowCount === 0) {
+      return res.status(401).json({
+        error: "Atnaujinimo žetonas jau panaudotas arba nebegalioja."
+      });
+    }
+
+    return res.status(200).json({
+      accessToken,
+      refreshToken: newRefreshToken,
+      tokenType: "Bearer",
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        role: user.role
+      }
+    });
+  } catch (error) {
+    console.error("Token refresh failed:", error);
+
+    return res.status(500).json({
+      error: "Nepavyko atnaujinti žetonų."
+    });
+  }
+});
+
+router.post("/logout", authenticate, async (req, res) => {
+  res.set("Cache-Control", "no-store");
+
+  try {
+    await pool.query(
+      `UPDATE auth_sessions
+       SET revoked_at = CURRENT_TIMESTAMP
+       WHERE id = $1
+         AND user_id = $2
+         AND revoked_at IS NULL`,
+      [req.sessionId, req.user.id]
+    );
+
+    return res.status(204).send();
+  } catch (error) {
+    console.error("Logout failed:", error);
+
+    return res.status(500).json({
+      error: "Nepavyko atsijungti."
+    });
+  }
+});
+
 module.exports = router;

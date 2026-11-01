@@ -1005,7 +1005,7 @@
           "Augintiniai"
         ],
         "summary": "Atnaujinti augintinį",
-        "description": "Pakeičia augintinio kortelę. Nepateikus arrival_date arba notes, šie laukai nustatomi į null.",
+        "description": "Pakeičia augintinio kortelę. Nepateikus notes, šis laukas nustatomas į null.",
         "parameters": [
           {
             "name": "id",
@@ -1249,7 +1249,8 @@
                 "required": [
                   "terrarium_id",
                   "name",
-                  "species"
+                  "species",
+                  "arrival_date"
                 ],
                 "properties": {
                   "terrarium_id": {
@@ -1272,7 +1273,7 @@
                   "arrival_date": {
                     "type": "string",
                     "format": "date",
-                    "nullable": true
+                    "description": "Augintinio atvykimo data."
                   },
                   "notes": {
                     "type": "string",
@@ -1698,7 +1699,6 @@
           "arrival_date": {
             "type": "string",
             "format": "date",
-            "nullable": true,
             "example": "2026-09-01"
           },
           "notes": {

@@ -3,6 +3,58 @@ const pool = require("../db");
 
 const router = express.Router();
 
+async function canModifyCareRecord(req, res, next) {
+  const id = Number(req.params.id);
+
+  if (
+    !/^[1-9]\d*$/.test(req.params.id) ||
+    !Number.isSafeInteger(id) ||
+    id > 2147483647
+  ) {
+    return res.status(400).json({
+      error: "Netinkamas priežiūros įrašo ID."
+    });
+  }
+
+  if (!req.user) {
+    return res.status(401).json({
+      error: "Reikia prisijungti."
+    });
+  }
+
+  try {
+    const result = await pool.query(
+      "SELECT created_by FROM care_records WHERE id = $1",
+      [id]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({
+        error: "Priežiūros įrašas nerastas."
+      });
+    }
+
+    const isManager = ["manager", "admin"].includes(req.user.role);
+    const isOwner =
+      req.user.role === "worker" &&
+      result.rows[0].created_by === req.user.id;
+
+    if (!isManager && !isOwner) {
+      return res.status(403).json({
+        error: "Galite keisti ir šalinti tik savo priežiūros įrašus."
+      });
+    }
+
+    return next();
+  } catch (error) {
+    console.error("Care record authorization failed:", error.message);
+
+    return res.status(500).json({
+      error: "Nepavyko patikrinti priežiūros įrašo teisių."
+    });
+  }
+}
+
 //prieziuros irasu sarasui pridedamas puslapiavimas ir filter pagal prieziuros tipa ir augintini
 router.get("/", async (req, res) => {
   const { page = "1", limit = "5", care_type, pet_id } = req.query;
@@ -89,7 +141,7 @@ router.get("/", async (req, res) => {
     const offsetPosition = values.length + 2;
 
     const result = await pool.query(
-      `SELECT id, pet_id, care_type, performed_at, notes
+      `SELECT id, pet_id, care_type, performed_at, notes, created_by
        FROM care_records
        ${filterSql}
        ORDER BY performed_at DESC, id DESC
@@ -186,10 +238,10 @@ router.post("/", async (req, res) => {
 
   try {
     const result = await pool.query(
-      `INSERT INTO care_records (pet_id, care_type, notes)
-       VALUES ($1, $2, $3)
-       RETURNING id, pet_id, care_type, performed_at, notes`,
-      [pet_id, care_type, notes.trim()]
+      `INSERT INTO care_records (pet_id, care_type, notes, created_by)
+   VALUES ($1, $2, $3, $4)
+   RETURNING id, pet_id, care_type, performed_at, notes, created_by`,
+      [pet_id, care_type, notes.trim(), req.user.id]
     );
 
     const record = result.rows[0];
@@ -229,7 +281,7 @@ router.get("/:id", async (req, res) => {
 
   try {
     const result = await pool.query(
-      `SELECT id, pet_id, care_type, performed_at, notes
+      `SELECT id, pet_id, care_type, performed_at, notes, created_by
        FROM care_records
        WHERE id = $1`,
       [id]
@@ -252,7 +304,7 @@ router.get("/:id", async (req, res) => {
 });
 
 //prieziuros iraso redagavimas
-router.put("/:id", async (req, res) => {
+router.put("/:id", canModifyCareRecord, async (req, res) => {
   const id = Number(req.params.id);
 
   if (
@@ -306,7 +358,7 @@ router.put("/:id", async (req, res) => {
            care_type = $2,
            notes = $3
        WHERE id = $4
-       RETURNING id, pet_id, care_type, performed_at, notes`,
+       RETURNING id, pet_id, care_type, performed_at, notes, created_by`,
       [pet_id, care_type, notes.trim(), id]
     );
 
@@ -333,7 +385,7 @@ router.put("/:id", async (req, res) => {
 });
 
 //prieziuros iraso trynimas
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", canModifyCareRecord, async (req, res) => {
   const id = Number(req.params.id);
 
   if (
