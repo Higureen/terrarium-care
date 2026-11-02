@@ -165,3 +165,32 @@ Runner lange patikrinti, kad nėra nepavykusių testų ir demonstracijos trukmė
 Terariumo negalima ištrinti, kol jame yra augintinių.
 Augintinio negalima ištrinti, kol jis turi priežiūros įrašų.
 
+## 2 laboratorinis darbas
+
+Realizuota autentifikacija ir autorizacija naudojant JWT.
+Prieigos žetone saugomi naudotojo ID ir rolė.
+
+Sistemoje yra trys rolės: worker, manager ir admin.
+Prieiga ribojama pagal rolę, o darbuotojai gali redaguoti
+ir šalinti tik savo priežiūros įrašus.
+
+Realizuoti registracijos, prisijungimo, žetonų atnaujinimo
+ir atsijungimo metodai. Atnaujinimo žetonas keičiamas
+kiekvieno atnaujinimo metu. Atsijungus sesija panaikinama.
+
+### Talpinimas
+
+Serverio dalis ir PostgreSQL duomenų bazė talpinamos Render.
+
+- API: https://terracare-api.onrender.com
+- Swagger UI: https://terracare-api.onrender.com/api-docs
+- Būsenos patikrinimas: https://terracare-api.onrender.com/health
+
+### Testavimas
+
+Postman kolekcija „TerraCare LAB1 + LAB2“ patikrinta
+vietinėje ir Render aplinkose. Visi testai praėjo.
+
+Testams naudojamos administratoriaus ir vadovo paskyros.
+Jų prisijungimo duomenys nustatomi privačiuose Postman
+aplinkos kintamuosiuose.
