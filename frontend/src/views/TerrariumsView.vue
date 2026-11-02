@@ -1,6 +1,6 @@
 <script setup>
 import { onMounted, ref } from "vue";
-import { useRouter } from "vue-router";
+import { RouterLink, useRouter } from "vue-router";
 import { auth, apiFetch } from "../services/auth";
 import TerrariumCreateModal from "../components/TerrariumCreateModal.vue";
 import TerrariumDeleteModal from "../components/TerrariumDeleteModal.vue";
@@ -235,25 +235,36 @@ onMounted(() => loadTerrariums());
             {{ terrarium.notes }}
           </p>
 
-          <div
-            v-if="['manager', 'admin'].includes(auth.user?.role)"
-            class="card-actions"
-          >
-            <button
-              class="secondary-button"
-              type="button"
-              @click="openEdit(terrarium)"
+          <div class="card-actions">
+            <RouterLink
+              class="secondary-button button-link"
+              :to="{
+                name: 'terrarium-details',
+                params: { id: terrarium.id },
+              }"
             >
-              Redaguoti
-            </button>
+              Peržiūrėti
+            </RouterLink>
 
-            <button
-              class="danger-button"
-              type="button"
-              @click="openDelete(terrarium)"
+            <template
+              v-if="['manager', 'admin'].includes(auth.user?.role)"
             >
-              Ištrinti
-            </button>
+              <button
+                class="secondary-button"
+                type="button"
+                @click="openEdit(terrarium)"
+              >
+                Redaguoti
+              </button>
+
+              <button
+                class="danger-button"
+                type="button"
+                @click="openDelete(terrarium)"
+              >
+                Ištrinti
+              </button>
+            </template>
           </div>
         </article>
       </div>

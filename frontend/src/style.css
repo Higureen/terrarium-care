@@ -657,3 +657,105 @@ h1 {
 .delete-actions {
   margin-top: 24px;
 }
+
+.button-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+}
+
+.back-link {
+  display: inline-block;
+  margin-bottom: 28px;
+  color: #275d42;
+  font-weight: 700;
+  text-underline-offset: 4px;
+}
+
+.details-panel {
+  margin-top: 28px;
+  border: 1px solid #dde5da;
+  border-radius: 18px;
+  background: #ffffff;
+}
+
+.details-conditions {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.section-heading {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 36px 0 20px;
+}
+
+.section-heading h2 {
+  margin: 0;
+  font-size: 26px;
+}
+
+.count-badge {
+  padding: 4px 12px;
+  border-radius: 20px;
+  color: #275d42;
+  background: #e8f0e4;
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.conditions dd {
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 768px) {
+  .details-conditions {
+    grid-template-columns: 1fr;
+  }
+}
+
+.pets-heading {
+  margin: 36px 0 20px;
+}
+
+.pets-heading .section-heading {
+  margin: 0;
+}
+
+.care-list {
+  display: grid;
+  gap: 16px;
+}
+
+.care-record {
+  padding: 24px;
+  border: 1px solid #dde5da;
+  border-left: 4px solid #7c9c6e;
+  border-radius: 14px;
+  background: #ffffff;
+}
+
+.care-record-heading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px 20px;
+}
+
+.care-record-heading h3 {
+  margin: 0;
+  font-size: 18px;
+}
+
+.care-record-heading time {
+  color: #5a6d61;
+  font-size: 13px;
+}
+
+.care-record > p {
+  margin: 14px 0 0;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}

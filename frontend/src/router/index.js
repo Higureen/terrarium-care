@@ -3,6 +3,8 @@ import TerrariumsView from '../views/TerrariumsView.vue'
 import LoginView from '../views/LoginView.vue'
 import { auth } from '../services/auth'
 import RegisterView from '../views/RegisterView.vue'
+import TerrariumDetailsView from "../views/TerrariumDetailsView.vue";
+import PetProfileView from "../views/PetProfileView.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -26,6 +28,18 @@ const router = createRouter({
       path: '/register',
       name: 'register',
       component: RegisterView,
+    },
+    {
+      path: "/terrariums/:id",
+      name: "terrarium-details",
+      component: TerrariumDetailsView,
+      meta: { requiresAuth: true },
+    },
+    {
+      path: "/pets/:id/profile",
+      name: "pet-profile",
+      component: PetProfileView,
+      meta: { requiresAuth: true },
     },
   ],
 })
