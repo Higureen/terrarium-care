@@ -748,6 +748,6 @@ app.patch(
   }
 );
 
-app.listen(port, "127.0.0.1", () => {
-    console.log(`TerraCare API: http://localhost:${port}`);
+app.listen(port, "0.0.0.0", () => {
+  console.log(`TerraCare API paleista, portas: ${port}`);
 });
