@@ -1,0 +1,4415 @@
+{
+  "info": {
+    "name": "TerraCare LAB1 + LAB2",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Paleisti visą kolekciją nuo pradžios. Reikia esamų aktyvių admin ir manager paskyrų. 29 pradinės LAB1 užklausos išsaugotos, pridėta autentifikacija ir laikinas puslapiavimo augintinis. Kiekvienas vykdymas sukuria 2 testinius naudotojus; sėkmės atveju jie išjungiami, o testiniai domeno objektai pašalinami. Nenaudoti produkciniams duomenims."
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000"
+    },
+    {
+      "key": "terrariumId",
+      "value": ""
+    },
+    {
+      "key": "petId",
+      "value": ""
+    },
+    {
+      "key": "careRecordId",
+      "value": ""
+    },
+    {
+      "key": "otherTerrariumId",
+      "value": ""
+    },
+    {
+      "key": "firstPagePetId",
+      "value": ""
+    },
+    {
+      "key": "petsSecondPageUrl",
+      "value": ""
+    },
+    {
+      "key": "invalidToken",
+      "value": "invalid.token.value"
+    }
+  ],
+  "item": [
+    {
+      "name": "00 Prisijungimas ir testinės paskyros",
+      "item": [
+        {
+          "name": "S01 – Administratoriaus prisijungimas",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/auth/login",
+            "auth": {
+              "type": "noauth"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\"email\":\"{{adminEmail}}\",\"password\":\"{{adminPassword}}\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "",
+                  "for (const key of [\"adminEmail\",\"adminPassword\",\"managerEmail\",\"managerPassword\"]) {",
+                  " if (!pm.environment.get(key)) {",
+                  "   pm.execution.setNextRequest(null);",
+                  "   throw new Error(\"Užpildykite aplinkos kintamąjį: \" + key);",
+                  " }",
+                  "}",
+                  "const runId = pm.variables.replaceIn(\"{{$guid}}\");",
+                  "pm.collectionVariables.set(\"workerAEmail\", \"tc-test-a-\" + runId + \"@example.com\");",
+                  "pm.collectionVariables.set(\"workerBEmail\", \"tc-test-b-\" + runId + \"@example.com\");",
+                  "pm.collectionVariables.set(\"testPassword\", \"Tc-test-\" + pm.variables.replaceIn(\"{{$guid}}\"));"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Statusas 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"JSON atsakymas\", () => pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\"));",
+                  "",
+                  "if (pm.response.code === 200) {",
+                  " const b = pm.response.json();",
+                  " pm.test(\"Tinkama rolė\", () => pm.expect(b.user.role).to.eql(\"admin\"));",
+                  " pm.test(\"Žetonai pateikti\", () => {",
+                  "   pm.expect(b.accessToken).to.be.a(\"string\").and.not.empty;",
+                  "   pm.expect(b.refreshToken).to.match(/^[a-f0-9]{64}$/);",
+                  " });",
+                  " pm.collectionVariables.set(\"adminToken\", b.accessToken);",
+                  " pm.collectionVariables.set(\"adminRefresh\", b.refreshToken);",
+                  " pm.collectionVariables.set(\"adminId\", b.user.id);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "S02 – Vadovo prisijungimas",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/auth/login",
+            "auth": {
+              "type": "noauth"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\"email\":\"{{managerEmail}}\",\"password\":\"{{managerPassword}}\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Statusas 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"JSON atsakymas\", () => pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\"));",
+                  "",
+                  "if (pm.response.code === 200) {",
+                  " const b = pm.response.json();",
+                  " pm.test(\"Tinkama rolė\", () => pm.expect(b.user.role).to.eql(\"manager\"));",
+                  " pm.test(\"Žetonai pateikti\", () => {",
+                  "   pm.expect(b.accessToken).to.be.a(\"string\").and.not.empty;",
+                  "   pm.expect(b.refreshToken).to.match(/^[a-f0-9]{64}$/);",
+                  " });",
+                  " pm.collectionVariables.set(\"managerToken\", b.accessToken);",
+                  " pm.collectionVariables.set(\"managerRefresh\", b.refreshToken);",
+                  " pm.collectionVariables.set(\"managerId\", b.user.id);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "S – Registruoti testinį darbuotoją A",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/auth/register",
+            "auth": {
+              "type": "noauth"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\"name\":\"Testinis darbuotojas A\",\"email\":\"{{workerAEmail}}\",\"password\":\"{{testPassword}}\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Statusas 201\", () => pm.response.to.have.status(201));",
+                  "pm.test(\"JSON atsakymas\", () => pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\"));",
+                  "if (pm.response.code === 201) pm.collectionVariables.set(\"workerAId\", pm.response.json().id);",
+                  "pm.test(\"Registruojamas worker\", () => pm.expect(pm.response.json().role).to.eql(\"worker\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "S – Darbuotojo A prisijungimas",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/auth/login",
+            "auth": {
+              "type": "noauth"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\"email\":\"{{workerAEmail}}\",\"password\":\"{{testPassword}}\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Statusas 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"JSON atsakymas\", () => pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\"));",
+                  "",
+                  "if (pm.response.code === 200) {",
+                  " const b = pm.response.json();",
+                  " pm.test(\"Tinkama rolė\", () => pm.expect(b.user.role).to.eql(\"worker\"));",
+                  " pm.test(\"Žetonai pateikti\", () => {",
+                  "   pm.expect(b.accessToken).to.be.a(\"string\").and.not.empty;",
+                  "   pm.expect(b.refreshToken).to.match(/^[a-f0-9]{64}$/);",
+                  " });",
+                  " pm.collectionVariables.set(\"workerAToken\", b.accessToken);",
+                  " pm.collectionVariables.set(\"workerARefresh\", b.refreshToken);",
+                  " pm.collectionVariables.set(\"workerAId\", b.user.id);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "S – Registruoti testinį darbuotoją B",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/auth/register",
+            "auth": {
+              "type": "noauth"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\"name\":\"Testinis darbuotojas B\",\"email\":\"{{workerBEmail}}\",\"password\":\"{{testPassword}}\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Statusas 201\", () => pm.response.to.have.status(201));",
+                  "pm.test(\"JSON atsakymas\", () => pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\"));",
+                  "if (pm.response.code === 201) pm.collectionVariables.set(\"workerBId\", pm.response.json().id);",
+                  "pm.test(\"Registruojamas worker\", () => pm.expect(pm.response.json().role).to.eql(\"worker\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "S – Darbuotojo B prisijungimas",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/auth/login",
+            "auth": {
+              "type": "noauth"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\"email\":\"{{workerBEmail}}\",\"password\":\"{{testPassword}}\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Statusas 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"JSON atsakymas\", () => pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\"));",
+                  "",
+                  "if (pm.response.code === 200) {",
+                  " const b = pm.response.json();",
+                  " pm.test(\"Tinkama rolė\", () => pm.expect(b.user.role).to.eql(\"worker\"));",
+                  " pm.test(\"Žetonai pateikti\", () => {",
+                  "   pm.expect(b.accessToken).to.be.a(\"string\").and.not.empty;",
+                  "   pm.expect(b.refreshToken).to.match(/^[a-f0-9]{64}$/);",
+                  " });",
+                  " pm.collectionVariables.set(\"workerBToken\", b.accessToken);",
+                  " pm.collectionVariables.set(\"workerBRefresh\", b.refreshToken);",
+                  " pm.collectionVariables.set(\"workerBId\", b.user.id);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "01 LAB1",
+      "item": [
+        {
+          "name": "01 – Sukurti terariumą",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "for (const key of [\"terrariumId\", \"petId\", \"careRecordId\", \"otherTerrariumId\", \"firstPagePetId\", \"petsSecondPageUrl\"]) {",
+                  "    pm.collectionVariables.unset(key);",
+                  "}"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Statusas yra 201\", function () {\r\n    pm.response.to.have.status(201);\r\n});\r\n\r\npm.test(\"Atsakymas yra JSON\", function () {\r\n    pm.expect(pm.response.headers.get(\"Content-Type\"))\r\n        .to.include(\"application/json\");\r\n});\r\n\r\npm.collectionVariables.unset(\"terrariumId\");\r\n\r\nif (pm.response.code === 201) {\r\n    const data = pm.response.json();\r\n\r\n    pm.test(\"Grąžintas ID ir teisingas pavadinimas\", function () {\r\n        pm.expect(data.id).to.be.a(\"number\");\r\n        pm.expect(data.id).to.be.above(0);\r\n        pm.expect(data.name).to.eql(\"API demonstracijos terariumas\");\r\n    });\r\n\r\n    if (Number.isInteger(data.id) && data.id > 0) {\r\n        pm.collectionVariables.set(\"terrariumId\", data.id);\r\n    }\r\n}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"API demonstracijos terariumas\",\n  \"temperature_min\": 22,\n  \"temperature_max\": 26,\n  \"humidity_min\": 60,\n  \"humidity_max\": 80,\n  \"last_cleaned\": \"2026-10-03\",\n  \"notes\": \"Automatinei laboratorinio darbo demonstracijai.\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/terrariums",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "terrariums"
+              ]
+            },
+            "description": "Temperatūros ir drėgmės minimumai negali viršyti maksimumų. Nepateikus datos ar pastabų, jos nustatomos į null.",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "02 – Gauti terariumą pagal ID",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const requiredVariables = [\"terrariumId\"];",
+                  "const missing = requiredVariables.filter(key => {",
+                  "    const value = pm.collectionVariables.get(key);",
+                  "    return value === undefined || value === null || value === \"\";",
+                  "});",
+                  "if (missing.length) {",
+                  "    pm.execution.setNextRequest(null);",
+                  "    pm.execution.skipRequest();",
+                  "    throw new Error(\"Trūksta kintamųjų: \" + missing.join(\", \") + \". Paleisk visą kolekciją nuo pradžios; puslapiavimo testui reikia bent 2 Litoria caerulea augintinių.\");",
+                  "}"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Statusas yra 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\npm.test(\"Atsakymas yra JSON\", function () {\r\n    pm.expect(pm.response.headers.get(\"Content-Type\"))\r\n        .to.include(\"application/json\");\r\n});\r\n\r\npm.test(\"Grąžintas mūsų sukurtas terariumas\", function () {\r\n    const data = pm.response.json();\r\n    const expectedId = Number(\r\n        pm.collectionVariables.get(\"terrariumId\")\r\n    );\r\n\r\n    pm.expect(data.id).to.eql(expectedId);\r\n    pm.expect(data.name).to.eql(\"API demonstracijos terariumas\");\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/terrariums/{{terrariumId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "terrariums",
+                "{{terrariumId}}"
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "03 – Gauti visų terariumų sąrašą",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Statusas yra 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\npm.test(\"Atsakymas yra JSON\", function () {\r\n    pm.expect(pm.response.headers.get(\"Content-Type\"))\r\n        .to.include(\"application/json\");\r\n});\r\n\r\npm.test(\"Sąraše yra sukurtas terariumas\", function () {\r\n    const data = pm.response.json().data;\r\n    const expectedId = Number(\r\n        pm.collectionVariables.get(\"terrariumId\")\r\n    );\r\n\r\n    pm.expect(data).to.be.an(\"array\");\r\n    pm.expect(data.some(item => item.id === expectedId)).to.eql(true);\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/terrariums?name=API%20demonstracijos%20terariumas&page=1&limit=100",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "terrariums"
+              ],
+              "query": [
+                {
+                  "key": "name",
+                  "value": "API%20demonstracijos%20terariumas"
+                },
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "100"
+                }
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "04 – Atnaujinti terariumą",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const requiredVariables = [\"terrariumId\"];",
+                  "const missing = requiredVariables.filter(key => {",
+                  "    const value = pm.collectionVariables.get(key);",
+                  "    return value === undefined || value === null || value === \"\";",
+                  "});",
+                  "if (missing.length) {",
+                  "    pm.execution.setNextRequest(null);",
+                  "    pm.execution.skipRequest();",
+                  "    throw new Error(\"Trūksta kintamųjų: \" + missing.join(\", \") + \". Paleisk visą kolekciją nuo pradžios; puslapiavimo testui reikia bent 2 Litoria caerulea augintinių.\");",
+                  "}"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Statusas yra 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\npm.test(\"Atsakymas yra JSON\", function () {\r\n    pm.expect(pm.response.headers.get(\"Content-Type\"))\r\n        .to.include(\"application/json\");\r\n});\r\n\r\npm.test(\"Atnaujintas tinkamas terariumas\", function () {\r\n    const data = pm.response.json();\r\n\r\n    pm.expect(data.id).to.eql(\r\n        Number(pm.collectionVariables.get(\"terrariumId\"))\r\n    );\r\n});\r\n\r\npm.test(\"Terariumo duomenys pakeisti\", function () {\r\n    const data = pm.response.json();\r\n\r\n    pm.expect(data.name).to.eql(\r\n        \"Atnaujintas demonstracijos terariumas\"\r\n    );\r\n    pm.expect(Number(data.temperature_min)).to.eql(23);\r\n    pm.expect(Number(data.temperature_max)).to.eql(27);\r\n    pm.expect(Number(data.humidity_min)).to.eql(65);\r\n    pm.expect(Number(data.humidity_max)).to.eql(85);\r\n    pm.expect(data.last_cleaned).to.eql(\"2026-10-03\");\r\n    pm.expect(data.notes).to.eql(\"Informacija atnaujinta per PUT.\");\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Atnaujintas demonstracijos terariumas\",\n  \"temperature_min\": 23,\n  \"temperature_max\": 27,\n  \"humidity_min\": 65,\n  \"humidity_max\": 85,\n  \"last_cleaned\": \"2026-10-03\",\n  \"notes\": \"Informacija atnaujinta per PUT.\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/terrariums/{{terrariumId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "terrariums",
+                "{{terrariumId}}"
+              ]
+            },
+            "description": "Pakeičia terariumo informaciją. Reikia pateikti pavadinimą ir visas temperatūros bei drėgmės ribas. Nepateikus last_cleaned ar notes, jie nustatomi į null.",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "05 – Sukurti augintinį",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const requiredVariables = [\"terrariumId\"];",
+                  "const missing = requiredVariables.filter(key => {",
+                  "    const value = pm.collectionVariables.get(key);",
+                  "    return value === undefined || value === null || value === \"\";",
+                  "});",
+                  "if (missing.length) {",
+                  "    pm.execution.setNextRequest(null);",
+                  "    pm.execution.skipRequest();",
+                  "    throw new Error(\"Trūksta kintamųjų: \" + missing.join(\", \") + \". Paleisk visą kolekciją nuo pradžios; puslapiavimo testui reikia bent 2 Litoria caerulea augintinių.\");",
+                  "}"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.collectionVariables.unset(\"petId\");\r\n\r\npm.test(\"Statusas yra 201\", function () {\r\n    pm.response.to.have.status(201);\r\n});\r\n\r\npm.test(\"Atsakymas yra JSON\", function () {\r\n    pm.expect(pm.response.headers.get(\"Content-Type\"))\r\n        .to.include(\"application/json\");\r\n});\r\n\r\nif (pm.response.code === 201) {\r\n    const data = pm.response.json();\r\n\r\n    pm.test(\"Grąžintas tinkamas augintinio ID\", function () {\r\n        pm.expect(Number.isInteger(data.id)).to.eql(true);\r\n        pm.expect(data.id).to.be.above(0);\r\n    });\r\n\r\n    pm.test(\"Augintinis sukurtas mūsų terariume\", function () {\r\n        pm.expect(data.terrarium_id).to.eql(\r\n            Number(pm.collectionVariables.get(\"terrariumId\"))\r\n        );\r\n        pm.expect(data.name).to.eql(\"Demo Pupa\");\r\n        pm.expect(data.species).to.eql(\"Litoria caerulea\");\r\n        pm.expect(data.arrival_date).to.eql(\"2026-10-03\");\r\n        pm.expect(data.notes).to.eql(\"Augintinis API demonstracijai.\");\r\n    });\r\n\r\n    if (Number.isInteger(data.id) && data.id > 0) {\r\n        pm.collectionVariables.set(\"petId\", data.id);\r\n    }\r\n}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"terrarium_id\": {{terrariumId}},\n  \"name\": \"Demo Pupa\",\n  \"species\": \"Litoria caerulea\",\n  \"arrival_date\": \"2026-10-03\",\n  \"notes\": \"Augintinis API demonstracijai.\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/pets",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "pets"
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "05a – Antras augintinis puslapiavimo testui",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/pets",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\"terrarium_id\":{{terrariumId}},\"name\":\"Puslapiavimo varlė\",\"species\":\"Litoria caerulea\",\"arrival_date\":\"2026-10-03\",\"notes\":\"Laikinas testinis augintinis.\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Statusas 201\", () => pm.response.to.have.status(201));",
+                  "pm.test(\"JSON atsakymas\", () => pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\"));",
+                  "if (pm.response.code === 201) pm.collectionVariables.set(\"companionPetId\", pm.response.json().id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "06 – Gauti augintinį pagal ID",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const requiredVariables = [\"petId\"];",
+                  "const missing = requiredVariables.filter(key => {",
+                  "    const value = pm.collectionVariables.get(key);",
+                  "    return value === undefined || value === null || value === \"\";",
+                  "});",
+                  "if (missing.length) {",
+                  "    pm.execution.setNextRequest(null);",
+                  "    pm.execution.skipRequest();",
+                  "    throw new Error(\"Trūksta kintamųjų: \" + missing.join(\", \") + \". Paleisk visą kolekciją nuo pradžios; puslapiavimo testui reikia bent 2 Litoria caerulea augintinių.\");",
+                  "}"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Statusas yra 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\npm.test(\"Atsakymas yra JSON\", function () {\r\n    pm.expect(pm.response.headers.get(\"Content-Type\"))\r\n        .to.include(\"application/json\");\r\n});\r\n\r\npm.test(\"Grąžintas sukurtas augintinis\", function () {\r\n    const data = pm.response.json();\r\n\r\n    pm.expect(data.id).to.eql(\r\n        Number(pm.collectionVariables.get(\"petId\"))\r\n    );\r\n    pm.expect(data.terrarium_id).to.eql(\r\n        Number(pm.collectionVariables.get(\"terrariumId\"))\r\n    );\r\n    pm.expect(data.name).to.eql(\"Demo Pupa\");\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/pets/{{petId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "pets",
+                "{{petId}}"
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "07 – Gauti visų augintinių sąrašą",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Statusas yra 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\npm.test(\"Atsakymas yra JSON\", function () {\r\n    pm.expect(pm.response.headers.get(\"Content-Type\"))\r\n        .to.include(\"application/json\");\r\n});\r\n\r\npm.test(\"Sąraše yra sukurtas augintinis\", function () {\r\n    const data = pm.response.json().data;\r\n    const petId = Number(pm.collectionVariables.get(\"petId\"));\r\n\r\n    pm.expect(data).to.be.an(\"array\");\r\n    pm.expect(data.some(pet => pet.id === petId)).to.eql(true);\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/pets?species=Litoria%20caerulea&page=1&limit=100",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "pets"
+              ],
+              "query": [
+                {
+                  "key": "species",
+                  "value": "Litoria%20caerulea"
+                },
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "100"
+                }
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "08 – Gauti konkretaus terariumo augintinius",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const requiredVariables = [\"terrariumId\"];",
+                  "const missing = requiredVariables.filter(key => {",
+                  "    const value = pm.collectionVariables.get(key);",
+                  "    return value === undefined || value === null || value === \"\";",
+                  "});",
+                  "if (missing.length) {",
+                  "    pm.execution.setNextRequest(null);",
+                  "    pm.execution.skipRequest();",
+                  "    throw new Error(\"Trūksta kintamųjų: \" + missing.join(\", \") + \". Paleisk visą kolekciją nuo pradžios; puslapiavimo testui reikia bent 2 Litoria caerulea augintinių.\");",
+                  "}"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Statusas yra 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\npm.test(\"Atsakymas yra JSON\", function () {\r\n    pm.expect(pm.response.headers.get(\"Content-Type\"))\r\n        .to.include(\"application/json\");\r\n});\r\n\r\npm.test(\"Sąraše yra mūsų augintinis\", function () {\r\n    const data = pm.response.json();\r\n    const petId = Number(pm.collectionVariables.get(\"petId\"));\r\n\r\n    pm.expect(data).to.be.an(\"array\");\r\n    pm.expect(data.some(pet => pet.id === petId)).to.eql(true);\r\n});\r\n\r\npm.test(\"Visi augintiniai priklauso pasirinktam terariumui\", function () {\r\n    const data = pm.response.json();\r\n    const terrariumId = Number(\r\n        pm.collectionVariables.get(\"terrariumId\")\r\n    );\r\n\r\n    pm.expect(data).to.be.an(\"array\");\r\n    pm.expect(\r\n        data.every(pet => pet.terrarium_id === terrariumId)\r\n    ).to.eql(true);\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/terrariums/{{terrariumId}}/pets",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "terrariums",
+                "{{terrariumId}}",
+                "pets"
+              ]
+            },
+            "description": "Hierarchinis metodas. Jei terariumas egzistuoja, bet neturi augintinių, grąžinamas tuščias masyvas. Jei terariumo nėra, grąžinamas 404.",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "09 – Atnaujinti augintinį",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const requiredVariables = [\"petId\", \"terrariumId\"];",
+                  "const missing = requiredVariables.filter(key => {",
+                  "    const value = pm.collectionVariables.get(key);",
+                  "    return value === undefined || value === null || value === \"\";",
+                  "});",
+                  "if (missing.length) {",
+                  "    pm.execution.setNextRequest(null);",
+                  "    pm.execution.skipRequest();",
+                  "    throw new Error(\"Trūksta kintamųjų: \" + missing.join(\", \") + \". Paleisk visą kolekciją nuo pradžios; puslapiavimo testui reikia bent 2 Litoria caerulea augintinių.\");",
+                  "}"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Statusas yra 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\npm.test(\"Atsakymas yra JSON\", function () {\r\n    pm.expect(pm.response.headers.get(\"Content-Type\"))\r\n        .to.include(\"application/json\");\r\n});\r\n\r\npm.test(\"Atnaujintas tinkamas augintinis\", function () {\r\n    const data = pm.response.json();\r\n\r\n    pm.expect(data.id).to.eql(\r\n        Number(pm.collectionVariables.get(\"petId\"))\r\n    );\r\n    pm.expect(data.terrarium_id).to.eql(\r\n        Number(pm.collectionVariables.get(\"terrariumId\"))\r\n    );\r\n});\r\n\r\npm.test(\"Augintinio duomenys pakeisti\", function () {\r\n    const data = pm.response.json();\r\n\r\n    pm.expect(data.name).to.eql(\"Demo Pupa atnaujinta\");\r\n    pm.expect(data.species).to.eql(\"Litoria caerulea\");\r\n    pm.expect(data.arrival_date).to.eql(\"2026-10-03\");\r\n    pm.expect(data.notes).to.eql(\r\n        \"Augintinio informacija atnaujinta per PUT.\"\r\n    );\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"terrarium_id\": {{terrariumId}},\n  \"name\": \"Demo Pupa atnaujinta\",\n  \"species\": \"Litoria caerulea\",\n  \"arrival_date\": \"2026-10-03\",\n  \"notes\": \"Augintinio informacija atnaujinta per PUT.\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/pets/{{petId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "pets",
+                "{{petId}}"
+              ]
+            },
+            "description": "Pakeičia augintinio kortelę. Nepateikus arrival_date arba notes, šie laukai nustatomi į null.",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "10 – Augintinių filtravimas ir puslapiavimas",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Statusas yra 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\npm.test(\"Atsakymas yra JSON\", function () {\r\n    pm.expect(pm.response.headers.get(\"Content-Type\"))\r\n        .to.include(\"application/json\");\r\n});\r\n\r\npm.test(\"Grąžinamas vienas nurodytos rūšies augintinis\", function () {\r\n    const body = pm.response.json();\r\n\r\n    pm.expect(body.data).to.be.an(\"array\").with.lengthOf(1);\r\n    pm.expect(body.data[0].species.toLowerCase())\r\n        .to.eql(\"litoria caerulea\");\r\n});\r\n\r\npm.test(\"Puslapiavimo informacija teisinga\", function () {\r\n    const body = pm.response.json();\r\n\r\n    pm.expect(body.pagination.page).to.eql(1);\r\n    pm.expect(body.pagination.limit).to.eql(1);\r\n    pm.expect(body.pagination.total).to.be.at.least(1);\r\n    pm.expect(body.pagination.totalPages)\r\n        .to.eql(Math.ceil(body.pagination.total / body.pagination.limit));\r\n});\r\n\r\npm.test(\"Puslapių nuorodos išsaugo filtrą\", function () {\r\n    const body = pm.response.json();\r\n    const firstPage =\r\n        \"/pets?page=1&limit=1&species=Litoria+caerulea\";\r\n\r\n    pm.expect(body._links.self).to.eql(firstPage);\r\n    pm.expect(body._links.first).to.eql(firstPage);\r\n    pm.expect(body._links.previous).to.eql(null);\r\n\r\n    if (body.pagination.totalPages > 1) {\r\n        pm.expect(body._links.next).to.eql(\r\n            \"/pets?page=2&limit=1&species=Litoria+caerulea\"\r\n        );\r\n    } else {\r\n        pm.expect(body._links.next).to.eql(null);\r\n    }\r\n});\r\n\r\npm.test(\"Augintinis turi teisingas hypermedia nuorodas\", function () {\r\n    const pet = pm.response.json().data[0];\r\n\r\n    pm.expect(pet._links.self).to.eql(`/pets/${pet.id}`);\r\n    pm.expect(pet._links.profile).to.eql(`/pets/${pet.id}/profile`);\r\n    pm.expect(pet._links.terrarium)\r\n        .to.eql(`/terrariums/${pet.terrarium_id}`);\r\n    pm.expect(pet._links.care_records).to.eql(\r\n        `/terrariums/${pet.terrarium_id}/pets/${pet.id}/care-records`\r\n    );\r\n});\r\npm.collectionVariables.unset(\"firstPagePetId\");\r\npm.collectionVariables.unset(\"petsSecondPageUrl\");\r\n\r\nif (pm.response.code === 200) {\r\n    const body = pm.response.json();\r\n\r\n    if (body.data.length > 0) {\r\n        pm.collectionVariables.set(\"firstPagePetId\", body.data[0].id);\r\n    }\r\n\r\n    if (body._links.next) {\r\n        pm.collectionVariables.set(\r\n            \"petsSecondPageUrl\",\r\n            body._links.next\r\n        );\r\n    }\r\n}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/pets?species=Litoria%20caerulea&page=1&limit=1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "pets"
+              ],
+              "query": [
+                {
+                  "key": "species",
+                  "value": "Litoria%20caerulea"
+                },
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "1"
+                }
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "11 – Antras augintinių puslapis",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const requiredVariables = [\"petsSecondPageUrl\"];",
+                  "const missing = requiredVariables.filter(key => {",
+                  "    const value = pm.collectionVariables.get(key);",
+                  "    return value === undefined || value === null || value === \"\";",
+                  "});",
+                  "if (missing.length) {",
+                  "    pm.execution.setNextRequest(null);",
+                  "    pm.execution.skipRequest();",
+                  "    throw new Error(\"Trūksta kintamųjų: \" + missing.join(\", \") + \". Paleisk visą kolekciją nuo pradžios; puslapiavimo testui reikia bent 2 Litoria caerulea augintinių.\");",
+                  "}"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Statusas yra 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\npm.test(\"Atsakymas yra JSON\", function () {\r\n    pm.expect(pm.response.headers.get(\"Content-Type\"))\r\n        .to.include(\"application/json\");\r\n});\r\n\r\npm.test(\"Grąžintas antras puslapis\", function () {\r\n    const body = pm.response.json();\r\n\r\n    pm.expect(body.pagination.page).to.eql(2);\r\n    pm.expect(body.pagination.limit).to.eql(1);\r\n    pm.expect(body.data).to.be.an(\"array\").with.lengthOf(1);\r\n});\r\n\r\npm.test(\"Augintinis nesikartoja ir atitinka filtrą\", function () {\r\n    const pet = pm.response.json().data[0];\r\n    const firstId = Number(\r\n        pm.collectionVariables.get(\"firstPagePetId\")\r\n    );\r\n\r\n    pm.expect(firstId).to.be.above(0);\r\n    pm.expect(pet.id).not.to.eql(firstId);\r\n    pm.expect(pet.species.toLowerCase()).to.eql(\"litoria caerulea\");\r\n});\r\n\r\npm.test(\"Yra nuoroda atgal į pirmą puslapį\", function () {\r\n    const body = pm.response.json();\r\n\r\n    pm.expect(body._links.previous).to.eql(\r\n        \"/pets?page=1&limit=1&species=Litoria+caerulea\"\r\n    );\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}{{petsSecondPageUrl}}",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "12 – Sukurti priežiūros įrašą",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const requiredVariables = [\"petId\"];",
+                  "const missing = requiredVariables.filter(key => {",
+                  "    const value = pm.collectionVariables.get(key);",
+                  "    return value === undefined || value === null || value === \"\";",
+                  "});",
+                  "if (missing.length) {",
+                  "    pm.execution.setNextRequest(null);",
+                  "    pm.execution.skipRequest();",
+                  "    throw new Error(\"Trūksta kintamųjų: \" + missing.join(\", \") + \". Paleisk visą kolekciją nuo pradžios; puslapiavimo testui reikia bent 2 Litoria caerulea augintinių.\");",
+                  "}"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.collectionVariables.unset(\"careRecordId\");\r\n\r\npm.test(\"Statusas yra 201\", function () {\r\n    pm.response.to.have.status(201);\r\n});\r\n\r\npm.test(\"Atsakymas yra JSON\", function () {\r\n    pm.expect(pm.response.headers.get(\"Content-Type\"))\r\n        .to.include(\"application/json\");\r\n});\r\n\r\nif (pm.response.code === 201) {\r\n    const data = pm.response.json();\r\n\r\n    pm.test(\"Grąžintas tinkamas įrašo ID\", function () {\r\n        pm.expect(Number.isInteger(data.id)).to.eql(true);\r\n        pm.expect(data.id).to.be.above(0);\r\n    });\r\n\r\n    pm.test(\"Įrašas priskirtas mūsų augintiniui\", function () {\r\n        pm.expect(data.pet_id).to.eql(\r\n            Number(pm.collectionVariables.get(\"petId\"))\r\n        );\r\n        pm.expect(data.care_type).to.eql(\"observation\");\r\n        pm.expect(data.notes).to.eql(\r\n            \"Demo Pupa aktyvi, pakitimų nepastebėta.\"\r\n        );\r\n    });\r\n\r\n    pm.test(\"Automatiškai nustatytas įrašo laikas\", function () {\r\n        pm.expect(data.performed_at).to.be.a(\"string\");\r\n        pm.expect(Number.isNaN(Date.parse(data.performed_at)))\r\n            .to.eql(false);\r\n    });\r\n\r\n    if (Number.isInteger(data.id) && data.id > 0) {\r\n        pm.collectionVariables.set(\"careRecordId\", data.id);\r\n    }\r\n}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"pet_id\": {{petId}},\n  \"care_type\": \"observation\",\n  \"notes\": \"Demo Pupa aktyvi, pakitimų nepastebėta.\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/care-records",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "care-records"
+              ]
+            },
+            "description": "Įrašas priskiriamas egzistuojančiam augintiniui. Laikas nustatomas automatiškai.",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "13 – Gauti priežiūros įrašą pagal ID",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const requiredVariables = [\"careRecordId\"];",
+                  "const missing = requiredVariables.filter(key => {",
+                  "    const value = pm.collectionVariables.get(key);",
+                  "    return value === undefined || value === null || value === \"\";",
+                  "});",
+                  "if (missing.length) {",
+                  "    pm.execution.setNextRequest(null);",
+                  "    pm.execution.skipRequest();",
+                  "    throw new Error(\"Trūksta kintamųjų: \" + missing.join(\", \") + \". Paleisk visą kolekciją nuo pradžios; puslapiavimo testui reikia bent 2 Litoria caerulea augintinių.\");",
+                  "}"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Statusas yra 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\npm.test(\"Atsakymas yra JSON\", function () {\r\n    pm.expect(pm.response.headers.get(\"Content-Type\"))\r\n        .to.include(\"application/json\");\r\n});\r\n\r\npm.test(\"Grąžintas mūsų sukurtas priežiūros įrašas\", function () {\r\n    const data = pm.response.json();\r\n\r\n    pm.expect(data.id).to.eql(\r\n        Number(pm.collectionVariables.get(\"careRecordId\"))\r\n    );\r\n    pm.expect(data.pet_id).to.eql(\r\n        Number(pm.collectionVariables.get(\"petId\"))\r\n    );\r\n    pm.expect(data.care_type).to.eql(\"observation\");\r\n    pm.expect(data.notes).to.eql(\r\n        \"Demo Pupa aktyvi, pakitimų nepastebėta.\"\r\n    );\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/care-records/{{careRecordId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "care-records",
+                "{{careRecordId}}"
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "14 – Gauti visus priežiūros įrašus",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const requiredVariables = [\"petId\"];",
+                  "const missing = requiredVariables.filter(key => {",
+                  "    const value = pm.collectionVariables.get(key);",
+                  "    return value === undefined || value === null || value === \"\";",
+                  "});",
+                  "if (missing.length) {",
+                  "    pm.execution.setNextRequest(null);",
+                  "    pm.execution.skipRequest();",
+                  "    throw new Error(\"Trūksta kintamųjų: \" + missing.join(\", \") + \". Paleisk visą kolekciją nuo pradžios; puslapiavimo testui reikia bent 2 Litoria caerulea augintinių.\");",
+                  "}"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Statusas yra 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Atsakymas yra JSON\", function () {",
+                  "    pm.expect(pm.response.headers.get(\"Content-Type\"))",
+                  "        .to.include(\"application/json\");",
+                  "});",
+                  "",
+                  "pm.test(\"Sąraše yra sukurtas priežiūros įrašas\", function () {",
+                  "    const data = pm.response.json().data;",
+                  "    const recordId = Number(",
+                  "        pm.collectionVariables.get(\"careRecordId\")",
+                  "    );",
+                  "",
+                  "    pm.expect(data).to.be.an(\"array\");",
+                  "    pm.expect(data.some(record => record.id === recordId))",
+                  "        .to.eql(true);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/care-records?pet_id={{petId}}&care_type=observation&page=1&limit=100",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "care-records"
+              ],
+              "query": [
+                {
+                  "key": "pet_id",
+                  "value": "{{petId}}"
+                },
+                {
+                  "key": "care_type",
+                  "value": "observation"
+                },
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "100"
+                }
+              ]
+            },
+            "description": "Įrašai pateikiami nuo naujausio. Jei įrašų nėra, grąžinamas tuščias masyvas.",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "15 – Atnaujinti priežiūros įrašą",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const requiredVariables = [\"careRecordId\", \"petId\"];",
+                  "const missing = requiredVariables.filter(key => {",
+                  "    const value = pm.collectionVariables.get(key);",
+                  "    return value === undefined || value === null || value === \"\";",
+                  "});",
+                  "if (missing.length) {",
+                  "    pm.execution.setNextRequest(null);",
+                  "    pm.execution.skipRequest();",
+                  "    throw new Error(\"Trūksta kintamųjų: \" + missing.join(\", \") + \". Paleisk visą kolekciją nuo pradžios; puslapiavimo testui reikia bent 2 Litoria caerulea augintinių.\");",
+                  "}"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Statusas yra 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\npm.test(\"Atsakymas yra JSON\", function () {\r\n    pm.expect(pm.response.headers.get(\"Content-Type\"))\r\n        .to.include(\"application/json\");\r\n});\r\n\r\npm.test(\"Atnaujintas tinkamas priežiūros įrašas\", function () {\r\n    const data = pm.response.json();\r\n\r\n    pm.expect(data.id).to.eql(\r\n        Number(pm.collectionVariables.get(\"careRecordId\"))\r\n    );\r\n    pm.expect(data.pet_id).to.eql(\r\n        Number(pm.collectionVariables.get(\"petId\"))\r\n    );\r\n});\r\n\r\npm.test(\"Priežiūros tipas ir pastabos pakeisti\", function () {\r\n    const data = pm.response.json();\r\n\r\n    pm.expect(data.care_type).to.eql(\"feeding\");\r\n    pm.expect(data.notes).to.eql(\r\n        \"Demo Pupa pamaitinta, maistą priėmė.\"\r\n    );\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"pet_id\": {{petId}},\n  \"care_type\": \"feeding\",\n  \"notes\": \"Demo Pupa pamaitinta, maistą priėmė.\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/care-records/{{careRecordId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "care-records",
+                "{{careRecordId}}"
+              ]
+            },
+            "description": "Būtina pateikti pet_id, care_type ir notes. Įrašo laikas nekeičiamas.",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "16 – Gauti augintinio profilį",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const requiredVariables = [\"petId\"];",
+                  "const missing = requiredVariables.filter(key => {",
+                  "    const value = pm.collectionVariables.get(key);",
+                  "    return value === undefined || value === null || value === \"\";",
+                  "});",
+                  "if (missing.length) {",
+                  "    pm.execution.setNextRequest(null);",
+                  "    pm.execution.skipRequest();",
+                  "    throw new Error(\"Trūksta kintamųjų: \" + missing.join(\", \") + \". Paleisk visą kolekciją nuo pradžios; puslapiavimo testui reikia bent 2 Litoria caerulea augintinių.\");",
+                  "}"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Statusas yra 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\npm.test(\"Atsakymas yra JSON\", function () {\r\n    pm.expect(pm.response.headers.get(\"Content-Type\"))\r\n        .to.include(\"application/json\");\r\n});\r\n\r\npm.test(\"Profilyje yra tinkamas augintinis\", function () {\r\n    const data = pm.response.json();\r\n\r\n    pm.expect(data.pet.id).to.eql(\r\n        Number(pm.collectionVariables.get(\"petId\"))\r\n    );\r\n});\r\n\r\npm.test(\"Profilyje yra augintinio terariumas\", function () {\r\n    const data = pm.response.json();\r\n    const terrariumId = Number(\r\n        pm.collectionVariables.get(\"terrariumId\")\r\n    );\r\n\r\n    pm.expect(data.terrarium.id).to.eql(terrariumId);\r\n    pm.expect(data.pet.terrarium_id).to.eql(data.terrarium.id);\r\n    pm.expect(data.terrarium.name).to.be.a(\"string\");\r\n});\r\n\r\npm.test(\"Istorijoje yra mūsų priežiūros įrašas\", function () {\r\n    const data = pm.response.json();\r\n    const recordId = Number(\r\n        pm.collectionVariables.get(\"careRecordId\")\r\n    );\r\n\r\n    pm.expect(data.care_records).to.be.an(\"array\");\r\n    pm.expect(\r\n        data.care_records.some(record => record.id === recordId)\r\n    ).to.eql(true);\r\n});\r\n\r\npm.test(\"Visa priežiūros istorija priklauso šiam augintiniui\", function () {\r\n    const data = pm.response.json();\r\n\r\n    pm.expect(data.care_records).to.be.an(\"array\");\r\n    pm.expect(\r\n        data.care_records.every(record => record.pet_id === data.pet.id)\r\n    ).to.eql(true);\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/pets/{{petId}}/profile",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "pets",
+                "{{petId}}",
+                "profile"
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "17 – Gauti terariumo augintinio priežiūros įrašus",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const requiredVariables = [\"terrariumId\", \"petId\"];",
+                  "const missing = requiredVariables.filter(key => {",
+                  "    const value = pm.collectionVariables.get(key);",
+                  "    return value === undefined || value === null || value === \"\";",
+                  "});",
+                  "if (missing.length) {",
+                  "    pm.execution.setNextRequest(null);",
+                  "    pm.execution.skipRequest();",
+                  "    throw new Error(\"Trūksta kintamųjų: \" + missing.join(\", \") + \". Paleisk visą kolekciją nuo pradžios; puslapiavimo testui reikia bent 2 Litoria caerulea augintinių.\");",
+                  "}"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Statusas yra 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\npm.test(\"Atsakymas yra JSON\", function () {\r\n    pm.expect(pm.response.headers.get(\"Content-Type\"))\r\n        .to.include(\"application/json\");\r\n});\r\n\r\npm.test(\"Sąraše yra mūsų priežiūros įrašas\", function () {\r\n    const data = pm.response.json();\r\n    const recordId = Number(\r\n        pm.collectionVariables.get(\"careRecordId\")\r\n    );\r\n\r\n    pm.expect(data).to.be.an(\"array\");\r\n    pm.expect(\r\n        data.some(record => record.id === recordId)\r\n    ).to.eql(true);\r\n});\r\n\r\npm.test(\"Visi įrašai priklauso pasirinktam augintiniui\", function () {\r\n    const data = pm.response.json();\r\n    const petId = Number(pm.collectionVariables.get(\"petId\"));\r\n\r\n    pm.expect(data).to.be.an(\"array\");\r\n    pm.expect(\r\n        data.every(record => record.pet_id === petId)\r\n    ).to.eql(true);\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/terrariums/{{terrariumId}}/pets/{{petId}}/care-records",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "terrariums",
+                "{{terrariumId}}",
+                "pets",
+                "{{petId}}",
+                "care-records"
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "18 – Sukurti kitą terariumą apimties testui",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.collectionVariables.unset(\"otherTerrariumId\");\r\n\r\npm.test(\"Statusas yra 201\", function () {\r\n    pm.response.to.have.status(201);\r\n});\r\n\r\nif (pm.response.code === 201) {\r\n    const data = pm.response.json();\r\n\r\n    pm.test(\"Sukurtas kitas terariumas\", function () {\r\n        pm.expect(Number.isInteger(data.id)).to.eql(true);\r\n        pm.expect(data.id).to.be.above(0);\r\n        pm.expect(data.id).not.to.eql(\r\n            Number(pm.collectionVariables.get(\"terrariumId\"))\r\n        );\r\n    });\r\n\r\n    if (Number.isInteger(data.id) && data.id > 0) {\r\n        pm.collectionVariables.set(\"otherTerrariumId\", data.id);\r\n    }\r\n}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Kitas terariumas apimties testui\",\n  \"temperature_min\": 22,\n  \"temperature_max\": 26,\n  \"humidity_min\": 60,\n  \"humidity_max\": 80,\n  \"notes\": \"Tuščias terariumas hierarchijos patikrinimui.\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/terrariums",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "terrariums"
+              ]
+            },
+            "description": "Temperatūros ir drėgmės minimumai negali viršyti maksimumų. Nepateikus datos ar pastabų, jos nustatomos į null.",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "19 – 404 – augintinis nepriklauso terariumui",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const requiredVariables = [\"otherTerrariumId\", \"petId\"];",
+                  "const missing = requiredVariables.filter(key => {",
+                  "    const value = pm.collectionVariables.get(key);",
+                  "    return value === undefined || value === null || value === \"\";",
+                  "});",
+                  "if (missing.length) {",
+                  "    pm.execution.setNextRequest(null);",
+                  "    pm.execution.skipRequest();",
+                  "    throw new Error(\"Trūksta kintamųjų: \" + missing.join(\", \") + \". Paleisk visą kolekciją nuo pradžios; puslapiavimo testui reikia bent 2 Litoria caerulea augintinių.\");",
+                  "}"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Statusas yra 404\", function () {\r\n    pm.response.to.have.status(404);\r\n});\r\n\r\npm.test(\"Atsakymas yra JSON\", function () {\r\n    pm.expect(pm.response.headers.get(\"Content-Type\"))\r\n        .to.include(\"application/json\");\r\n});\r\n\r\npm.test(\"Augintinis nerastas būtent šiame terariume\", function () {\r\n    const data = pm.response.json();\r\n\r\n    pm.expect(data.error).to.eql(\r\n        \"Augintinis šiame terariume nerastas.\"\r\n    );\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/terrariums/{{otherTerrariumId}}/pets/{{petId}}/care-records",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "terrariums",
+                "{{otherTerrariumId}}",
+                "pets",
+                "{{petId}}",
+                "care-records"
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "20 – Ištrinti kitą apimties testo terariumą",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const requiredVariables = [\"otherTerrariumId\"];",
+                  "const missing = requiredVariables.filter(key => {",
+                  "    const value = pm.collectionVariables.get(key);",
+                  "    return value === undefined || value === null || value === \"\";",
+                  "});",
+                  "if (missing.length) {",
+                  "    pm.execution.setNextRequest(null);",
+                  "    pm.execution.skipRequest();",
+                  "    throw new Error(\"Trūksta kintamųjų: \" + missing.join(\", \") + \". Paleisk visą kolekciją nuo pradžios; puslapiavimo testui reikia bent 2 Litoria caerulea augintinių.\");",
+                  "}"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Statusas yra 204\", function () {\r\n    pm.response.to.have.status(204);\r\n});\r\n\r\npm.test(\"Atsakymo turinys tuščias\", function () {\r\n    pm.expect(pm.response.text()).to.eql(\"\");\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/terrariums/{{otherTerrariumId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "terrariums",
+                "{{otherTerrariumId}}"
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "21 – Ištrinti priežiūros įrašą",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const requiredVariables = [\"careRecordId\"];",
+                  "const missing = requiredVariables.filter(key => {",
+                  "    const value = pm.collectionVariables.get(key);",
+                  "    return value === undefined || value === null || value === \"\";",
+                  "});",
+                  "if (missing.length) {",
+                  "    pm.execution.setNextRequest(null);",
+                  "    pm.execution.skipRequest();",
+                  "    throw new Error(\"Trūksta kintamųjų: \" + missing.join(\", \") + \". Paleisk visą kolekciją nuo pradžios; puslapiavimo testui reikia bent 2 Litoria caerulea augintinių.\");",
+                  "}"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Statusas yra 204\", function () {\r\n    pm.response.to.have.status(204);\r\n});\r\n\r\npm.test(\"Atsakymo turinys tuščias\", function () {\r\n    pm.expect(pm.response.text()).to.eql(\"\");\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/care-records/{{careRecordId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "care-records",
+                "{{careRecordId}}"
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "21a – Pašalinti puslapiavimo augintinį",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/pets/{{companionPetId}}",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Statusas 204\", () => pm.response.to.have.status(204));",
+                  "pm.test(\"Tuščias atsakymas\", () => pm.expect(pm.response.text()).to.eql(\"\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "22 – Ištrinti augintinį",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const requiredVariables = [\"petId\"];",
+                  "const missing = requiredVariables.filter(key => {",
+                  "    const value = pm.collectionVariables.get(key);",
+                  "    return value === undefined || value === null || value === \"\";",
+                  "});",
+                  "if (missing.length) {",
+                  "    pm.execution.setNextRequest(null);",
+                  "    pm.execution.skipRequest();",
+                  "    throw new Error(\"Trūksta kintamųjų: \" + missing.join(\", \") + \". Paleisk visą kolekciją nuo pradžios; puslapiavimo testui reikia bent 2 Litoria caerulea augintinių.\");",
+                  "}"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Statusas yra 204\", function () {\r\n    pm.response.to.have.status(204);\r\n});\r\n\r\npm.test(\"Atsakymo turinys tuščias\", function () {\r\n    pm.expect(pm.response.text()).to.eql(\"\");\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/pets/{{petId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "pets",
+                "{{petId}}"
+              ]
+            },
+            "description": "Augintinį galima ištrinti tik tada, kai jis neturi priežiūros įrašų.",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "23 – Ištrinti terariumą",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const requiredVariables = [\"terrariumId\"];",
+                  "const missing = requiredVariables.filter(key => {",
+                  "    const value = pm.collectionVariables.get(key);",
+                  "    return value === undefined || value === null || value === \"\";",
+                  "});",
+                  "if (missing.length) {",
+                  "    pm.execution.setNextRequest(null);",
+                  "    pm.execution.skipRequest();",
+                  "    throw new Error(\"Trūksta kintamųjų: \" + missing.join(\", \") + \". Paleisk visą kolekciją nuo pradžios; puslapiavimo testui reikia bent 2 Litoria caerulea augintinių.\");",
+                  "}"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Statusas yra 204\", function () {\r\n    pm.response.to.have.status(204);\r\n});\r\n\r\npm.test(\"Atsakymo turinys tuščias\", function () {\r\n    pm.expect(pm.response.text()).to.eql(\"\");\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/terrariums/{{terrariumId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "terrariums",
+                "{{terrariumId}}"
+              ]
+            },
+            "description": "Galima ištrinti tik terariumą, kuriame nėra augintinių.",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "24 – 404 - ištrintas terariumas",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const requiredVariables = [\"terrariumId\"];",
+                  "const missing = requiredVariables.filter(key => {",
+                  "    const value = pm.collectionVariables.get(key);",
+                  "    return value === undefined || value === null || value === \"\";",
+                  "});",
+                  "if (missing.length) {",
+                  "    pm.execution.setNextRequest(null);",
+                  "    pm.execution.skipRequest();",
+                  "    throw new Error(\"Trūksta kintamųjų: \" + missing.join(\", \") + \". Paleisk visą kolekciją nuo pradžios; puslapiavimo testui reikia bent 2 Litoria caerulea augintinių.\");",
+                  "}"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Statusas yra 404\", function () {\r\n    pm.response.to.have.status(404);\r\n});\r\n\r\npm.test(\"Atsakymas yra JSON\", function () {\r\n    pm.expect(pm.response.headers.get(\"Content-Type\"))\r\n        .to.include(\"application/json\");\r\n});\r\n\r\npm.test(\"Grąžintas klaidos pranešimas\", function () {\r\n    const data = pm.response.json();\r\n\r\n    pm.expect(data.error).to.be.a(\"string\");\r\n    pm.expect(data.error.trim()).not.to.eql(\"\");\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/terrariums/{{terrariumId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "terrariums",
+                "{{terrariumId}}"
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "25 – 422 - netinkama drėgme",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Statusas yra 422\", function () {\r\n    pm.response.to.have.status(422);\r\n});\r\n\r\npm.test(\"Atsakymas yra JSON\", function () {\r\n    pm.expect(pm.response.headers.get(\"Content-Type\"))\r\n        .to.include(\"application/json\");\r\n});\r\n\r\npm.test(\"Grąžintas klaidos pranešimas\", function () {\r\n    const data = pm.response.json();\r\n\r\n    pm.expect(data.error).to.be.a(\"string\");\r\n    pm.expect(data.error.trim()).not.to.eql(\"\");\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Netinkamas terariumas\",\n  \"temperature_min\": 22,\n  \"temperature_max\": 26,\n  \"humidity_min\": 60,\n  \"humidity_max\": 120,\n  \"last_cleaned\": \"2026-10-03\",\n  \"notes\": \"Validacijos testas.\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/terrariums",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "terrariums"
+              ]
+            },
+            "description": "Temperatūros ir drėgmės minimumai negali viršyti maksimumų. Nepateikus datos ar pastabų, jos nustatomos į null.",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "26 – 400 - netaisyklingas JSON",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Statusas yra 400\", function () {\r\n    pm.response.to.have.status(400);\r\n});\r\n\r\npm.test(\"Atsakymas yra JSON\", function () {\r\n    pm.expect(pm.response.headers.get(\"Content-Type\"))\r\n        .to.include(\"application/json\");\r\n});\r\n\r\npm.test(\"Pranešama apie netaisyklingą JSON\", function () {\r\n    const data = pm.response.json();\r\n\r\n    pm.expect(data.error).to.eql(\"Netaisyklingas JSON formatas.\");\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Blogas JSON\",\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/terrariums",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "terrariums"
+              ]
+            },
+            "description": "Temperatūros ir drėgmės minimumai negali viršyti maksimumų. Nepateikus datos ar pastabų, jos nustatomos į null.",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "27 – 400 – netinkamas puslapis",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Statusas yra 400\", function () {\r\n    pm.response.to.have.status(400);\r\n});\r\n\r\npm.test(\"Atsakymas yra JSON\", function () {\r\n    pm.expect(pm.response.headers.get(\"Content-Type\"))\r\n        .to.include(\"application/json\");\r\n});\r\n\r\npm.test(\"Grąžintas klaidos pranešimas\", function () {\r\n    const body = pm.response.json();\r\n\r\n    pm.expect(body.error).to.be.a(\"string\");\r\n    pm.expect(body.error.trim()).not.to.eql(\"\");\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/pets?page=0&limit=5",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "pets"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "0"
+                },
+                {
+                  "key": "limit",
+                  "value": "5"
+                }
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "28 – 400 – per didelis limitas",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Statusas yra 400\", function () {\r\n    pm.response.to.have.status(400);\r\n});\r\n\r\npm.test(\"Atsakymas yra JSON\", function () {\r\n    pm.expect(pm.response.headers.get(\"Content-Type\"))\r\n        .to.include(\"application/json\");\r\n});\r\n\r\npm.test(\"Grąžintas klaidos pranešimas\", function () {\r\n    const body = pm.response.json();\r\n\r\n    pm.expect(body.error).to.be.a(\"string\");\r\n    pm.expect(body.error.trim()).not.to.eql(\"\");\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/terrariums?page=1&limit=101",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "terrariums"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "101"
+                }
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "29 – 400 – netinkamas priežiūros filtras",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Statusas yra 400\", function () {\r\n    pm.response.to.have.status(400);\r\n});\r\n\r\npm.test(\"Atsakymas yra JSON\", function () {\r\n    pm.expect(pm.response.headers.get(\"Content-Type\"))\r\n        .to.include(\"application/json\");\r\n});\r\n\r\npm.test(\"Grąžintas klaidos pranešimas\", function () {\r\n    const body = pm.response.json();\r\n\r\n    pm.expect(body.error).to.be.a(\"string\");\r\n    pm.expect(body.error.trim()).not.to.eql(\"\");\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/care-records?care_type=wrong",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "care-records"
+              ],
+              "query": [
+                {
+                  "key": "care_type",
+                  "value": "wrong"
+                }
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "02 LAB2",
+      "item": [
+        {
+          "name": "A01 – Be žetono",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/terrariums",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Statusas 401\", () => pm.response.to.have.status(401));",
+                  "pm.test(\"JSON atsakymas\", () => pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\"));",
+                  "pm.test(\"Klaidos pranešimas\", () => pm.expect(pm.response.json().error).to.be.a(\"string\").and.not.empty);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "A02 – Netinkamas žetonas",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/auth/me",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{invalidToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Statusas 401\", () => pm.response.to.have.status(401));",
+                  "pm.test(\"JSON atsakymas\", () => pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\"));",
+                  "pm.test(\"Klaidos pranešimas\", () => pm.expect(pm.response.json().error).to.be.a(\"string\").and.not.empty);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "A03 – Negalima pasirinkti admin registruojantis",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/auth/register",
+            "auth": {
+              "type": "noauth"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\"name\":\"Testas\",\"email\":\"{{workerAEmail}}\",\"password\":\"{{testPassword}}\",\"role\":\"admin\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Statusas 422\", () => pm.response.to.have.status(422));",
+                  "pm.test(\"JSON atsakymas\", () => pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\"));",
+                  "pm.test(\"Klaidos pranešimas\", () => pm.expect(pm.response.json().error).to.be.a(\"string\").and.not.empty);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "A04 – Neteisingas slaptažodis",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/auth/login",
+            "auth": {
+              "type": "noauth"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\"email\":\"{{workerAEmail}}\",\"password\":\"Definitely-wrong-password!\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Statusas 401\", () => pm.response.to.have.status(401));",
+                  "pm.test(\"JSON atsakymas\", () => pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\"));",
+                  "pm.test(\"Klaidos pranešimas\", () => pm.expect(pm.response.json().error).to.be.a(\"string\").and.not.empty);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "A05 – Darbuotojas mato terariumus",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/terrariums",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{workerAToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Statusas 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"JSON atsakymas\", () => pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "A06 – Darbuotojas negali kurti terariumo",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/terrariums",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{workerAToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Statusas 403\", () => pm.response.to.have.status(403));",
+                  "pm.test(\"JSON atsakymas\", () => pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\"));",
+                  "pm.test(\"Klaidos pranešimas\", () => pm.expect(pm.response.json().error).to.be.a(\"string\").and.not.empty);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "A07 – Darbuotojas negali kurti augintinio",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/pets",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{workerAToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Statusas 403\", () => pm.response.to.have.status(403));",
+                  "pm.test(\"JSON atsakymas\", () => pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\"));",
+                  "pm.test(\"Klaidos pranešimas\", () => pm.expect(pm.response.json().error).to.be.a(\"string\").and.not.empty);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "A – Darbuotojas ir naudotojų sąrašas",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/users",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{workerAToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Statusas 403\", () => pm.response.to.have.status(403));",
+                  "pm.test(\"JSON atsakymas\", () => pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\"));",
+                  "pm.test(\"Klaidos pranešimas\", () => pm.expect(pm.response.json().error).to.be.a(\"string\").and.not.empty);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "A – Vadovas ir naudotojų sąrašas",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/users",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{managerToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Statusas 403\", () => pm.response.to.have.status(403));",
+                  "pm.test(\"JSON atsakymas\", () => pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\"));",
+                  "pm.test(\"Klaidos pranešimas\", () => pm.expect(pm.response.json().error).to.be.a(\"string\").and.not.empty);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "A – Administratorius ir naudotojų sąrašas",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/users",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Statusas 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"JSON atsakymas\", () => pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "A08 – Vadovas sukuria testinį terariumą",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/terrariums",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{managerToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\"name\": \"LAB2 testinis terariumas\", \"temperature_min\": 22, \"temperature_max\": 26, \"humidity_min\": 60, \"humidity_max\": 80, \"notes\": \"Automatinis teisių testas.\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Statusas 201\", () => pm.response.to.have.status(201));",
+                  "pm.test(\"JSON atsakymas\", () => pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\"));",
+                  "if (pm.response.code === 201) pm.collectionVariables.set(\"authTerrariumId\", pm.response.json().id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "A09 – Vadovas sukuria augintinį",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/pets",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{managerToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\"terrarium_id\":{{authTerrariumId}},\"name\":\"LAB2 varlė\",\"species\":\"Litoria caerulea\",\"arrival_date\":\"2026-11-01\",\"notes\":\"Testinis augintinis.\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Statusas 201\", () => pm.response.to.have.status(201));",
+                  "pm.test(\"JSON atsakymas\", () => pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\"));",
+                  "if (pm.response.code === 201) pm.collectionVariables.set(\"authPetId\", pm.response.json().id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "A – Darbuotojui draudžiama PUT /pets/{{authPetId}}",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/pets/{{authPetId}}",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{workerAToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Statusas 403\", () => pm.response.to.have.status(403));",
+                  "pm.test(\"JSON atsakymas\", () => pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\"));",
+                  "pm.test(\"Klaidos pranešimas\", () => pm.expect(pm.response.json().error).to.be.a(\"string\").and.not.empty);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "A – Darbuotojui draudžiama DELETE /pets/{{authPetId}}",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/pets/{{authPetId}}",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{workerAToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Statusas 403\", () => pm.response.to.have.status(403));",
+                  "pm.test(\"JSON atsakymas\", () => pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\"));",
+                  "pm.test(\"Klaidos pranešimas\", () => pm.expect(pm.response.json().error).to.be.a(\"string\").and.not.empty);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "A – Darbuotojui draudžiama PUT /terrariums/{{authTerrariumId}}",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/terrariums/{{authTerrariumId}}",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{workerAToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Statusas 403\", () => pm.response.to.have.status(403));",
+                  "pm.test(\"JSON atsakymas\", () => pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\"));",
+                  "pm.test(\"Klaidos pranešimas\", () => pm.expect(pm.response.json().error).to.be.a(\"string\").and.not.empty);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "A – Darbuotojui draudžiama DELETE /terrariums/{{authTerrariumId}}",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/terrariums/{{authTerrariumId}}",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{workerAToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Statusas 403\", () => pm.response.to.have.status(403));",
+                  "pm.test(\"JSON atsakymas\", () => pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\"));",
+                  "pm.test(\"Klaidos pranešimas\", () => pm.expect(pm.response.json().error).to.be.a(\"string\").and.not.empty);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "A10 – Privaloma atvykimo data",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/pets",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{managerToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\"terrarium_id\":{{authTerrariumId}},\"name\":\"Be datos\",\"species\":\"Litoria caerulea\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Statusas 422\", () => pm.response.to.have.status(422));",
+                  "pm.test(\"JSON atsakymas\", () => pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\"));",
+                  "pm.test(\"Klaidos pranešimas\", () => pm.expect(pm.response.json().error).to.be.a(\"string\").and.not.empty);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "A11 – Darbuotojas keičia valymo datą",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/terrariums/{{authTerrariumId}}/last-cleaned",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{workerAToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\"last_cleaned\": \"2026-11-01\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Statusas 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"JSON atsakymas\", () => pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "A12 – Per valymo endpointą negalima keisti temperatūros",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/terrariums/{{authTerrariumId}}/last-cleaned",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{workerAToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\"last_cleaned\": \"2026-11-01\", \"temperature_min\": 99}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Statusas 422\", () => pm.response.to.have.status(422));",
+                  "pm.test(\"JSON atsakymas\", () => pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\"));",
+                  "pm.test(\"Klaidos pranešimas\", () => pm.expect(pm.response.json().error).to.be.a(\"string\").and.not.empty);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "A13 – A sukuria savo įrašą",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/care-records",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{workerAToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\"pet_id\":{{authPetId}},\"care_type\":\"observation\",\"notes\":\"Darbuotojo A stebėjimas.\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Statusas 201\", () => pm.response.to.have.status(201));",
+                  "pm.test(\"JSON atsakymas\", () => pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\"));",
+                  "if (pm.response.code === 201) pm.collectionVariables.set(\"authRecordId\", pm.response.json().id);",
+                  "pm.test(\"Autorius A\", () => pm.expect(pm.response.json().created_by).to.eql(Number(pm.collectionVariables.get(\"workerAId\"))));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "A14 – A redaguoja savo įrašą",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/care-records/{{authRecordId}}",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{workerAToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\"pet_id\":{{authPetId}},\"care_type\":\"observation\",\"notes\":\"Darbuotojo A stebėjimas.\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Statusas 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"JSON atsakymas\", () => pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\"));",
+                  "pm.test(\"Autorius A\", () => pm.expect(pm.response.json().created_by).to.eql(Number(pm.collectionVariables.get(\"workerAId\"))));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "A15 – B negali redaguoti svetimo įrašo",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/care-records/{{authRecordId}}",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{workerBToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\"pet_id\":{{authPetId}},\"care_type\":\"observation\",\"notes\":\"Darbuotojo A stebėjimas.\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Statusas 403\", () => pm.response.to.have.status(403));",
+                  "pm.test(\"JSON atsakymas\", () => pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\"));",
+                  "pm.test(\"Klaidos pranešimas\", () => pm.expect(pm.response.json().error).to.be.a(\"string\").and.not.empty);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "A16 – B negali ištrinti svetimo įrašo",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/care-records/{{authRecordId}}",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{workerBToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Statusas 403\", () => pm.response.to.have.status(403));",
+                  "pm.test(\"JSON atsakymas\", () => pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\"));",
+                  "pm.test(\"Klaidos pranešimas\", () => pm.expect(pm.response.json().error).to.be.a(\"string\").and.not.empty);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "A – Vadovas redaguoja svetimą įrašą",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/care-records/{{authRecordId}}",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{managerToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\"pet_id\":{{authPetId}},\"care_type\":\"observation\",\"notes\":\"Darbuotojo A stebėjimas.\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Statusas 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"JSON atsakymas\", () => pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\"));",
+                  "pm.test(\"Autorius A\", () => pm.expect(pm.response.json().created_by).to.eql(Number(pm.collectionVariables.get(\"workerAId\"))));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "A – Administratorius redaguoja svetimą įrašą",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/care-records/{{authRecordId}}",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\"pet_id\":{{authPetId}},\"care_type\":\"observation\",\"notes\":\"Darbuotojo A stebėjimas.\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Statusas 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"JSON atsakymas\", () => pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\"));",
+                  "pm.test(\"Autorius A\", () => pm.expect(pm.response.json().created_by).to.eql(Number(pm.collectionVariables.get(\"workerAId\"))));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "A17 – Vadovas negali keisti naudotojų rolių",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/users/{{workerBId}}",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{managerToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\"role\": \"admin\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Statusas 403\", () => pm.response.to.have.status(403));",
+                  "pm.test(\"JSON atsakymas\", () => pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\"));",
+                  "pm.test(\"Klaidos pranešimas\", () => pm.expect(pm.response.json().error).to.be.a(\"string\").and.not.empty);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "A18 – Admin negali išjungti savo paskyros",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/users/{{adminId}}",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\"is_active\": false}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Statusas 403\", () => pm.response.to.have.status(403));",
+                  "pm.test(\"JSON atsakymas\", () => pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\"));",
+                  "pm.test(\"Klaidos pranešimas\", () => pm.expect(pm.response.json().error).to.be.a(\"string\").and.not.empty);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "A19 – Admin suteikia B vadovo rolę",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/users/{{workerBId}}",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\"role\": \"manager\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Statusas 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"JSON atsakymas\", () => pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "A20 – Senas B access nebegalioja po rolės keitimo",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/auth/me",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{workerBToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Statusas 401\", () => pm.response.to.have.status(401));",
+                  "pm.test(\"JSON atsakymas\", () => pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\"));",
+                  "pm.test(\"Klaidos pranešimas\", () => pm.expect(pm.response.json().error).to.be.a(\"string\").and.not.empty);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "A21 – Senas B refresh nebegalioja",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/auth/refresh",
+            "auth": {
+              "type": "noauth"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\"refreshToken\":\"{{workerBRefresh}}\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Statusas 401\", () => pm.response.to.have.status(401));",
+                  "pm.test(\"JSON atsakymas\", () => pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\"));",
+                  "pm.test(\"Klaidos pranešimas\", () => pm.expect(pm.response.json().error).to.be.a(\"string\").and.not.empty);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "A22 – B prisijungia su nauja role",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/auth/login",
+            "auth": {
+              "type": "noauth"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\"email\":\"{{workerBEmail}}\",\"password\":\"{{testPassword}}\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Statusas 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"JSON atsakymas\", () => pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\"));",
+                  "",
+                  "if (pm.response.code === 200) {",
+                  " const b = pm.response.json();",
+                  " pm.test(\"Tinkama rolė\", () => pm.expect(b.user.role).to.eql(\"manager\"));",
+                  " pm.test(\"Žetonai pateikti\", () => {",
+                  "   pm.expect(b.accessToken).to.be.a(\"string\").and.not.empty;",
+                  "   pm.expect(b.refreshToken).to.match(/^[a-f0-9]{64}$/);",
+                  " });",
+                  " pm.collectionVariables.set(\"workerBToken\", b.accessToken);",
+                  " pm.collectionVariables.set(\"workerBRefresh\", b.refreshToken);",
+                  " pm.collectionVariables.set(\"workerBId\", b.user.id);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "A23 – Admin išjungia B paskyrą",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/users/{{workerBId}}",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\"is_active\": false}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Statusas 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"JSON atsakymas\", () => pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "A24 – Išjungtos paskyros access atmestas",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/auth/me",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{workerBToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Statusas 401\", () => pm.response.to.have.status(401));",
+                  "pm.test(\"JSON atsakymas\", () => pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\"));",
+                  "pm.test(\"Klaidos pranešimas\", () => pm.expect(pm.response.json().error).to.be.a(\"string\").and.not.empty);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "A25 – Išjungtos paskyros refresh atmestas",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/auth/refresh",
+            "auth": {
+              "type": "noauth"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\"refreshToken\":\"{{workerBRefresh}}\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Statusas 401\", () => pm.response.to.have.status(401));",
+                  "pm.test(\"JSON atsakymas\", () => pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\"));",
+                  "pm.test(\"Klaidos pranešimas\", () => pm.expect(pm.response.json().error).to.be.a(\"string\").and.not.empty);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "A26 – Išjungta paskyra negali prisijungti",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/auth/login",
+            "auth": {
+              "type": "noauth"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\"email\":\"{{workerBEmail}}\",\"password\":\"{{testPassword}}\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Statusas 401\", () => pm.response.to.have.status(401));",
+                  "pm.test(\"JSON atsakymas\", () => pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\"));",
+                  "pm.test(\"Klaidos pranešimas\", () => pm.expect(pm.response.json().error).to.be.a(\"string\").and.not.empty);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "A27 – Admin įjungia B ir grąžina worker rolę",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/users/{{workerBId}}",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\"role\": \"worker\", \"is_active\": true}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Statusas 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"JSON atsakymas\", () => pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "A28 – B vėl prisijungia",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/auth/login",
+            "auth": {
+              "type": "noauth"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\"email\":\"{{workerBEmail}}\",\"password\":\"{{testPassword}}\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Statusas 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"JSON atsakymas\", () => pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\"));",
+                  "",
+                  "if (pm.response.code === 200) {",
+                  " const b = pm.response.json();",
+                  " pm.test(\"Tinkama rolė\", () => pm.expect(b.user.role).to.eql(\"worker\"));",
+                  " pm.test(\"Žetonai pateikti\", () => {",
+                  "   pm.expect(b.accessToken).to.be.a(\"string\").and.not.empty;",
+                  "   pm.expect(b.refreshToken).to.match(/^[a-f0-9]{64}$/);",
+                  " });",
+                  " pm.collectionVariables.set(\"workerBToken\", b.accessToken);",
+                  " pm.collectionVariables.set(\"workerBRefresh\", b.refreshToken);",
+                  " pm.collectionVariables.set(\"workerBId\", b.user.id);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "A29 – A atnaujina žetonus",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/auth/refresh",
+            "auth": {
+              "type": "noauth"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\"refreshToken\":\"{{workerARefresh}}\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Statusas 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"JSON atsakymas\", () => pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\"));",
+                  "",
+                  "if (pm.response.code === 200) {",
+                  " const b = pm.response.json();",
+                  " pm.test(\"Refresh pasikeitė\", () => pm.expect(b.refreshToken).not.to.eql(pm.collectionVariables.get(\"workerARefresh\")));",
+                  " pm.collectionVariables.set(\"oldARefresh\", pm.collectionVariables.get(\"workerARefresh\"));",
+                  " pm.collectionVariables.set(\"workerARefresh\", b.refreshToken);",
+                  " pm.collectionVariables.set(\"workerAToken\", b.accessToken);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "A30 – Panaudotas refresh atmestas",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/auth/refresh",
+            "auth": {
+              "type": "noauth"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\"refreshToken\":\"{{oldARefresh}}\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Statusas 401\", () => pm.response.to.have.status(401));",
+                  "pm.test(\"JSON atsakymas\", () => pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\"));",
+                  "pm.test(\"Klaidos pranešimas\", () => pm.expect(pm.response.json().error).to.be.a(\"string\").and.not.empty);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "A31 – Naujas access veikia",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/auth/me",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{workerAToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Statusas 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"JSON atsakymas\", () => pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "A32 – Savininkas pašalina savo įrašą",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/care-records/{{authRecordId}}",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{workerAToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Statusas 204\", () => pm.response.to.have.status(204));",
+                  "pm.test(\"Tuščias atsakymas\", () => pm.expect(pm.response.text()).to.eql(\"\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "A33 – Pašalintas įrašas neberandamas",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/care-records/{{authRecordId}}",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{workerAToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Statusas 404\", () => pm.response.to.have.status(404));",
+                  "pm.test(\"JSON atsakymas\", () => pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\"));",
+                  "pm.test(\"Klaidos pranešimas\", () => pm.expect(pm.response.json().error).to.be.a(\"string\").and.not.empty);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "A34 – A atsijungia",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/auth/logout",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{workerAToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Statusas 204\", () => pm.response.to.have.status(204));",
+                  "pm.test(\"Tuščias atsakymas\", () => pm.expect(pm.response.text()).to.eql(\"\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "A35 – Access po logout atmestas",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/auth/me",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{workerAToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Statusas 401\", () => pm.response.to.have.status(401));",
+                  "pm.test(\"JSON atsakymas\", () => pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\"));",
+                  "pm.test(\"Klaidos pranešimas\", () => pm.expect(pm.response.json().error).to.be.a(\"string\").and.not.empty);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "A36 – Naujausias refresh po logout atmestas",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/auth/refresh",
+            "auth": {
+              "type": "noauth"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\"refreshToken\":\"{{workerARefresh}}\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Statusas 401\", () => pm.response.to.have.status(401));",
+                  "pm.test(\"JSON atsakymas\", () => pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\"));",
+                  "pm.test(\"Klaidos pranešimas\", () => pm.expect(pm.response.json().error).to.be.a(\"string\").and.not.empty);"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "03 Testinių duomenų sutvarkymas",
+      "item": [
+        {
+          "name": "C – Išjungti testinį darbuotoją A",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/users/{{workerAId}}",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\"is_active\": false}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Statusas 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"JSON atsakymas\", () => pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "C – Išjungti testinį darbuotoją B",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/users/{{workerBId}}",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\"is_active\": false}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Statusas 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"JSON atsakymas\", () => pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "C – Ištrinti testinį augintinį",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/pets/{{authPetId}}",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{managerToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Statusas 204\", () => pm.response.to.have.status(204));",
+                  "pm.test(\"Tuščias atsakymas\", () => pm.expect(pm.response.text()).to.eql(\"\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "C – Ištrinti testinį terariumą",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/terrariums/{{authTerrariumId}}",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{managerToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Statusas 204\", () => pm.response.to.have.status(204));",
+                  "pm.test(\"Tuščias atsakymas\", () => pm.expect(pm.response.text()).to.eql(\"\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "C – Vadovo atsijungimas",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/auth/logout",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{managerToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Statusas 204\", () => pm.response.to.have.status(204));",
+                  "pm.test(\"Tuščias atsakymas\", () => pm.expect(pm.response.text()).to.eql(\"\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "C – Administratoriaus atsijungimas",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/auth/logout",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Statusas 204\", () => pm.response.to.have.status(204));",
+                  "pm.test(\"Tuščias atsakymas\", () => pm.expect(pm.response.text()).to.eql(\"\"));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

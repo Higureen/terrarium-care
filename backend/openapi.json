@@ -2,8 +2,8 @@
   "openapi": "3.0.3",
   "info": {
     "title": "TerraCare API",
-    "version": "1.0.0",
-    "description": "Terariumų, augintinių ir jų priežiūros valdymo API."
+    "version": "2.0.0",
+    "description": "Terariumų, augintinių ir jų priežiūros valdymo API. JWT prieigos žetonas siunčiamas Authorization: Bearer antraštėje. Rolės: worker, manager, admin. Atnaujinimo žetonai keičiami kiekvieno atnaujinimo metu; sesijos galiojimo pabaiga nepratęsiama."
   },
   "servers": [
     {
@@ -18,7 +18,7 @@
           "Augintiniai"
         ],
         "summary": "Gauti augintinio profilį",
-        "description": "Viename atsakyme sujungiama augintinio informacija, jo terariumas ir priežiūros istorija. Jei priežiūros įrašų nėra, care_records yra tuščias masyvas.",
+        "description": "Viename atsakyme sujungiama augintinio informacija, jo terariumas ir priežiūros istorija. Jei priežiūros įrašų nėra, care_records yra tuščias masyvas. Prieinama prisijungusiems worker, manager ir admin.",
         "parameters": [
           {
             "name": "id",
@@ -129,6 +129,9 @@
                 }
               }
             }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
           }
         }
       }
@@ -139,7 +142,7 @@
           "Priežiūros įrašai"
         ],
         "summary": "Gauti terariumo augintinio priežiūros įrašus",
-        "description": "Tikrinama, ar terariumas egzistuoja ir ar augintinis priklauso būtent jam. Grąžinama augintinio priežiūros istorija nuo naujausių įrašų. Jei istorija tuščia, grąžinamas tuščias masyvas.",
+        "description": "Tikrinama, ar terariumas egzistuoja ir ar augintinis priklauso būtent jam. Grąžinama augintinio priežiūros istorija nuo naujausių įrašų. Jei istorija tuščia, grąžinamas tuščias masyvas. Prieinama prisijungusiems worker, manager ir admin.",
         "parameters": [
           {
             "name": "terrariumId",
@@ -227,6 +230,9 @@
                 }
               }
             }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
           }
         }
       }
@@ -286,15 +292,19 @@
           },
           "500": {
             "$ref": "#/paths/~1terrariums/get/responses/500"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
           }
-        }
+        },
+        "description": "Prieinama prisijungusiems worker, manager ir admin."
       },
       "put": {
         "tags": [
           "Terariumai"
         ],
         "summary": "Atnaujinti terariumą",
-        "description": "Pakeičia terariumo informaciją. Reikia pateikti pavadinimą ir visas temperatūros bei drėgmės ribas. Nepateikus last_cleaned ar notes, jie nustatomi į null.",
+        "description": "Pakeičia terariumo informaciją. Reikia pateikti pavadinimą ir visas temperatūros bei drėgmės ribas. Nepateikus last_cleaned ar notes, jie nustatomi į null. Prieinama tik manager ir admin rolėms.",
         "requestBody": {
           "required": true,
           "content": {
@@ -334,6 +344,12 @@
           },
           "500": {
             "$ref": "#/paths/~1terrariums/get/responses/500"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
           }
         }
       },
@@ -342,7 +358,7 @@
           "Terariumai"
         ],
         "summary": "Ištrinti terariumą",
-        "description": "Galima ištrinti tik terariumą, kuriame nėra augintinių.",
+        "description": "Galima ištrinti tik terariumą, kuriame nėra augintinių. Prieinama tik manager ir admin rolėms.",
         "responses": {
           "204": {
             "description": "Terariumas ištrintas. Atsakymo turinio nėra."
@@ -368,6 +384,12 @@
           },
           "500": {
             "$ref": "#/paths/~1terrariums/get/responses/500"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
           }
         }
       }
@@ -378,7 +400,7 @@
           "Terariumai"
         ],
         "summary": "Gauti konkretaus terariumo augintinius",
-        "description": "Hierarchinis metodas. Jei terariumas egzistuoja, bet neturi augintinių, grąžinamas tuščias masyvas. Jei terariumo nėra, grąžinamas 404.",
+        "description": "Hierarchinis metodas. Jei terariumas egzistuoja, bet neturi augintinių, grąžinamas tuščias masyvas. Jei terariumo nėra, grąžinamas 404. Prieinama prisijungusiems worker, manager ir admin.",
         "parameters": [
           {
             "name": "id",
@@ -424,6 +446,9 @@
                 }
               }
             }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
           }
         }
       }
@@ -434,7 +459,7 @@
           "Terariumai"
         ],
         "summary": "Gauti terariumų sąrašą",
-        "description": "Grąžina vieną sąrašo puslapį. Galima ieškoti pagal pavadinimo dalį, neatsižvelgiant į raidžių dydį. Nesant rezultatų, data yra tuščias masyvas.",
+        "description": "Grąžina vieną sąrašo puslapį. Galima ieškoti pagal pavadinimo dalį, neatsižvelgiant į raidžių dydį. Nesant rezultatų, data yra tuščias masyvas. Prieinama prisijungusiems worker, manager ir admin.",
         "parameters": [
           {
             "name": "page",
@@ -547,6 +572,9 @@
                 }
               }
             }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
           }
         }
       },
@@ -555,7 +583,7 @@
           "Terariumai"
         ],
         "summary": "Sukurti terariumą",
-        "description": "Temperatūros ir drėgmės minimumai negali viršyti maksimumų. Nepateikus datos ar pastabų, jos nustatomos į null.",
+        "description": "Temperatūros ir drėgmės minimumai negali viršyti maksimumų. Nepateikus datos ar pastabų, jos nustatomos į null. Prieinama tik manager ir admin rolėms.",
         "requestBody": {
           "required": true,
           "content": {
@@ -617,6 +645,12 @@
                 }
               }
             }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
           }
         }
       }
@@ -689,15 +723,19 @@
                 }
               }
             }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
           }
-        }
+        },
+        "description": "Prieinama prisijungusiems worker, manager ir admin."
       },
       "put": {
         "tags": [
           "Priežiūros įrašai"
         ],
         "summary": "Atnaujinti priežiūros įrašą",
-        "description": "Būtina pateikti pet_id, care_type ir notes. Įrašo laikas nekeičiamas.",
+        "description": "Būtina pateikti pet_id, care_type ir notes. Įrašo laikas nekeičiamas. worker gali keisti arba šalinti tik savo įrašus (created_by sutampa su naudotojo ID). manager ir admin gali tvarkyti visus įrašus. Autorius redaguojant nekeičiamas.",
         "requestBody": {
           "required": true,
           "content": {
@@ -750,6 +788,12 @@
                 }
               }
             }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
           }
         }
       },
@@ -780,8 +824,15 @@
                 }
               }
             }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
           }
-        }
+        },
+        "description": "worker gali keisti arba šalinti tik savo įrašus (created_by sutampa su naudotojo ID). manager ir admin gali tvarkyti visus įrašus. Autorius redaguojant nekeičiamas."
       }
     },
     "/care-records": {
@@ -790,7 +841,7 @@
           "Priežiūros įrašai"
         ],
         "summary": "Gauti priežiūros įrašų sąrašą",
-        "description": "Grąžina vieną sąrašo puslapį nuo naujausių įrašų. Galima filtruoti pagal priežiūros tipą ir augintinį. Abu filtrai gali būti naudojami kartu. Nesant rezultatų, data yra tuščias masyvas.",
+        "description": "Grąžina vieną sąrašo puslapį nuo naujausių įrašų. Galima filtruoti pagal priežiūros tipą ir augintinį. Abu filtrai gali būti naudojami kartu. Nesant rezultatų, data yra tuščias masyvas. Prieinama prisijungusiems worker, manager ir admin.",
         "parameters": [
           {
             "name": "page",
@@ -919,6 +970,9 @@
                 }
               }
             }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
           }
         }
       },
@@ -927,7 +981,7 @@
           "Priežiūros įrašai"
         ],
         "summary": "Sukurti priežiūros įrašą",
-        "description": "Įrašas priskiriamas egzistuojančiam augintiniui. Laikas nustatomas automatiškai.",
+        "description": "Įrašas priskiriamas egzistuojančiam augintiniui. Laikas nustatomas automatiškai. Prieinama prisijungusiems naudotojams. created_by nustato serveris pagal prisijungusį naudotoją, jo siųsti nereikia.",
         "requestBody": {
           "required": true,
           "content": {
@@ -995,6 +1049,9 @@
                 }
               }
             }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
           }
         }
       }
@@ -1005,7 +1062,7 @@
           "Augintiniai"
         ],
         "summary": "Atnaujinti augintinį",
-        "description": "Pakeičia augintinio kortelę. Nepateikus notes, šis laukas nustatomas į null.",
+        "description": "Pakeičia augintinio kortelę. Nepateikus notes, šis laukas nustatomas į null. Prieinama tik manager ir admin rolėms.",
         "parameters": [
           {
             "name": "id",
@@ -1083,6 +1140,12 @@
                 }
               }
             }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
           }
         }
       },
@@ -1091,7 +1154,7 @@
           "Augintiniai"
         ],
         "summary": "Ištrinti augintinį",
-        "description": "Augintinį galima ištrinti tik tada, kai jis neturi priežiūros įrašų.",
+        "description": "Augintinį galima ištrinti tik tada, kai jis neturi priežiūros įrašų. Prieinama tik manager ir admin rolėms.",
         "parameters": [
           {
             "name": "id",
@@ -1159,6 +1222,12 @@
                 }
               }
             }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
           }
         }
       },
@@ -1230,8 +1299,12 @@
                 }
               }
             }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
           }
-        }
+        },
+        "description": "Prieinama prisijungusiems worker, manager ir admin."
       }
     },
     "/pets": {
@@ -1339,15 +1412,22 @@
                 }
               }
             }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
           }
-        }
+        },
+        "description": "Prieinama tik manager ir admin rolėms."
       },
       "get": {
         "tags": [
           "Augintiniai"
         ],
         "summary": "Gauti augintinių sąrašą",
-        "description": "Grąžina vieną sąrašo puslapį. Galima filtruoti pagal tikslų rūšies pavadinimą, neatsižvelgiant į raidžių dydį. Nesant rezultatų, data yra tuščias masyvas.",
+        "description": "Grąžina vieną sąrašo puslapį. Galima filtruoti pagal tikslų rūšies pavadinimą, neatsižvelgiant į raidžių dydį. Nesant rezultatų, data yra tuščias masyvas. Prieinama prisijungusiems worker, manager ir admin.",
         "parameters": [
           {
             "name": "page",
@@ -1435,6 +1515,495 @@
                 },
                 "example": {
                   "error": "Nepavyko gauti augintinių sąrašo."
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
+    },
+    "/auth/register": {
+      "post": {
+        "tags": [
+          "Autentifikacija"
+        ],
+        "summary": "Užregistruoti darbuotoją",
+        "responses": {
+          "201": {
+            "description": "Paskyra sukurta; žetonai neišduodami.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "El. pašto adresas jau naudojamas.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalError"
+          },
+          "400": {
+            "description": "Netaisyklingas JSON formatas arba netinkamas ID.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "422": {
+            "$ref": "#/components/responses/ValidationError"
+          }
+        },
+        "security": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterInput"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "tags": [
+          "Autentifikacija"
+        ],
+        "summary": "Prisijungti",
+        "responses": {
+          "200": {
+            "description": "Išduota žetonų pora.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenPair"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Neteisingi prisijungimo duomenys arba neaktyvi paskyra.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalError"
+          },
+          "400": {
+            "description": "Netaisyklingas JSON formatas arba netinkamas ID.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "422": {
+            "$ref": "#/components/responses/ValidationError"
+          }
+        },
+        "security": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginInput"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/refresh": {
+      "post": {
+        "tags": [
+          "Autentifikacija"
+        ],
+        "summary": "Atnaujinti žetonus",
+        "responses": {
+          "200": {
+            "description": "Nauja žetonų pora. Išsaugokite naują refreshToken.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenPair"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Atnaujinimo žetonas netinkamas, panaudotas arba nebegalioja.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalError"
+          },
+          "400": {
+            "description": "Netaisyklingas JSON formatas arba netinkamas ID.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "422": {
+            "$ref": "#/components/responses/ValidationError"
+          }
+        },
+        "security": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RefreshInput"
+              }
+            }
+          }
+        },
+        "description": "Access žetonas nereikalingas. Senasis refreshToken pakeičiamas ir nebeveikia. Pradinė sesijos galiojimo pabaiga nepratęsiama. Ankstesnis accessToken gali veikti iki galiojimo pabaigos, kol sesija aktyvi."
+      }
+    },
+    "/auth/me": {
+      "get": {
+        "tags": [
+          "Autentifikacija"
+        ],
+        "summary": "Gauti prisijungusį naudotoją",
+        "responses": {
+          "200": {
+            "description": "Naudotojo id, name, email ir role.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalError"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
+    },
+    "/auth/logout": {
+      "post": {
+        "tags": [
+          "Autentifikacija"
+        ],
+        "summary": "Atsijungti nuo dabartinės sesijos",
+        "responses": {
+          "204": {
+            "description": "Sesija panaikinta. Atsakymo turinio nėra."
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalError"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        },
+        "description": "Reikalingas galiojantis accessToken. Panaikinama tik dabartinė sesija: jos access ir refresh žetonai nebeveikia."
+      }
+    },
+    "/users": {
+      "get": {
+        "tags": [
+          "Naudotojai"
+        ],
+        "summary": "Gauti naudotojų sąrašą",
+        "responses": {
+          "200": {
+            "description": "Naudotojų sąrašas be slaptažodžių maišų ir žetonų.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/User"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalError"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        },
+        "description": "Tik admin."
+      }
+    },
+    "/users/{id}": {
+      "patch": {
+        "tags": [
+          "Naudotojai"
+        ],
+        "summary": "Keisti rolę arba paskyros aktyvumą",
+        "responses": {
+          "200": {
+            "description": "Atnaujintas naudotojas.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Reikia admin rolės; savo paskyros keisti negalima.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Naudotojas nerastas.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalError"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "400": {
+            "description": "Netaisyklingas JSON formatas arba netinkamas ID.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "422": {
+            "$ref": "#/components/responses/ValidationError"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserUpdateInput"
+              }
+            }
+          }
+        },
+        "description": "Tik admin. Bent vienas iš laukų role arba is_active. Visos naudotojo sesijos panaikinamos. Pakartotinis paskyros įjungimas senų sesijų neatkuria.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 2147483647
+            }
+          }
+        ]
+      }
+    },
+    "/terrariums/{id}/last-cleaned": {
+      "patch": {
+        "tags": [
+          "Terariumai"
+        ],
+        "summary": "Atnaujinti paskutinio valymo datą",
+        "responses": {
+          "200": {
+            "description": "Atnaujinta valymo data.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "id",
+                    "name",
+                    "last_cleaned"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 2147483647
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "last_cleaned": {
+                      "type": "string",
+                      "format": "date"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "description": "Terariumas nerastas.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalError"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "400": {
+            "description": "Netaisyklingas JSON formatas arba netinkamas ID.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "422": {
+            "$ref": "#/components/responses/ValidationError"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CleaningDateInput"
+              }
+            }
+          }
+        },
+        "description": "worker, manager ir admin. Galima keisti tik last_cleaned lauką.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 2147483647
+            }
+          }
+        ]
+      }
+    },
+    "/health": {
+      "get": {
+        "tags": [
+          "Sistema"
+        ],
+        "summary": "Patikrinti serverio ir DB būklę",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "Serveris ir DB pasiekiami.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "ok"
+                      ]
+                    },
+                    "database": {
+                      "type": "string",
+                      "enum": [
+                        "connected"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Duomenų bazė nepasiekiama.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "error"
+                      ]
+                    },
+                    "database": {
+                      "type": "string",
+                      "enum": [
+                        "unavailable"
+                      ]
+                    }
+                  }
                 }
               }
             }
@@ -1643,6 +2212,13 @@
           "notes": {
             "type": "string",
             "example": "Augintinis aktyvus, pakitimų nepastebėta."
+          },
+          "created_by": {
+            "type": "integer",
+            "nullable": true,
+            "readOnly": true,
+            "description": "Įrašo autoriaus ID. Senuose įrašuose gali būti null. Kai kurie sudėtiniai ir hierarchiniai atsakymai šio lauko negrąžina.",
+            "example": 1
           }
         }
       },
@@ -1719,7 +2295,222 @@
             "example": "Nepavyko gauti augintinių sąrašo."
           }
         }
+      },
+      "User": {
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "email",
+          "role"
+        ],
+        "properties": {
+          "id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 2147483647
+          },
+          "name": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "worker",
+              "manager",
+              "admin"
+            ]
+          },
+          "is_active": {
+            "type": "boolean"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "RegisterInput": {
+        "type": "object",
+        "required": [
+          "name",
+          "email",
+          "password"
+        ],
+        "description": "Rolės pateikti negalima; serveris suteikia worker.",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "maxLength": 254
+          },
+          "password": {
+            "type": "string",
+            "format": "password",
+            "minLength": 15,
+            "maxLength": 128,
+            "writeOnly": true
+          }
+        }
+      },
+      "LoginInput": {
+        "type": "object",
+        "required": [
+          "email",
+          "password"
+        ],
+        "properties": {
+          "email": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 254
+          },
+          "password": {
+            "type": "string",
+            "format": "password",
+            "minLength": 1,
+            "maxLength": 128,
+            "writeOnly": true
+          }
+        }
+      },
+      "RefreshInput": {
+        "type": "object",
+        "required": [
+          "refreshToken"
+        ],
+        "properties": {
+          "refreshToken": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$",
+            "description": "Naujausias login arba refresh atsakyme gautas atnaujinimo žetonas."
+          }
+        }
+      },
+      "TokenPair": {
+        "type": "object",
+        "required": [
+          "accessToken",
+          "refreshToken",
+          "tokenType",
+          "user"
+        ],
+        "properties": {
+          "accessToken": {
+            "type": "string",
+            "description": "HS256 pasirašytas JWT: sub, role, sid, iat, exp, iss, aud. Pagal numatytą konfigūraciją galioja 15 min."
+          },
+          "refreshToken": {
+            "type": "string",
+            "description": "Atsitiktinis 64 šešioliktainių simbolių žetonas; DB saugoma SHA-256 maiša. Pagal numatytą konfigūraciją sesija galioja 7 dienas."
+          },
+          "tokenType": {
+            "type": "string",
+            "enum": [
+              "Bearer"
+            ]
+          },
+          "user": {
+            "$ref": "#/components/schemas/User"
+          }
+        }
+      },
+      "UserUpdateInput": {
+        "type": "object",
+        "minProperties": 1,
+        "additionalProperties": false,
+        "properties": {
+          "role": {
+            "type": "string",
+            "enum": [
+              "worker",
+              "manager",
+              "admin"
+            ]
+          },
+          "is_active": {
+            "type": "boolean"
+          }
+        }
+      },
+      "CleaningDateInput": {
+        "type": "object",
+        "required": [
+          "last_cleaned"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "last_cleaned": {
+            "type": "string",
+            "format": "date",
+            "example": "2026-11-01",
+            "description": "Tikra kalendorinė data YYYY-MM-DD formatu."
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "Įklijuokite accessToken be kabučių ir be Bearer prefikso."
+      }
+    },
+    "responses": {
+      "Unauthorized": {
+        "description": "Nėra galiojančio žetono: žetonas netinkamas, pasibaigęs, sesija panaikinta arba paskyra neaktyvi.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "Forbidden": {
+        "description": "Nepakanka teisių atlikti veiksmą.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "ValidationError": {
+        "description": "Netinkami užklausos duomenys.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "InternalError": {
+        "description": "Vidinė serverio arba duomenų bazės klaida.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
       }
     }
-  }
+  },
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ]
 }

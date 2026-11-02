@@ -1,0 +1,36 @@
+{
+  "name": "TerraCare local",
+  "values": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000",
+      "enabled": true,
+      "type": "default"
+    },
+    {
+      "key": "adminEmail",
+      "value": "admin@example.com",
+      "enabled": true,
+      "type": "default"
+    },
+    {
+      "key": "adminPassword",
+      "value": "",
+      "enabled": true,
+      "type": "secret"
+    },
+    {
+      "key": "managerEmail",
+      "value": "manager@example.com",
+      "enabled": true,
+      "type": "default"
+    },
+    {
+      "key": "managerPassword",
+      "value": "",
+      "enabled": true,
+      "type": "secret"
+    }
+  ],
+  "_postman_variable_scope": "environment"
+}

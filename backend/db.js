@@ -1,18 +1,21 @@
 require("dotenv").config({
-    path: require("node:path").join(__dirname, ".env"),
-    override: true
+  path: require("node:path").join(__dirname, ".env")
 });
-console.log({
-  envFileExists: require("node:fs").existsSync(
-    require("node:path").join(__dirname, ".env")
-  ),
-  passwordType: typeof process.env.PGPASSWORD,
-  passwordPresent: Boolean(process.env.PGPASSWORD)
-});
+
 const { Pool } = require("pg");
 
-const pool = new Pool({
-    connectionTimeoutMillis: 5000
+const config = {
+  connectionTimeoutMillis: 10000
+};
+
+if (process.env.DATABASE_URL) {
+  config.connectionString = process.env.DATABASE_URL;
+}
+
+const pool = new Pool(config);
+
+pool.on("error", (error) => {
+  console.error("Netikėta DB ryšio klaida:", error.message);
 });
 
 module.exports = pool;

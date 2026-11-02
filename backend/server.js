@@ -8,6 +8,7 @@ const careRecordRoutes = require("./routes/careRecords");
 const authRouter = require("./routes/auth");
 const authenticate = require("./middleware/authenticate");
 const authorize = require("./middleware/authorize");
+const userRoutes = require("./routes/users");
 const app = express();
 const port = process.env.PORT || 3000;
 
@@ -24,6 +25,7 @@ app.get("/openapi.json", (req, res) => {
 app.use("/terrariums", authenticate);
 app.use("/pets", authenticate, petRoutes);
 app.use("/care-records", authenticate, careRecordRoutes);
+app.use("/users", authenticate, userRoutes);
 
 app.put("/terrariums/:id", authorize("manager", "admin"), async (req, res) => {
     const id = Number(req.params.id);
@@ -662,6 +664,90 @@ app.get(
     }
   }
 );
+
+app.patch(
+  "/terrariums/:id/last-cleaned",
+  authorize("worker", "manager", "admin"),
+  async (req, res) => {
+    const id = Number(req.params.id);
+
+    if (
+      !/^[1-9]\d*$/.test(req.params.id) ||
+      !Number.isSafeInteger(id) ||
+      id > 2147483647
+    ) {
+      return res.status(400).json({
+        error: "Netinkamas terariumo ID."
+      });
+    }
+
+    const body = req.body;
+
+    if (!body || typeof body !== "object" || Array.isArray(body)) {
+      return res.status(422).json({
+        error: "Pateikite JSON objektą."
+      });
+    }
+
+    if (
+      Object.keys(body).length !== 1 ||
+      !Object.hasOwn(body, "last_cleaned")
+    ) {
+      return res.status(422).json({
+        error: "Pateikite tik last_cleaned lauką."
+      });
+    }
+
+    const { last_cleaned } = body;
+
+    if (
+      typeof last_cleaned !== "string" ||
+      !/^\d{4}-\d{2}-\d{2}$/.test(last_cleaned) ||
+      last_cleaned.startsWith("0000")
+    ) {
+      return res.status(422).json({
+        error: "Valymo data turi būti YYYY-MM-DD formato."
+      });
+    }
+
+    const date = new Date(`${last_cleaned}T00:00:00Z`);
+
+    if (
+      Number.isNaN(date.getTime()) ||
+      date.toISOString().slice(0, 10) !== last_cleaned
+    ) {
+      return res.status(422).json({
+        error: "Nurodyta data neegzistuoja."
+      });
+    }
+
+    try {
+      const result = await pool.query(
+        `UPDATE terrariums
+         SET last_cleaned = $1
+         WHERE id = $2
+         RETURNING id, name,
+                   to_char(last_cleaned, 'YYYY-MM-DD') AS last_cleaned`,
+        [last_cleaned, id]
+      );
+
+      if (result.rows.length === 0) {
+        return res.status(404).json({
+          error: "Terariumas nerastas."
+        });
+      }
+
+      return res.status(200).json(result.rows[0]);
+    } catch (error) {
+      console.error("Failed to update cleaning date:", error.message);
+
+      return res.status(500).json({
+        error: "Nepavyko atnaujinti valymo datos."
+      });
+    }
+  }
+);
+
 app.listen(port, "127.0.0.1", () => {
     console.log(`TerraCare API: http://localhost:${port}`);
 });
