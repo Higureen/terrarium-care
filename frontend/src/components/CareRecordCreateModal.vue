@@ -7,17 +7,26 @@ const props = defineProps({
     type: Number,
     required: true,
   },
+  record: {
+    type: Object,
+    default: null,
+  },
 });
 
-const emit = defineEmits(["close", "created", "unauthorized"]);
+const emit = defineEmits([
+  "close",
+  "created",
+  "updated",
+  "unauthorized",
+]);
 
 const dialog = ref(null);
 const saving = ref(false);
 const error = ref("");
 
 const form = reactive({
-  care_type: "observation",
-  notes: "",
+  care_type: props.record?.care_type ?? "observation",
+  notes: props.record?.notes ?? "",
 });
 
 onMounted(() => {
@@ -43,8 +52,12 @@ async function submit() {
   saving.value = true;
 
   try {
-    const response = await apiFetch("/care-records", {
-      method: "POST",
+    const path = props.record
+      ? `/care-records/${props.record.id}`
+      : "/care-records";
+
+    const response = await apiFetch(path, {
+      method: props.record ? "PUT" : "POST",
       headers: {
         "Content-Type": "application/json",
       },
@@ -64,11 +77,11 @@ async function submit() {
 
     if (!response.ok) {
       throw new Error(
-        data.error || "Nepavyko sukurti priežiūros įrašo."
+        data.error || "Nepavyko išsaugoti priežiūros įrašo."
       );
     }
 
-    emit("created", data);
+    emit(props.record ? "updated" : "created", data);
   } catch (err) {
     error.value =
       err instanceof TypeError
@@ -89,7 +102,9 @@ async function submit() {
     @close="emit('close')"
   >
     <div class="modal-heading">
-      <h2 id="care-form-title">Naujas priežiūros įrašas</h2>
+      <h2 id="care-form-title">
+        {{ props.record ? "Redaguoti įrašą" : "Naujas priežiūros įrašas" }}
+      </h2>
 
       <button
         class="secondary-button"
@@ -136,7 +151,11 @@ async function submit() {
         </div>
 
         <p class="field-hint">
-          Įrašo datą ir autorių sistema nustatys automatiškai.
+          {{
+            props.record
+              ? "Redaguojant įrašo data ir autorius nekeičiami."
+              : "Įrašo datą ir autorių sistema nustatys automatiškai."
+          }}
         </p>
       </fieldset>
 

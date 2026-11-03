@@ -1,8 +1,9 @@
 <script setup>
 import { ref, watch } from "vue";
 import { RouterLink, useRoute, useRouter } from "vue-router";
-import { apiFetch } from "../services/auth";
+import { auth, apiFetch } from "../services/auth";
 import CareRecordCreateModal from "../components/CareRecordCreateModal.vue";
+import CareRecordDeleteModal from "../components/CareRecordDeleteModal.vue";
 
 const route = useRoute();
 const router = useRouter();
@@ -12,6 +13,8 @@ const loading = ref(false);
 const error = ref("");
 const successMessage = ref("");
 const showCareCreate = ref(false);
+const editingRecord = ref(null);
+const deletingRecord = ref(null);
 
 let requestNumber = 0;
 
@@ -20,6 +23,22 @@ const careTypeNames = {
   observation: "Būklės stebėjimas",
   other: "Kita priežiūra",
 };
+
+function canModifyRecord(record) {
+  const user = auth.user;
+
+  if (!user) return false;
+
+  if (["manager", "admin"].includes(user.role)) {
+    return true;
+  }
+
+  return (
+    user.role === "worker" &&
+    record.created_by != null &&
+    Number(record.created_by) === Number(user.id)
+  );
+}
 
 async function loadProfile() {
   const currentRequest = ++requestNumber;
@@ -65,6 +84,13 @@ async function loadProfile() {
 }
 
 function openCareCreate() {
+  editingRecord.value = null;
+  successMessage.value = "";
+  showCareCreate.value = true;
+}
+
+function openCareEdit(record) {
+  editingRecord.value = record;
   successMessage.value = "";
   showCareCreate.value = true;
 }
@@ -76,8 +102,27 @@ async function handleCareCreated() {
   await loadProfile();
 }
 
+async function handleCareUpdated() {
+  showCareCreate.value = false;
+  editingRecord.value = null;
+  successMessage.value = "Priežiūros įrašas atnaujintas.";
+
+  await loadProfile();
+}
+function openCareDelete(record) {
+  successMessage.value = "";
+  deletingRecord.value = record;
+}
+
+async function handleCareDeleted() {
+  deletingRecord.value = null;
+  successMessage.value = "Priežiūros įrašas ištrintas.";
+
+  await loadProfile();
+}
 function handleUnauthorized() {
   showCareCreate.value = false;
+  deletingRecord.value = null;
   router.push("/login");
 }
 
@@ -102,6 +147,8 @@ watch(
   () => route.params.id,
   () => {
     showCareCreate.value = false;
+    editingRecord.value = null;
+    deletingRecord.value = null;
     successMessage.value = "";
     loadProfile();
   },
@@ -111,17 +158,13 @@ watch(
 
 <template>
   <section>
-    <RouterLink
-      class="back-link"
-      :to="
-        profile
-          ? {
-              name: 'terrarium-details',
-              params: { id: profile.terrarium.id },
-            }
-          : '/terrariums'
-      "
-    >
+    <RouterLink class="back-link" :to="profile
+      ? {
+        name: 'terrarium-details',
+        params: { id: profile.terrarium.id },
+      }
+      : '/terrariums'
+      ">
       {{ profile ? "← Atgal į terariumą" : "← Visi terariumai" }}
     </RouterLink>
 
@@ -132,11 +175,7 @@ watch(
     <div v-else-if="error" class="form-error" role="alert">
       <p>{{ error }}</p>
 
-      <button
-        class="secondary-button"
-        type="button"
-        @click="loadProfile"
-      >
+      <button class="secondary-button" type="button" @click="loadProfile">
         Bandyti dar kartą
       </button>
     </div>
@@ -156,12 +195,10 @@ watch(
           <div>
             <dt>Terariumas</dt>
             <dd>
-              <RouterLink
-                :to="{
-                  name: 'terrarium-details',
-                  params: { id: profile.terrarium.id },
-                }"
-              >
+              <RouterLink :to="{
+                name: 'terrarium-details',
+                params: { id: profile.terrarium.id },
+              }">
                 {{ profile.terrarium.name }}
               </RouterLink>
             </dd>
@@ -191,11 +228,7 @@ watch(
           </span>
         </div>
 
-        <button
-          class="primary-button"
-          type="button"
-          @click="openCareCreate"
-        >
+        <button class="primary-button" type="button" @click="openCareCreate">
           + Priežiūros įrašas
         </button>
       </div>
@@ -205,11 +238,7 @@ watch(
       </p>
 
       <div v-if="profile.care_records.length" class="care-list">
-        <article
-          v-for="record in profile.care_records"
-          :key="record.id"
-          class="care-record"
-        >
+        <article v-for="record in profile.care_records" :key="record.id" class="care-record">
           <div class="care-record-heading">
             <h3>
               {{ careTypeNames[record.care_type] || record.care_type }}
@@ -221,21 +250,31 @@ watch(
           </div>
 
           <p>{{ record.notes }}</p>
+
+          <div v-if="canModifyRecord(record)" class="care-record-actions">
+            <button class="secondary-button" type="button" @click="openCareEdit(record)">
+              Redaguoti
+            </button>
+
+            <button class="danger-button" type="button" @click="openCareDelete(record)">
+              Ištrinti
+            </button>
+          </div>
+
+          <div v-else class="empty-state">
+            <h2>Priežiūros įrašų dar nėra</h2>
+            <p>
+              Pridėkite maitinimą, būklės stebėjimą ar kitą priežiūros veiksmą.
+            </p>
+          </div>
         </article>
       </div>
+       </template>
 
-      <div v-else class="empty-state">
-        <h2>Priežiūros įrašų dar nėra</h2>
-        <p>Pridėkite maitinimą, būklės stebėjimą ar kitą priežiūros veiksmą.</p>
-      </div>
-    </template>
-
-    <CareRecordCreateModal
-      v-if="showCareCreate && profile"
-      :pet-id="Number(profile.pet.id)"
-      @close="showCareCreate = false"
-      @created="handleCareCreated"
-      @unauthorized="handleUnauthorized"
-    />
+    <CareRecordCreateModal v-if="showCareCreate && profile" :pet-id="Number(profile.pet.id)" :record="editingRecord"
+      @close="showCareCreate = false" @created="handleCareCreated" @updated="handleCareUpdated"
+      @unauthorized="handleUnauthorized" />
+    <CareRecordDeleteModal v-if="deletingRecord" :record="deletingRecord" @close="deletingRecord = null"
+      @deleted="handleCareDeleted" @unauthorized="handleUnauthorized" />
   </section>
 </template>
