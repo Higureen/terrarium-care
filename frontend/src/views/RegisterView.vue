@@ -1,6 +1,7 @@
 <script setup>
 import { ref } from 'vue'
 import { RouterLink, useRouter } from 'vue-router'
+import { apiUrl } from "../services/api";
 
 const router = useRouter()
 
@@ -29,7 +30,7 @@ async function submit() {
   loading.value = true
 
   try {
-    const response = await fetch('/api/auth/register', {
+    const response = await fetch(apiUrl("/auth/register"), {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

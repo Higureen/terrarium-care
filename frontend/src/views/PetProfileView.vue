@@ -60,15 +60,40 @@ async function loadProfile() {
 
     const data = await response.json();
 
+    if (currentRequest !== requestNumber) return;
+
     if (!response.ok) {
-      throw new Error(
-        data.error || "Nepavyko gauti augintinio profilio."
-      );
+      throw new Error(data.error || "Nepavyko gauti augintinio profilio.");
     }
+
+    const terrariumId = encodeURIComponent(String(data.terrarium.id));
+    const petId = encodeURIComponent(String(data.pet.id));
+
+    const recordsResponse = await apiFetch(
+      `/terrariums/${terrariumId}/pets/${petId}/care-records`,
+    );
 
     if (currentRequest !== requestNumber) return;
 
-    profile.value = data;
+    if (recordsResponse.status === 401) {
+      await router.push("/login");
+      return;
+    }
+
+    const records = await recordsResponse.json();
+
+    if (currentRequest !== requestNumber) return;
+
+    if (!recordsResponse.ok) {
+      throw new Error(
+        records.error || "Nepavyko gauti priežiūros įrašų.",
+      );
+    }
+
+    profile.value = {
+      ...data,
+      care_records: records,
+    };
   } catch (err) {
     if (currentRequest !== requestNumber) return;
 

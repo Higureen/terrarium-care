@@ -137,20 +137,24 @@ onMounted(() => loadTerrariums());
     <div class="page-heading">
       <h1>Terariumai</h1>
 
-      <button
-        v-if="['manager', 'admin'].includes(auth.user?.role)"
-        class="primary-button"
-        type="button"
-        :disabled="loading"
-        @click="openCreate"
-      >
+      <button v-if="['manager', 'admin'].includes(auth.user?.role)" class="primary-button" type="button"
+        :disabled="loading" @click="openCreate">
         + Naujas terariumas
       </button>
     </div>
 
-    <p class="page-description">
-      Laikymo sąlygos ir paskutinio valymo informacija vienoje vietoje.
-    </p>
+    <div class="terrarium-intro">
+      <div>
+        <h2>Kasdienė priežiūra prasideda nuo dėmesio</h2>
+
+        <p>
+          Stebėkite terariumų laikymo sąlygas, susipažinkite su jų
+          gyventojais ir registruokite priežiūros darbus.
+        </p>
+      </div>
+
+      <img src="/images/toad.jpg" alt="Rupūžė, tupinti žmogaus delne" width="732" height="598" />
+    </div>
 
     <p v-if="successMessage" class="form-success" role="status">
       {{ successMessage }}
@@ -160,20 +164,10 @@ onMounted(() => loadTerrariums());
       <div class="form-field">
         <label for="terrarium-search">Paieška pagal pavadinimą</label>
 
-        <input
-          id="terrarium-search"
-          v-model="search"
-          type="search"
-          placeholder="Pvz., varlių"
-          :disabled="loading"
-        />
+        <input id="terrarium-search" v-model="search" type="search" placeholder="Pvz., varlių" :disabled="loading" />
       </div>
 
-      <button
-        class="primary-button"
-        type="submit"
-        :disabled="loading"
-      >
+      <button class="primary-button" type="submit" :disabled="loading">
         Ieškoti
       </button>
     </form>
@@ -185,11 +179,7 @@ onMounted(() => loadTerrariums());
     <div v-else-if="error" class="form-error" role="alert">
       <p>{{ error }}</p>
 
-      <button
-        class="secondary-button"
-        type="button"
-        @click="loadTerrariums(page)"
-      >
+      <button class="secondary-button" type="button" @click="loadTerrariums(page)">
         Bandyti dar kartą
       </button>
     </div>
@@ -200,11 +190,7 @@ onMounted(() => loadTerrariums());
       </p>
 
       <div v-if="terrariums.length" class="terrarium-grid">
-        <article
-          v-for="terrarium in terrariums"
-          :key="terrarium.id"
-          class="terrarium-card"
-        >
+        <article v-for="terrarium in terrariums" :key="terrarium.id" class="terrarium-card">
           <div class="card-heading">
             <span class="card-label">TERARIUMAS</span>
             <h2>{{ terrarium.name }}</h2>
@@ -236,32 +222,19 @@ onMounted(() => loadTerrariums());
           </p>
 
           <div class="card-actions">
-            <RouterLink
-              class="secondary-button button-link"
-              :to="{
-                name: 'terrarium-details',
-                params: { id: terrarium.id },
-              }"
-            >
+            <RouterLink class="secondary-button button-link" :to="{
+              name: 'terrarium-details',
+              params: { id: terrarium.id },
+            }">
               Peržiūrėti
             </RouterLink>
 
-            <template
-              v-if="['manager', 'admin'].includes(auth.user?.role)"
-            >
-              <button
-                class="secondary-button"
-                type="button"
-                @click="openEdit(terrarium)"
-              >
+            <template v-if="['manager', 'admin'].includes(auth.user?.role)">
+              <button class="secondary-button" type="button" @click="openEdit(terrarium)">
                 Redaguoti
               </button>
 
-              <button
-                class="danger-button"
-                type="button"
-                @click="openDelete(terrarium)"
-              >
+              <button class="danger-button" type="button" @click="openDelete(terrarium)">
                 Ištrinti
               </button>
             </template>
@@ -274,48 +247,23 @@ onMounted(() => loadTerrariums());
         <p>Pabandykite kitą pavadinimą arba išvalykite paiešką.</p>
       </div>
 
-      <nav
-        v-if="totalPages > 1"
-        class="pagination"
-        aria-label="Terariumų puslapiai"
-      >
-        <button
-          class="secondary-button"
-          type="button"
-          :disabled="page <= 1"
-          @click="loadTerrariums(page - 1)"
-        >
+      <nav v-if="totalPages > 1" class="pagination" aria-label="Terariumų puslapiai">
+        <button class="secondary-button" type="button" :disabled="page <= 1" @click="loadTerrariums(page - 1)">
           ← Ankstesnis
         </button>
 
         <span>{{ page }} / {{ totalPages }}</span>
 
-        <button
-          class="secondary-button"
-          type="button"
-          :disabled="page >= totalPages"
-          @click="loadTerrariums(page + 1)"
-        >
+        <button class="secondary-button" type="button" :disabled="page >= totalPages" @click="loadTerrariums(page + 1)">
           Kitas →
         </button>
       </nav>
     </template>
 
-    <TerrariumCreateModal
-      v-if="showCreate"
-      :terrarium="editingTerrarium"
-      @close="showCreate = false"
-      @created="handleCreated"
-      @updated="handleUpdated"
-      @unauthorized="handleUnauthorized"
-    />
+    <TerrariumCreateModal v-if="showCreate" :terrarium="editingTerrarium" @close="showCreate = false"
+      @created="handleCreated" @updated="handleUpdated" @unauthorized="handleUnauthorized" />
 
-    <TerrariumDeleteModal
-      v-if="deletingTerrarium"
-      :terrarium="deletingTerrarium"
-      @close="deletingTerrarium = null"
-      @deleted="handleDeleted"
-      @unauthorized="handleUnauthorized"
-    />
+    <TerrariumDeleteModal v-if="deletingTerrarium" :terrarium="deletingTerrarium" @close="deletingTerrarium = null"
+      @deleted="handleDeleted" @unauthorized="handleUnauthorized" />
   </section>
 </template>

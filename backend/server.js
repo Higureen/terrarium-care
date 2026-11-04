@@ -2,6 +2,7 @@ require("dotenv").config();
 const swaggerUi = require("swagger-ui-express");
 const openapi = require("./openapi.json");
 const express = require("express");
+const cors = require("cors");
 const pool = require("./db");
 const petRoutes = require("./routes/pets");
 const careRecordRoutes = require("./routes/careRecords");
@@ -11,6 +12,26 @@ const authorize = require("./middleware/authorize");
 const userRoutes = require("./routes/users");
 const app = express();
 const port = process.env.PORT || 3000;
+
+app.disable("x-powered-by");
+
+const allowedOrigins = (process.env.CORS_ORIGINS || "")
+  .split(",")
+  .map(origin => origin.trim())
+  .filter(Boolean);
+
+app.use(
+  cors({
+    origin(origin, callback) {
+      const allowed = Boolean(origin && allowedOrigins.includes(origin));
+      callback(null, allowed);
+    },
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+    exposedHeaders: ["Location"],
+    maxAge: 600,
+  })
+);
 
 app.use(express.json());
 

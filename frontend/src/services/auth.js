@@ -1,4 +1,6 @@
 import { reactive } from "vue";
+import { reactive } from "vue";
+import { apiUrl } from "./api";
 
 const STORAGE_KEY = "terracare-session";
 
@@ -30,7 +32,7 @@ export function clearAuth() {
 }
 
 export async function login(email, password) {
-  const response = await fetch("/api/auth/login", {
+  const response = await fetch(apiUrl("/auth/login"), {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -59,7 +61,7 @@ async function refreshTokens() {
     return false;
   }
 
-  const response = await fetch("/api/auth/refresh", {
+  const response = await fetch(apiUrl("/auth/refresh"), {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -116,7 +118,7 @@ export async function apiFetch(path, options = {}) {
       headers.delete("Authorization");
     }
 
-    return fetch(`/api${path}`, {
+    return fetch(apiUrl(path), {
       ...options,
       headers,
     });

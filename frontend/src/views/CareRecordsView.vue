@@ -2,6 +2,7 @@
 import { onMounted, ref } from "vue";
 import { RouterLink, useRouter } from "vue-router";
 import { apiFetch } from "../services/auth";
+import CareRecordDetailsModal from "../components/CareRecordDetailsModal.vue";
 
 const router = useRouter();
 
@@ -19,12 +20,22 @@ const total = ref(0);
 const loading = ref(false);
 const error = ref("");
 const filterError = ref("");
+const selectedRecordId = ref(null);
 
 const careTypeNames = {
   feeding: "Maitinimas",
   observation: "Būklės stebėjimas",
   other: "Kita priežiūra",
 };
+
+function openRecord(record) {
+  selectedRecordId.value = Number(record.id);
+}
+
+function handleUnauthorized() {
+  selectedRecordId.value = null;
+  router.push("/login");
+}
 
 async function loadRecords(targetPage = 1) {
   if (loading.value) return;
@@ -80,11 +91,9 @@ function applyFilters() {
 
   const id = String(petId.value).trim();
 
-  if (
-    id &&
-    (!/^[1-9]\d*$/.test(id) || Number(id) > 2147483647)
-  ) {
-    filterError.value = "Augintinio ID turi būti teigiamas sveikasis skaičius.";
+  if (id && (!/^[1-9]\d*$/.test(id) || Number(id) > 2147483647)) {
+    filterError.value =
+      "Augintinio ID turi būti teigiamas sveikasis skaičius.";
     return;
   }
 
@@ -114,9 +123,9 @@ function formatDateTime(value) {
   return Number.isNaN(date.getTime())
     ? "Nenurodyta"
     : new Intl.DateTimeFormat("lt-LT", {
-      dateStyle: "medium",
-      timeStyle: "short",
-    }).format(date);
+        dateStyle: "medium",
+        timeStyle: "short",
+      }).format(date);
 }
 
 onMounted(() => loadRecords());
@@ -136,7 +145,11 @@ onMounted(() => loadRecords());
       <div class="form-field">
         <label for="care-type-filter">Priežiūros tipas</label>
 
-        <select id="care-type-filter" v-model="careType" :disabled="loading">
+        <select
+          id="care-type-filter"
+          v-model="careType"
+          :disabled="loading"
+        >
           <option value="">Visi tipai</option>
           <option value="feeding">Maitinimas</option>
           <option value="observation">Būklės stebėjimas</option>
@@ -147,16 +160,33 @@ onMounted(() => loadRecords());
       <div class="form-field">
         <label for="pet-id-filter">Augintinio ID</label>
 
-        <input id="pet-id-filter" v-model="petId" type="number" min="1" max="2147483647" step="1"
-          placeholder="Visi augintiniai" :disabled="loading" />
+        <input
+          id="pet-id-filter"
+          v-model="petId"
+          type="number"
+          min="1"
+          max="2147483647"
+          step="1"
+          placeholder="Visi augintiniai"
+          :disabled="loading"
+        />
       </div>
 
       <div class="filter-actions">
-        <button class="primary-button" type="submit" :disabled="loading">
+        <button
+          class="primary-button"
+          type="submit"
+          :disabled="loading"
+        >
           Filtruoti
         </button>
 
-        <button class="secondary-button" type="button" :disabled="loading" @click="clearFilters">
+        <button
+          class="secondary-button"
+          type="button"
+          :disabled="loading"
+          @click="clearFilters"
+        >
           Išvalyti
         </button>
       </div>
@@ -173,7 +203,11 @@ onMounted(() => loadRecords());
     <div v-else-if="error" class="form-error" role="alert">
       <p>{{ error }}</p>
 
-      <button class="secondary-button" type="button" @click="loadRecords(page)">
+      <button
+        class="secondary-button"
+        type="button"
+        @click="loadRecords(page)"
+      >
         Bandyti dar kartą
       </button>
     </div>
@@ -181,16 +215,22 @@ onMounted(() => loadRecords());
     <template v-else>
       <p class="results-count" role="status">
         Rasta įrašų: {{ total }}
+
         <span v-if="appliedCareType">
           · {{ careTypeNames[appliedCareType] }}
         </span>
+
         <span v-if="appliedPetId">
           · Augintinio ID: {{ appliedPetId }}
         </span>
       </p>
 
       <div v-if="records.length" class="care-records-grid">
-        <article v-for="record in records" :key="record.id" class="care-entry">
+        <article
+          v-for="record in records"
+          :key="record.id"
+          class="care-entry"
+        >
           <div class="care-entry-heading">
             <span class="card-label">
               Augintinis #{{ record.pet_id }}
@@ -205,15 +245,30 @@ onMounted(() => loadRecords());
             </time>
           </div>
 
-          <p class="care-entry-notes">{{ record.notes }}</p>
+          <p class="care-entry-notes">
+            {{ record.notes }}
+          </p>
 
-          <RouterLink class="secondary-button button-link profile-link" :to="{
-            name: 'pet-profile',
-            params: { id: record.pet_id },
-            query: { from: 'care-records' },
-          }">
-            Augintinio profilis
-          </RouterLink>
+          <div class="record-actions">
+            <button
+              class="primary-button"
+              type="button"
+              @click="openRecord(record)"
+            >
+              Peržiūrėti įrašą
+            </button>
+
+            <RouterLink
+              class="secondary-button button-link"
+              :to="{
+                name: 'pet-profile',
+                params: { id: record.pet_id },
+                query: { from: 'care-records' },
+              }"
+            >
+              Augintinio profilis
+            </RouterLink>
+          </div>
         </article>
       </div>
 
@@ -229,18 +284,40 @@ onMounted(() => loadRecords());
         </p>
       </div>
 
-      <nav v-if="totalPages > 1" class="pagination" aria-label="Priežiūros įrašų puslapiai">
-        <button class="secondary-button" type="button" :disabled="page <= 1" @click="loadRecords(page - 1)">
+      <nav
+        v-if="totalPages > 1"
+        class="pagination"
+        aria-label="Priežiūros įrašų puslapiai"
+      >
+        <button
+          class="secondary-button"
+          type="button"
+          :disabled="page <= 1"
+          @click="loadRecords(page - 1)"
+        >
           ← Ankstesnis
         </button>
 
         <span>{{ page }} / {{ totalPages }}</span>
 
-        <button class="secondary-button" type="button" :disabled="page >= totalPages" @click="loadRecords(page + 1)">
+        <button
+          class="secondary-button"
+          type="button"
+          :disabled="page >= totalPages"
+          @click="loadRecords(page + 1)"
+        >
           Kitas →
         </button>
       </nav>
     </template>
+
+    <CareRecordDetailsModal
+      v-if="selectedRecordId !== null"
+      :key="selectedRecordId"
+      :record-id="selectedRecordId"
+      @close="selectedRecordId = null"
+      @unauthorized="handleUnauthorized"
+    />
   </section>
 </template>
 
@@ -277,6 +354,7 @@ onMounted(() => loadRecords());
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+  min-width: 0;
   padding: 24px;
   border: 1px solid #dce5d9;
   border-left: 4px solid #527b54;
@@ -303,18 +381,21 @@ onMounted(() => loadRecords());
 }
 
 .care-entry-notes {
+  max-width: 100%;
   margin: 20px 0;
   white-space: pre-wrap;
   overflow-wrap: anywhere;
   line-height: 1.7;
 }
 
-.profile-link {
+.record-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
   margin-top: auto;
 }
 
 @media (max-width: 768px) {
-
   .care-filters,
   .care-records-grid {
     grid-template-columns: 1fr;
