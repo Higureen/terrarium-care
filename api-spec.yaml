@@ -1,0 +1,2395 @@
+openapi: 3.0.3
+info:
+  title: TerraCare API
+  version: 2.0.0
+  description: 'Terariumų, augintinių ir jų priežiūros valdymo API. JWT prieigos žetonas siunčiamas Authorization:
+    Bearer antraštėje. Rolės: worker, manager, admin. Atnaujinimo žetonai keičiami kiekvieno atnaujinimo metu; sesijos
+    galiojimo pabaiga nepratęsiama. Pavyzdžiai iliustraciniai: ID, slaptažodžiai ir žetonai nėra tikri prisijungimo
+    duomenys. Pavyzdžių klaidų tekstas gali skirtis pagal validavimo atvejį.'
+servers:
+- url: https://terracare-api.onrender.com
+  description: Publikuota API
+- url: http://localhost:3000
+  description: Vietinė API
+paths:
+  /pets/{id}/profile:
+    get:
+      tags:
+      - Augintiniai
+      summary: Gauti augintinio profilį
+      description: 'Viename atsakyme sujungiama augintinio informacija, jo terariumas ir priežiūros istorija. Jei
+        priežiūros įrašų nėra, care_records yra tuščias masyvas. Prieinama prisijungusiems worker, manager ir admin.
+        Prieiga: Prisijungę worker, manager ir admin.'
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: Augintinio ID.
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 2147483647
+      responses:
+        '200':
+          description: Augintinio profilis iš trijų susijusių esybių
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - pet
+                - terrarium
+                - care_records
+                properties:
+                  pet:
+                    $ref: '#/components/schemas/Pet'
+                  terrarium:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                      name:
+                        type: string
+                      temperature_min:
+                        type: number
+                      temperature_max:
+                        type: number
+                      humidity_min:
+                        type: number
+                      humidity_max:
+                        type: number
+                      last_cleaned:
+                        type: string
+                        format: date
+                        nullable: true
+                      notes:
+                        type: string
+                        nullable: true
+                  care_records:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/CareRecord'
+              example:
+                pet:
+                  id: 1
+                  terrarium_id: 1
+                  name: Pupa
+                  species: Litoria caerulea
+                  arrival_date: '2026-09-01'
+                  notes: Aktyvi vakare.
+                terrarium:
+                  id: 1
+                  name: Demo naudotojas
+                  temperature_min: 22
+                  temperature_max: 26
+                  humidity_min: 60
+                  humidity_max: 80
+                  last_cleaned: '2026-11-01'
+                  notes: Demonstracinės pastabos.
+                care_records:
+                - id: 1
+                  pet_id: 1
+                  care_type: feeding
+                  performed_at: '2026-11-01T10:00:00.000Z'
+                  notes: Augintinis aktyvus, pakitimų nepastebėta.
+                  created_by: 1
+        '400':
+          description: Netinkamas augintinio ID
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: Netinkamas augintinio ID.
+        '404':
+          description: Augintinis nerastas
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: Augintinis nerastas.
+        '500':
+          description: Serverio klaida
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: Nepavyko gauti augintinio profilio.
+        '401':
+          description: 'Nėra galiojančio žetono: žetonas netinkamas, pasibaigęs, sesija panaikinta arba paskyra
+            neaktyvi.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: Reikalingas galiojantis prisijungimo žetonas.
+  /terrariums/{terrariumId}/pets/{petId}/care-records:
+    get:
+      tags:
+      - Priežiūros įrašai
+      summary: Gauti terariumo augintinio priežiūros įrašus
+      description: 'Tikrinama, ar terariumas egzistuoja ir ar augintinis priklauso būtent jam. Grąžinama augintinio
+        priežiūros istorija nuo naujausių įrašų. Jei istorija tuščia, grąžinamas tuščias masyvas. Prieinama prisijungusiems
+        worker, manager ir admin. Prieiga: Prisijungę worker, manager ir admin.'
+      parameters:
+      - name: terrariumId
+        in: path
+        required: true
+        description: Terariumo ID.
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 2147483647
+      - name: petId
+        in: path
+        required: true
+        description: Šiam terariumui priklausančio augintinio ID.
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 2147483647
+      responses:
+        '200':
+          description: Augintinio priežiūros įrašų sąrašas
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CareRecord'
+              example:
+              - id: 1
+                pet_id: 1
+                care_type: feeding
+                performed_at: '2026-11-01T10:00:00.000Z'
+                notes: Augintinis aktyvus, pakitimų nepastebėta.
+                created_by: 1
+        '400':
+          description: Netinkamas terariumo arba augintinio ID
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: Terariumo ir augintinio ID turi būti teigiami sveikieji skaičiai.
+        '404':
+          description: Terariumas nerastas arba augintinis šiame terariume nerastas
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                terrariumNotFound:
+                  summary: Terariumas neegzistuoja
+                  value:
+                    error: Terariumas nerastas.
+                petNotInTerrarium:
+                  summary: Augintinis neegzistuoja arba priklauso kitam terariumui
+                  value:
+                    error: Augintinis šiame terariume nerastas.
+              example:
+                error: Objektas nerastas.
+        '500':
+          description: Serverio klaida
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: Nepavyko gauti augintinio priežiūros įrašų.
+        '401':
+          description: 'Nėra galiojančio žetono: žetonas netinkamas, pasibaigęs, sesija panaikinta arba paskyra
+            neaktyvi.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: Reikalingas galiojantis prisijungimo žetonas.
+  /terrariums/{id}:
+    parameters:
+    - name: id
+      in: path
+      required: true
+      description: Terariumo ID
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 2147483647
+    get:
+      tags:
+      - Terariumai
+      summary: Gauti terariumą pagal ID
+      responses:
+        '200':
+          description: Terariumo informacija
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Terrarium'
+              example:
+                id: 1
+                name: Varlių terariumas
+                temperature_min: '22.00'
+                temperature_max: '26.00'
+                humidity_min: '60.00'
+                humidity_max: '80.00'
+                last_cleaned: '2026-11-01'
+                notes: Demonstracinis terariumas.
+        '400':
+          description: Netinkamas terariumo ID
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: Netinkami užklausos duomenys.
+        '404':
+          description: Terariumas nerastas
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: Terariumas nerastas.
+        '500':
+          description: Serverio klaida
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: Nepavyko gauti terariumų sąrašo.
+        '401':
+          description: 'Nėra galiojančio žetono: žetonas netinkamas, pasibaigęs, sesija panaikinta arba paskyra
+            neaktyvi.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: Reikalingas galiojantis prisijungimo žetonas.
+      description: 'Prieinama prisijungusiems worker, manager ir admin. Prieiga: Prisijungę worker, manager ir admin.'
+    put:
+      tags:
+      - Terariumai
+      summary: Atnaujinti terariumą
+      description: 'Pakeičia terariumo informaciją. Reikia pateikti pavadinimą ir visas temperatūros bei drėgmės
+        ribas. Nepateikus last_cleaned ar notes, jie nustatomi į null. Prieinama tik manager ir admin rolėms. Prieiga:
+        Tik manager ir admin.'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TerrariumInput'
+            example:
+              name: Demo terariumas
+              temperature_min: 22
+              temperature_max: 26
+              humidity_min: 60
+              humidity_max: 80
+              last_cleaned: '2026-10-03'
+              notes: Demonstracinis terariumas.
+      responses:
+        '200':
+          description: Terariumas atnaujintas
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Terrarium'
+              example:
+                id: 1
+                name: Demo terariumas
+                temperature_min: '22.0'
+                temperature_max: '26.0'
+                humidity_min: '60.0'
+                humidity_max: '80.0'
+                last_cleaned: '2026-10-03'
+                notes: Demonstracinis terariumas.
+        '400':
+          description: Netinkamas ID arba netaisyklingas JSON
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: Netinkami užklausos duomenys.
+        '404':
+          description: Terariumas nerastas
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: Terariumas nerastas.
+        '422':
+          description: 'Netinkami duomenys: trūksta laukų, netinkami jų tipai, ribos arba data'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: Netinkami pateikti duomenys.
+        '500':
+          description: Serverio klaida
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: Nepavyko gauti terariumų sąrašo.
+        '401':
+          description: 'Nėra galiojančio žetono: žetonas netinkamas, pasibaigęs, sesija panaikinta arba paskyra
+            neaktyvi.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: Reikalingas galiojantis prisijungimo žetonas.
+        '403':
+          description: Nepakanka teisių atlikti veiksmą.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: Neturite teisės atlikti šio veiksmo.
+    delete:
+      tags:
+      - Terariumai
+      summary: Ištrinti terariumą
+      description: 'Galima ištrinti tik terariumą, kuriame nėra augintinių. Prieinama tik manager ir admin rolėms.
+        Prieiga: Tik manager ir admin.'
+      responses:
+        '204':
+          description: Terariumas ištrintas. Atsakymo turinio nėra.
+        '400':
+          description: Netinkamas terariumo ID
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: Netinkami užklausos duomenys.
+        '404':
+          description: Terariumas nerastas
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: Terariumas nerastas.
+        '409':
+          description: Terariume yra augintinių
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: Terariumo ištrinti negalima, nes jame yra augintinių.
+        '500':
+          description: Serverio klaida
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: Nepavyko gauti terariumų sąrašo.
+        '401':
+          description: 'Nėra galiojančio žetono: žetonas netinkamas, pasibaigęs, sesija panaikinta arba paskyra
+            neaktyvi.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: Reikalingas galiojantis prisijungimo žetonas.
+        '403':
+          description: Nepakanka teisių atlikti veiksmą.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: Neturite teisės atlikti šio veiksmo.
+  /terrariums/{id}/pets:
+    get:
+      tags:
+      - Terariumai
+      summary: Gauti konkretaus terariumo augintinius
+      description: 'Hierarchinis metodas. Jei terariumas egzistuoja, bet neturi augintinių, grąžinamas tuščias masyvas.
+        Jei terariumo nėra, grąžinamas 404. Prieinama prisijungusiems worker, manager ir admin. Prieiga: Prisijungę
+        worker, manager ir admin.'
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: Terariumo ID
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 2147483647
+      responses:
+        '200':
+          description: Pasirinkto terariumo augintinių sąrašas
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Pet'
+              example:
+              - id: 1
+                terrarium_id: 1
+                name: Pupa
+                species: Litoria caerulea
+                arrival_date: '2026-09-01'
+                notes: Aktyvi vakare.
+        '400':
+          description: Netinkamas terariumo ID
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: Netinkami užklausos duomenys.
+        '404':
+          description: Terariumas nerastas
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: Terariumas nerastas.
+        '500':
+          description: Serverio klaida
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: Nepavyko gauti terariumo augintinių.
+        '401':
+          description: 'Nėra galiojančio žetono: žetonas netinkamas, pasibaigęs, sesija panaikinta arba paskyra
+            neaktyvi.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: Reikalingas galiojantis prisijungimo žetonas.
+  /terrariums:
+    get:
+      tags:
+      - Terariumai
+      summary: Gauti terariumų sąrašą
+      description: 'Grąžina vieną sąrašo puslapį. Galima ieškoti pagal pavadinimo dalį, neatsižvelgiant į raidžių
+        dydį. Nesant rezultatų, data yra tuščias masyvas. Prieinama prisijungusiems worker, manager ir admin. Prieiga:
+        Prisijungę worker, manager ir admin.'
+      parameters:
+      - name: page
+        in: query
+        description: Puslapio numeris nuo 1. Pernelyg didelis page ir limit derinys atmetamas su 400.
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 9007199254740991
+          default: 1
+      - name: limit
+        in: query
+        description: Įrašų skaičius puslapyje.
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 5
+      - name: name
+        in: query
+        description: Terariumo pavadinimo dalis. Negali būti vien tarpai arba turėti nulinį simbolį.
+        schema:
+          type: string
+          minLength: 1
+          maxLength: 100
+        example: ekspozicija
+      responses:
+        '200':
+          description: Terariumų sąrašo puslapis su navigacijos nuorodomis
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - data
+                - pagination
+                - _links
+                properties:
+                  data:
+                    type: array
+                    items:
+                      allOf:
+                      - $ref: '#/components/schemas/Terrarium'
+                      - type: object
+                        properties:
+                          _links:
+                            type: object
+                            properties:
+                              self:
+                                type: string
+                                example: /terrariums/1
+                              pets:
+                                type: string
+                                example: /terrariums/1/pets
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+                  _links:
+                    $ref: '#/components/schemas/PageLinks'
+              example:
+                data:
+                - id: 1
+                  name: Varlių terariumas
+                  temperature_min: '22.00'
+                  temperature_max: '26.00'
+                  humidity_min: '60.00'
+                  humidity_max: '80.00'
+                  last_cleaned: '2026-11-01'
+                  notes: Demonstracinis terariumas.
+                  _links:
+                    self: /terrariums/1
+                    pets: /terrariums/1/pets
+                pagination:
+                  page: 1
+                  limit: 5
+                  total: 1
+                  totalPages: 1
+                _links:
+                  self: /terrariums?page=1&limit=5
+                  first: /terrariums?page=1&limit=5
+                  previous: null
+                  next: null
+        '400':
+          description: Netinkami puslapiavimo arba filtravimo parametrai
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: page ir limit turi būti teigiami sveikieji skaičiai.
+        '500':
+          description: Serverio klaida
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: Nepavyko gauti terariumų sąrašo.
+        '401':
+          description: 'Nėra galiojančio žetono: žetonas netinkamas, pasibaigęs, sesija panaikinta arba paskyra
+            neaktyvi.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: Reikalingas galiojantis prisijungimo žetonas.
+    post:
+      tags:
+      - Terariumai
+      summary: Sukurti terariumą
+      description: 'Temperatūros ir drėgmės minimumai negali viršyti maksimumų. Nepateikus datos ar pastabų, jos
+        nustatomos į null. Prieinama tik manager ir admin rolėms. Prieiga: Tik manager ir admin.'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TerrariumInput'
+            example:
+              name: Demo terariumas
+              temperature_min: 22
+              temperature_max: 26
+              humidity_min: 60
+              humidity_max: 80
+              last_cleaned: '2026-10-03'
+              notes: Demonstracinis terariumas.
+      responses:
+        '201':
+          description: Terariumas sukurtas
+          headers:
+            Location:
+              description: Sukurto terariumo adresas
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Terrarium'
+              example:
+                id: 1
+                name: Demo terariumas
+                temperature_min: '22.0'
+                temperature_max: '26.0'
+                humidity_min: '60.0'
+                humidity_max: '80.0'
+                last_cleaned: '2026-10-03'
+                notes: Demonstracinis terariumas.
+        '400':
+          description: Netaisyklingas JSON formatas
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: Netaisyklingas JSON formatas.
+        '422':
+          description: 'Netinkami duomenys: trūksta laukų, netinkami jų tipai, ribos arba data'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: Netinkami pateikti duomenys.
+        '500':
+          description: Serverio klaida
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: Vidinė serverio klaida.
+        '401':
+          description: 'Nėra galiojančio žetono: žetonas netinkamas, pasibaigęs, sesija panaikinta arba paskyra
+            neaktyvi.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: Reikalingas galiojantis prisijungimo žetonas.
+        '403':
+          description: Nepakanka teisių atlikti veiksmą.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: Neturite teisės atlikti šio veiksmo.
+  /care-records/{id}:
+    parameters:
+    - name: id
+      in: path
+      required: true
+      description: Priežiūros įrašo ID
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 2147483647
+    get:
+      tags:
+      - Priežiūros įrašai
+      summary: Gauti priežiūros įrašą pagal ID
+      responses:
+        '200':
+          description: Priežiūros įrašo informacija
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CareRecord'
+              example:
+                id: 1
+                pet_id: 1
+                care_type: feeding
+                performed_at: '2026-11-01T10:00:00.000Z'
+                notes: Augintinis aktyvus, pakitimų nepastebėta.
+                created_by: 1
+        '400':
+          description: Netinkamas priežiūros įrašo ID
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: Netinkamas priežiūros įrašo ID.
+        '404':
+          description: Priežiūros įrašas nerastas
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: Priežiūros įrašas nerastas.
+        '500':
+          description: Serverio klaida
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: Nepavyko gauti priežiūros įrašo.
+        '401':
+          description: 'Nėra galiojančio žetono: žetonas netinkamas, pasibaigęs, sesija panaikinta arba paskyra
+            neaktyvi.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: Reikalingas galiojantis prisijungimo žetonas.
+      description: 'Prieinama prisijungusiems worker, manager ir admin. Prieiga: Prisijungę worker, manager ir admin.'
+    put:
+      tags:
+      - Priežiūros įrašai
+      summary: Atnaujinti priežiūros įrašą
+      description: 'Būtina pateikti pet_id, care_type ir notes. Įrašo laikas nekeičiamas. worker gali keisti arba
+        šalinti tik savo įrašus (created_by sutampa su naudotojo ID). manager ir admin gali tvarkyti visus įrašus.
+        Autorius redaguojant nekeičiamas. Prieiga: worker – tik savo įrašai; manager ir admin – visi įrašai.'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CareRecordInput'
+            example:
+              pet_id: 1
+              care_type: observation
+              notes: Augintinis aktyvus, pakitimų nepastebėta.
+      responses:
+        '200':
+          description: Priežiūros įrašas atnaujintas
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CareRecord'
+              example:
+                id: 1
+                pet_id: 1
+                care_type: observation
+                performed_at: '2026-11-01T10:00:00.000Z'
+                notes: Augintinis aktyvus, pakitimų nepastebėta.
+                created_by: 1
+        '400':
+          description: Netinkamas ID arba netaisyklingas JSON
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: Netinkamas priežiūros įrašo ID.
+        '404':
+          description: Priežiūros įrašas nerastas
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: Priežiūros įrašas nerastas.
+        '422':
+          description: Netinkami duomenys arba augintinis neegzistuoja
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: Nurodytas augintinis neegzistuoja.
+        '500':
+          description: Serverio klaida
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: Nepavyko atnaujinti priežiūros įrašo.
+        '401':
+          description: 'Nėra galiojančio žetono: žetonas netinkamas, pasibaigęs, sesija panaikinta arba paskyra
+            neaktyvi.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: Reikalingas galiojantis prisijungimo žetonas.
+        '403':
+          description: Nepakanka teisių atlikti veiksmą.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: Neturite teisės atlikti šio veiksmo.
+    delete:
+      tags:
+      - Priežiūros įrašai
+      summary: Ištrinti priežiūros įrašą
+      responses:
+        '204':
+          description: Priežiūros įrašas ištrintas. Atsakymo turinio nėra.
+        '400':
+          description: Netinkamas priežiūros įrašo ID
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: Netinkamas priežiūros įrašo ID.
+        '404':
+          description: Priežiūros įrašas nerastas
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: Priežiūros įrašas nerastas.
+        '500':
+          description: Serverio klaida
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: Nepavyko ištrinti priežiūros įrašo.
+        '401':
+          description: 'Nėra galiojančio žetono: žetonas netinkamas, pasibaigęs, sesija panaikinta arba paskyra
+            neaktyvi.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: Reikalingas galiojantis prisijungimo žetonas.
+        '403':
+          description: Nepakanka teisių atlikti veiksmą.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: Neturite teisės atlikti šio veiksmo.
+      description: 'worker gali keisti arba šalinti tik savo įrašus (created_by sutampa su naudotojo ID). manager
+        ir admin gali tvarkyti visus įrašus. Autorius redaguojant nekeičiamas. Prieiga: worker – tik savo įrašai;
+        manager ir admin – visi įrašai.'
+  /care-records:
+    get:
+      tags:
+      - Priežiūros įrašai
+      summary: Gauti priežiūros įrašų sąrašą
+      description: 'Grąžina vieną sąrašo puslapį nuo naujausių įrašų. Galima filtruoti pagal priežiūros tipą ir
+        augintinį. Abu filtrai gali būti naudojami kartu. Nesant rezultatų, data yra tuščias masyvas. Prieinama
+        prisijungusiems worker, manager ir admin. Prieiga: Prisijungę worker, manager ir admin.'
+      parameters:
+      - name: page
+        in: query
+        description: Puslapio numeris nuo 1. Pernelyg didelis page ir limit derinys atmetamas su 400.
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 9007199254740991
+          default: 1
+      - name: limit
+        in: query
+        description: Įrašų skaičius puslapyje.
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 5
+      - name: care_type
+        in: query
+        description: Priežiūros įrašo tipas.
+        schema:
+          type: string
+          enum:
+          - feeding
+          - observation
+          - other
+      - name: pet_id
+        in: query
+        description: Augintinio ID. Jei atitinkančių įrašų nėra, grąžinamas tuščias sąrašas.
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 2147483647
+      responses:
+        '200':
+          description: Priežiūros įrašų sąrašo puslapis su navigacijos nuorodomis
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - data
+                - pagination
+                - _links
+                properties:
+                  data:
+                    type: array
+                    items:
+                      allOf:
+                      - $ref: '#/components/schemas/CareRecord'
+                      - type: object
+                        properties:
+                          _links:
+                            type: object
+                            properties:
+                              self:
+                                type: string
+                                example: /care-records/1
+                              pet:
+                                type: string
+                                example: /pets/1
+                              profile:
+                                type: string
+                                example: /pets/1/profile
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+                  _links:
+                    $ref: '#/components/schemas/PageLinks'
+              example:
+                data:
+                - id: 1
+                  pet_id: 1
+                  care_type: feeding
+                  performed_at: '2026-11-01T10:00:00.000Z'
+                  notes: Augintinis aktyvus, pakitimų nepastebėta.
+                  created_by: 1
+                  _links:
+                    self: /care-records/1
+                    pet: /pets/1
+                    profile: /pets/1/profile
+                pagination:
+                  page: 1
+                  limit: 5
+                  total: 1
+                  totalPages: 1
+                _links:
+                  self: /care-records?page=1&limit=5
+                  first: /care-records?page=1&limit=5
+                  previous: null
+                  next: null
+        '400':
+          description: Netinkami puslapiavimo arba filtravimo parametrai
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: Priežiūros tipas turi būti feeding, observation arba other.
+        '500':
+          description: Serverio klaida
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: Nepavyko gauti priežiūros įrašų.
+        '401':
+          description: 'Nėra galiojančio žetono: žetonas netinkamas, pasibaigęs, sesija panaikinta arba paskyra
+            neaktyvi.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: Reikalingas galiojantis prisijungimo žetonas.
+    post:
+      tags:
+      - Priežiūros įrašai
+      summary: Sukurti priežiūros įrašą
+      description: 'Įrašas priskiriamas egzistuojančiam augintiniui. Laikas nustatomas automatiškai. Prieinama prisijungusiems
+        naudotojams. created_by nustato serveris pagal prisijungusį naudotoją, jo siųsti nereikia. Prieiga: Prisijungę
+        worker, manager ir admin.'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CareRecordInput'
+            example:
+              pet_id: 1
+              care_type: observation
+              notes: Augintinis aktyvus, pakitimų nepastebėta.
+      responses:
+        '201':
+          description: Priežiūros įrašas sukurtas
+          headers:
+            Location:
+              description: Sukurto priežiūros įrašo adresas
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CareRecord'
+              example:
+                id: 1
+                pet_id: 1
+                care_type: observation
+                performed_at: '2026-11-01T10:00:00.000Z'
+                notes: Augintinis aktyvus, pakitimų nepastebėta.
+                created_by: 1
+        '400':
+          description: Netaisyklingas JSON formatas
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: Netaisyklingas JSON formatas.
+        '422':
+          description: Netinkami duomenys arba augintinis neegzistuoja
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: Nurodytas augintinis neegzistuoja.
+        '500':
+          description: Serverio klaida
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: Nepavyko sukurti priežiūros įrašo.
+        '401':
+          description: 'Nėra galiojančio žetono: žetonas netinkamas, pasibaigęs, sesija panaikinta arba paskyra
+            neaktyvi.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: Reikalingas galiojantis prisijungimo žetonas.
+  /pets/{id}:
+    put:
+      tags:
+      - Augintiniai
+      summary: Atnaujinti augintinį
+      description: 'Pakeičia augintinio kortelę. Nepateikus notes, šis laukas nustatomas į null. Prieinama tik manager
+        ir admin rolėms. Prieiga: Tik manager ir admin.'
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 2147483647
+      requestBody:
+        $ref: '#/paths/~1pets/post/requestBody'
+      responses:
+        '200':
+          description: Augintinis atnaujintas
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pet'
+              example:
+                id: 1
+                terrarium_id: 1
+                name: Mėta
+                species: Litoria caerulea
+                arrival_date: '2026-10-03'
+                notes: Aktyvi vakare.
+        '400':
+          description: Netinkamas ID arba netaisyklingas JSON
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: Netinkamas augintinio ID.
+        '404':
+          description: Augintinis nerastas
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: Augintinis nerastas.
+        '422':
+          description: Netinkami duomenys arba nurodytas terariumas neegzistuoja
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: Nurodytas terariumas neegzistuoja.
+        '500':
+          description: Serverio klaida
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: Nepavyko atnaujinti augintinio.
+        '401':
+          description: 'Nėra galiojančio žetono: žetonas netinkamas, pasibaigęs, sesija panaikinta arba paskyra
+            neaktyvi.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: Reikalingas galiojantis prisijungimo žetonas.
+        '403':
+          description: Nepakanka teisių atlikti veiksmą.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: Neturite teisės atlikti šio veiksmo.
+    delete:
+      tags:
+      - Augintiniai
+      summary: Ištrinti augintinį
+      description: 'Augintinį galima ištrinti tik tada, kai jis neturi priežiūros įrašų. Prieinama tik manager ir
+        admin rolėms. Prieiga: Tik manager ir admin.'
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 2147483647
+      responses:
+        '204':
+          description: Augintinis ištrintas. Atsakymo turinio nėra.
+        '400':
+          description: Netinkamas augintinio ID
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: Netinkamas augintinio ID.
+        '404':
+          description: Augintinis nerastas
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: Augintinis nerastas.
+        '409':
+          description: Augintinis turi priežiūros įrašų
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: Augintinio ištrinti negalima, nes jis turi priežiūros įrašų.
+        '500':
+          description: Serverio klaida
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: Nepavyko ištrinti augintinio.
+        '401':
+          description: 'Nėra galiojančio žetono: žetonas netinkamas, pasibaigęs, sesija panaikinta arba paskyra
+            neaktyvi.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: Reikalingas galiojantis prisijungimo žetonas.
+        '403':
+          description: Nepakanka teisių atlikti veiksmą.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: Neturite teisės atlikti šio veiksmo.
+    get:
+      tags:
+      - Augintiniai
+      summary: Gauti augintinį pagal ID
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: Augintinio ID
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 2147483647
+        example: 1
+      responses:
+        '200':
+          description: Augintinio informacija
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pet'
+              example:
+                id: 1
+                terrarium_id: 1
+                name: Pupa
+                species: Litoria caerulea
+                arrival_date: '2026-09-01'
+                notes: Aktyvi vakare.
+        '400':
+          description: Netinkamas augintinio ID
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: Augintinio ID turi būti teigiamas sveikasis skaičius.
+        '404':
+          description: Augintinis nerastas
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: Augintinis nerastas.
+        '500':
+          description: Serverio klaida
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: Nepavyko gauti augintinio.
+        '401':
+          description: 'Nėra galiojančio žetono: žetonas netinkamas, pasibaigęs, sesija panaikinta arba paskyra
+            neaktyvi.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: Reikalingas galiojantis prisijungimo žetonas.
+      description: 'Prieinama prisijungusiems worker, manager ir admin. Prieiga: Prisijungę worker, manager ir admin.'
+  /pets:
+    post:
+      tags:
+      - Augintiniai
+      summary: Sukurti augintinį
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - terrarium_id
+              - name
+              - species
+              - arrival_date
+              properties:
+                terrarium_id:
+                  type: integer
+                  minimum: 1
+                  maximum: 2147483647
+                name:
+                  type: string
+                  minLength: 1
+                  maxLength: 100
+                  description: Vardas negali būti sudarytas tik iš tarpų.
+                species:
+                  type: string
+                  minLength: 1
+                  maxLength: 150
+                  description: Rūšis negali būti sudaryta tik iš tarpų.
+                arrival_date:
+                  type: string
+                  format: date
+                  description: Augintinio atvykimo data.
+                notes:
+                  type: string
+                  nullable: true
+            example:
+              terrarium_id: 1
+              name: Mėta
+              species: Litoria caerulea
+              arrival_date: '2026-10-03'
+              notes: Aktyvi vakare.
+      responses:
+        '201':
+          description: Augintinis sukurtas
+          headers:
+            Location:
+              description: Sukurto augintinio adresas
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pet'
+              example:
+                id: 1
+                terrarium_id: 1
+                name: Mėta
+                species: Litoria caerulea
+                arrival_date: '2026-10-03'
+                notes: Aktyvi vakare.
+        '400':
+          description: Netaisyklingas JSON formatas
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: Netinkami užklausos duomenys.
+        '422':
+          description: Netinkami duomenys arba nurodytas terariumas neegzistuoja
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: Netinkami pateikti duomenys.
+        '500':
+          description: Serverio klaida
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: Vidinė serverio klaida.
+        '401':
+          description: 'Nėra galiojančio žetono: žetonas netinkamas, pasibaigęs, sesija panaikinta arba paskyra
+            neaktyvi.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: Reikalingas galiojantis prisijungimo žetonas.
+        '403':
+          description: Nepakanka teisių atlikti veiksmą.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: Neturite teisės atlikti šio veiksmo.
+      description: 'Prieinama tik manager ir admin rolėms. Prieiga: Tik manager ir admin.'
+    get:
+      tags:
+      - Augintiniai
+      summary: Gauti augintinių sąrašą
+      description: 'Grąžina vieną sąrašo puslapį. Galima filtruoti pagal tikslų rūšies pavadinimą, neatsižvelgiant
+        į raidžių dydį. Nesant rezultatų, data yra tuščias masyvas. Prieinama prisijungusiems worker, manager ir
+        admin. Prieiga: Prisijungę worker, manager ir admin.'
+      parameters:
+      - name: page
+        in: query
+        description: Puslapio numeris nuo 1.
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 9007199254740991
+          default: 1
+      - name: limit
+        in: query
+        description: Įrašų skaičius puslapyje. Pernelyg didelis page ir limit derinys atmetamas su 400.
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 5
+      - name: species
+        in: query
+        description: Tikslus rūšies pavadinimas. Negali būti vien tarpai arba turėti nulinį simbolį.
+        schema:
+          type: string
+          minLength: 1
+          maxLength: 150
+        example: Litoria caerulea
+      responses:
+        '200':
+          description: Augintinių sąrašo puslapis su navigacijos nuorodomis
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - data
+                - pagination
+                - _links
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/PetListItem'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+                  _links:
+                    $ref: '#/components/schemas/PageLinks'
+              example:
+                data:
+                - id: 1
+                  terrarium_id: 1
+                  name: Pupa
+                  species: Litoria caerulea
+                  arrival_date: '2026-09-01'
+                  notes: Aktyvi vakare.
+                  _links:
+                    self: /pets/1
+                    profile: /pets/1/profile
+                    terrarium: /terrariums/1
+                    care_records: /terrariums/1/pets/1/care-records
+                pagination:
+                  page: 1
+                  limit: 5
+                  total: 1
+                  totalPages: 1
+                _links:
+                  self: /pets?page=1&limit=5
+                  first: /pets?page=1&limit=5
+                  previous: null
+                  next: null
+        '400':
+          description: Netinkami puslapiavimo arba filtravimo parametrai
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: page ir limit turi būti teigiami sveikieji skaičiai.
+        '500':
+          description: Serverio klaida
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: Nepavyko gauti augintinių sąrašo.
+        '401':
+          description: 'Nėra galiojančio žetono: žetonas netinkamas, pasibaigęs, sesija panaikinta arba paskyra
+            neaktyvi.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: Reikalingas galiojantis prisijungimo žetonas.
+  /auth/register:
+    post:
+      tags:
+      - Autentifikacija
+      summary: Užregistruoti darbuotoją
+      responses:
+        '201':
+          description: Paskyra sukurta; žetonai neišduodami.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+              example:
+                id: 1
+                name: Demo naudotojas
+                email: demo@example.com
+                role: worker
+                created_at: '2026-11-01T10:00:00.000Z'
+        '409':
+          description: El. pašto adresas jau naudojamas.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: Veiksmas negalimas dėl susijusių arba pasikartojančių duomenų.
+        '500':
+          description: Vidinė serverio arba duomenų bazės klaida.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: Vidinė serverio klaida.
+        '400':
+          description: Netaisyklingas JSON formatas arba netinkamas ID.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: Netinkami užklausos duomenys.
+        '422':
+          description: Netinkami užklausos duomenys.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: Netinkami pateikti duomenys.
+        '429':
+          description: Viršytas užklausų dažnio limitas.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: Per daug užklausų. Bandykite vėliau.
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterInput'
+            example:
+              name: Demo naudotojas
+              email: demo@example.com
+              password: Pavyzdinis-Slaptazodis-2026
+      description: ' Prieiga: Vieša prieiga.'
+  /auth/login:
+    post:
+      tags:
+      - Autentifikacija
+      summary: Prisijungti
+      responses:
+        '200':
+          description: Išduota žetonų pora.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenPair'
+              example:
+                accessToken: PAKEISKITE_GAUTU_JWT
+                refreshToken: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+                tokenType: Bearer
+                user:
+                  id: 1
+                  name: Demo naudotojas
+                  email: demo@example.com
+                  role: worker
+        '401':
+          description: Neteisingi prisijungimo duomenys arba neaktyvi paskyra.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: Reikalingas galiojantis prisijungimo žetonas.
+        '500':
+          description: Vidinė serverio arba duomenų bazės klaida.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: Vidinė serverio klaida.
+        '400':
+          description: Netaisyklingas JSON formatas arba netinkamas ID.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: Netinkami užklausos duomenys.
+        '422':
+          description: Netinkami užklausos duomenys.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: Netinkami pateikti duomenys.
+        '429':
+          description: Viršytas užklausų dažnio limitas.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: Per daug užklausų. Bandykite vėliau.
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginInput'
+            example:
+              email: demo@example.com
+              password: Pavyzdinis-Slaptazodis-2026
+      description: ' Prieiga: Vieša prieiga.'
+  /auth/refresh:
+    post:
+      tags:
+      - Autentifikacija
+      summary: Atnaujinti žetonus
+      responses:
+        '200':
+          description: Nauja žetonų pora. Išsaugokite naują refreshToken.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenPair'
+              example:
+                accessToken: PAKEISKITE_GAUTU_JWT
+                refreshToken: bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+                tokenType: Bearer
+                user:
+                  id: 1
+                  name: Demo naudotojas
+                  email: demo@example.com
+                  role: worker
+        '401':
+          description: Atnaujinimo žetonas netinkamas, panaudotas arba nebegalioja.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: Reikalingas galiojantis prisijungimo žetonas.
+        '500':
+          description: Vidinė serverio arba duomenų bazės klaida.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: Vidinė serverio klaida.
+        '400':
+          description: Netaisyklingas JSON formatas arba netinkamas ID.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: Netinkami užklausos duomenys.
+        '422':
+          description: Netinkami užklausos duomenys.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: Netinkami pateikti duomenys.
+        '429':
+          description: Viršytas užklausų dažnio limitas.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: Per daug užklausų. Bandykite vėliau.
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RefreshInput'
+            example:
+              refreshToken: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+      description: 'Access žetonas nereikalingas. Senasis refreshToken pakeičiamas ir nebeveikia. Pradinė sesijos
+        galiojimo pabaiga nepratęsiama. Ankstesnis accessToken gali veikti iki galiojimo pabaigos, kol sesija aktyvi.
+        Prieiga: Vieša prieiga.'
+  /auth/me:
+    get:
+      tags:
+      - Autentifikacija
+      summary: Gauti prisijungusį naudotoją
+      responses:
+        '200':
+          description: Naudotojo id, name, email ir role.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+              example:
+                id: 1
+                name: Demo naudotojas
+                email: demo@example.com
+                role: worker
+        '500':
+          description: Vidinė serverio arba duomenų bazės klaida.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: Vidinė serverio klaida.
+        '401':
+          description: 'Nėra galiojančio žetono: žetonas netinkamas, pasibaigęs, sesija panaikinta arba paskyra
+            neaktyvi.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: Reikalingas galiojantis prisijungimo žetonas.
+      description: ' Prieiga: Prisijungę worker, manager ir admin.'
+  /auth/logout:
+    post:
+      tags:
+      - Autentifikacija
+      summary: Atsijungti nuo dabartinės sesijos
+      responses:
+        '204':
+          description: Sesija panaikinta. Atsakymo turinio nėra.
+        '500':
+          description: Vidinė serverio arba duomenų bazės klaida.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: Vidinė serverio klaida.
+        '401':
+          description: 'Nėra galiojančio žetono: žetonas netinkamas, pasibaigęs, sesija panaikinta arba paskyra
+            neaktyvi.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: Reikalingas galiojantis prisijungimo žetonas.
+      description: 'Reikalingas galiojantis accessToken. Panaikinama tik dabartinė sesija: jos access ir refresh
+        žetonai nebeveikia. Prieiga: Prisijungę worker, manager ir admin.'
+  /users:
+    get:
+      tags:
+      - Naudotojai
+      summary: Gauti naudotojų sąrašą
+      responses:
+        '200':
+          description: Naudotojų sąrašas be slaptažodžių maišų ir žetonų.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+              example:
+              - id: 1
+                name: Demo naudotojas
+                email: demo@example.com
+                role: worker
+                is_active: true
+                created_at: '2026-11-01T10:00:00.000Z'
+        '403':
+          description: Nepakanka teisių atlikti veiksmą.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: Neturite teisės atlikti šio veiksmo.
+        '500':
+          description: Vidinė serverio arba duomenų bazės klaida.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: Vidinė serverio klaida.
+        '401':
+          description: 'Nėra galiojančio žetono: žetonas netinkamas, pasibaigęs, sesija panaikinta arba paskyra
+            neaktyvi.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: Reikalingas galiojantis prisijungimo žetonas.
+      description: 'Tik admin. Prieiga: Tik admin.'
+  /users/{id}:
+    patch:
+      tags:
+      - Naudotojai
+      summary: Keisti rolę arba paskyros aktyvumą
+      responses:
+        '200':
+          description: Atnaujintas naudotojas.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+              example:
+                id: 1
+                name: Demo naudotojas
+                email: demo@example.com
+                role: worker
+                is_active: true
+                created_at: '2026-11-01T10:00:00.000Z'
+        '403':
+          description: Reikia admin rolės; savo paskyros keisti negalima.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: Neturite teisės atlikti šio veiksmo.
+        '404':
+          description: Naudotojas nerastas.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: Objektas nerastas.
+        '500':
+          description: Vidinė serverio arba duomenų bazės klaida.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: Vidinė serverio klaida.
+        '401':
+          description: 'Nėra galiojančio žetono: žetonas netinkamas, pasibaigęs, sesija panaikinta arba paskyra
+            neaktyvi.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: Reikalingas galiojantis prisijungimo žetonas.
+        '400':
+          description: Netaisyklingas JSON formatas arba netinkamas ID.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: Netinkami užklausos duomenys.
+        '422':
+          description: Netinkami užklausos duomenys.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: Netinkami pateikti duomenys.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserUpdateInput'
+            example:
+              role: worker
+              is_active: true
+      description: 'Tik admin. Bent vienas iš laukų role arba is_active. Visos naudotojo sesijos panaikinamos. Pakartotinis
+        paskyros įjungimas senų sesijų neatkuria. Prieiga: Tik admin.'
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 2147483647
+  /terrariums/{id}/last-cleaned:
+    patch:
+      tags:
+      - Terariumai
+      summary: Atnaujinti paskutinio valymo datą
+      responses:
+        '200':
+          description: Atnaujinta valymo data.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - id
+                - name
+                - last_cleaned
+                properties:
+                  id:
+                    type: integer
+                    minimum: 1
+                    maximum: 2147483647
+                  name:
+                    type: string
+                  last_cleaned:
+                    type: string
+                    format: date
+              example:
+                id: 1
+                name: Demo naudotojas
+                last_cleaned: '2026-11-01'
+        '403':
+          description: Nepakanka teisių atlikti veiksmą.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: Neturite teisės atlikti šio veiksmo.
+        '404':
+          description: Terariumas nerastas.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: Objektas nerastas.
+        '500':
+          description: Vidinė serverio arba duomenų bazės klaida.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: Vidinė serverio klaida.
+        '401':
+          description: 'Nėra galiojančio žetono: žetonas netinkamas, pasibaigęs, sesija panaikinta arba paskyra
+            neaktyvi.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: Reikalingas galiojantis prisijungimo žetonas.
+        '400':
+          description: Netaisyklingas JSON formatas arba netinkamas ID.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: Netinkami užklausos duomenys.
+        '422':
+          description: Netinkami užklausos duomenys.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: Netinkami pateikti duomenys.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CleaningDateInput'
+            example:
+              last_cleaned: '2026-11-01'
+      description: 'worker, manager ir admin. Galima keisti tik last_cleaned lauką. Prieiga: Prisijungę worker,
+        manager ir admin.'
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 2147483647
+  /health:
+    get:
+      tags:
+      - Sistema
+      summary: Patikrinti serverio ir DB būklę
+      security: []
+      responses:
+        '200':
+          description: Serveris ir DB pasiekiami.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    enum:
+                    - ok
+                  database:
+                    type: string
+                    enum:
+                    - connected
+              example:
+                status: ok
+                database: connected
+        '503':
+          description: Duomenų bazė nepasiekiama.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    enum:
+                    - error
+                  database:
+                    type: string
+                    enum:
+                    - unavailable
+              example:
+                status: error
+                database: unavailable
+      description: ' Prieiga: Vieša prieiga.'
+components:
+  schemas:
+    Pagination:
+      type: object
+      properties:
+        page:
+          type: integer
+          example: 1
+        limit:
+          type: integer
+          example: 5
+        total:
+          type: integer
+          example: 12
+        totalPages:
+          type: integer
+          example: 3
+    PageLinks:
+      type: object
+      properties:
+        self:
+          type: string
+        first:
+          type: string
+        previous:
+          type: string
+          nullable: true
+        next:
+          type: string
+          nullable: true
+    PetListItem:
+      allOf:
+      - $ref: '#/components/schemas/Pet'
+      - type: object
+        properties:
+          _links:
+            type: object
+            properties:
+              self:
+                type: string
+                example: /pets/1
+              profile:
+                type: string
+                example: /pets/1/profile
+              terrarium:
+                type: string
+                example: /terrariums/1
+              care_records:
+                type: string
+                example: /terrariums/1/pets/1/care-records
+    Terrarium:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: Varlių terariumas
+        temperature_min:
+          type: string
+          example: '22.00'
+        temperature_max:
+          type: string
+          example: '26.00'
+        humidity_min:
+          type: string
+          example: '60.00'
+        humidity_max:
+          type: string
+          example: '80.00'
+        last_cleaned:
+          type: string
+          format: date
+          nullable: true
+        notes:
+          type: string
+          nullable: true
+          example: Demonstracinis terariumas.
+    TerrariumInput:
+      type: object
+      required:
+      - name
+      - temperature_min
+      - temperature_max
+      - humidity_min
+      - humidity_max
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+          description: Pavadinimas negali būti sudarytas tik iš tarpų.
+          example: Demo terariumas
+        temperature_min:
+          type: number
+          minimum: -999.99
+          maximum: 999.99
+          description: Minimali temperatūra °C. Negali viršyti maksimalios.
+          example: 22
+        temperature_max:
+          type: number
+          minimum: -999.99
+          maximum: 999.99
+          description: Maksimali temperatūra °C.
+          example: 26
+        humidity_min:
+          type: number
+          minimum: 0
+          maximum: 100
+          description: Minimali drėgmė procentais. Negali viršyti maksimalios.
+          example: 60
+        humidity_max:
+          type: number
+          minimum: 0
+          maximum: 100
+          description: Maksimali drėgmė procentais.
+          example: 80
+        last_cleaned:
+          type: string
+          format: date
+          nullable: true
+          example: '2026-10-03'
+        notes:
+          type: string
+          nullable: true
+          example: Demonstracinis terariumas.
+    CareRecord:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        pet_id:
+          type: integer
+          example: 1
+        care_type:
+          type: string
+          enum:
+          - feeding
+          - observation
+          - other
+        performed_at:
+          type: string
+          format: date-time
+          readOnly: true
+          description: Laiką automatiškai nustato serveris.
+        notes:
+          type: string
+          example: Augintinis aktyvus, pakitimų nepastebėta.
+        created_by:
+          type: integer
+          nullable: true
+          readOnly: true
+          description: Įrašo autoriaus ID. Senuose įrašuose gali būti null. Kai kurie sudėtiniai ir hierarchiniai
+            atsakymai šio lauko negrąžina.
+          example: 1
+    CareRecordInput:
+      type: object
+      required:
+      - pet_id
+      - care_type
+      - notes
+      properties:
+        pet_id:
+          type: integer
+          minimum: 1
+          maximum: 2147483647
+          example: 1
+        care_type:
+          type: string
+          enum:
+          - feeding
+          - observation
+          - other
+          example: observation
+        notes:
+          type: string
+          minLength: 1
+          description: Pastabos negali būti sudarytos tik iš tarpų.
+          example: Augintinis aktyvus, pakitimų nepastebėta.
+    Pet:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        terrarium_id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: Pupa
+        species:
+          type: string
+          example: Litoria caerulea
+        arrival_date:
+          type: string
+          format: date
+          example: '2026-09-01'
+        notes:
+          type: string
+          nullable: true
+          example: Aktyvi vakare.
+    Error:
+      type: object
+      required:
+      - error
+      properties:
+        error:
+          type: string
+          example: Nepavyko gauti augintinių sąrašo.
+    User:
+      type: object
+      required:
+      - id
+      - name
+      - email
+      - role
+      properties:
+        id:
+          type: integer
+          minimum: 1
+          maximum: 2147483647
+        name:
+          type: string
+        email:
+          type: string
+        role:
+          type: string
+          enum:
+          - worker
+          - manager
+          - admin
+        is_active:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+    RegisterInput:
+      type: object
+      required:
+      - name
+      - email
+      - password
+      description: Rolės pateikti negalima; serveris suteikia worker.
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+        email:
+          type: string
+          format: email
+          maxLength: 254
+        password:
+          type: string
+          format: password
+          minLength: 15
+          maxLength: 128
+          writeOnly: true
+    LoginInput:
+      type: object
+      required:
+      - email
+      - password
+      properties:
+        email:
+          type: string
+          minLength: 1
+          maxLength: 254
+        password:
+          type: string
+          format: password
+          minLength: 1
+          maxLength: 128
+          writeOnly: true
+    RefreshInput:
+      type: object
+      required:
+      - refreshToken
+      properties:
+        refreshToken:
+          type: string
+          pattern: ^[a-f0-9]{64}$
+          description: Naujausias login arba refresh atsakyme gautas atnaujinimo žetonas.
+    TokenPair:
+      type: object
+      required:
+      - accessToken
+      - refreshToken
+      - tokenType
+      - user
+      properties:
+        accessToken:
+          type: string
+          description: 'HS256 pasirašytas JWT: sub, role, sid, iat, exp, iss, aud. Pagal numatytą konfigūraciją
+            galioja 15 min.'
+        refreshToken:
+          type: string
+          description: Atsitiktinis 64 šešioliktainių simbolių žetonas; DB saugoma SHA-256 maiša. Pagal numatytą
+            konfigūraciją sesija galioja 7 dienas.
+        tokenType:
+          type: string
+          enum:
+          - Bearer
+        user:
+          $ref: '#/components/schemas/User'
+    UserUpdateInput:
+      type: object
+      minProperties: 1
+      additionalProperties: false
+      properties:
+        role:
+          type: string
+          enum:
+          - worker
+          - manager
+          - admin
+        is_active:
+          type: boolean
+    CleaningDateInput:
+      type: object
+      required:
+      - last_cleaned
+      additionalProperties: false
+      properties:
+        last_cleaned:
+          type: string
+          format: date
+          example: '2026-11-01'
+          description: Tikra kalendorinė data YYYY-MM-DD formatu.
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Įklijuokite accessToken be kabučių ir be Bearer prefikso.
+  responses:
+    Unauthorized:
+      description: 'Nėra galiojančio žetono: žetonas netinkamas, pasibaigęs, sesija panaikinta arba paskyra neaktyvi.'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Forbidden:
+      description: Nepakanka teisių atlikti veiksmą.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    ValidationError:
+      description: Netinkami užklausos duomenys.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    InternalError:
+      description: Vidinė serverio arba duomenų bazės klaida.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+security:
+- bearerAuth: []

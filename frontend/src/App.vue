@@ -113,7 +113,7 @@ async function handleLogout() {
             </p>
           </div>
 
-          <RouterLink v-else to="/login" @click="menuOpen = false">
+          <RouterLink v-else-if="$route.path !== '/login'" to="/login" @click="menuOpen = false">
             Prisijungti
           </RouterLink>
         </nav>
