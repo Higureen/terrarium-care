@@ -564,15 +564,6 @@ app.post("/terrariums", authorize("manager", "admin"), async (req, res) => {
     }
 });
 
-app.use((error, req, res, next) => {
-    if (error.type === "entity.parse.failed") {
-        return res.status(400).json({
-            error: "Netaisyklingas JSON formatas."
-        });
-    }
-
-    next(error);
-});
 //hierarchinis get metodas
 app.get("/terrariums/:id/pets", async (req, res) => {
   const id = Number(req.params.id);
@@ -771,6 +762,47 @@ app.patch(
     }
   }
 );
+
+// neegzistuojantis API kelias
+app.use((req, res) => {
+  return res.status(404).json({
+    error: "API kelias nerastas."
+  });
+});
+
+// bendras klaidu apdorojimas
+app.use((error, req, res, next) => {
+  if (res.headersSent) {
+    return next(error);
+  }
+
+  if (error.type === "entity.parse.failed") {
+    return res.status(400).json({
+      error: "Netaisyklingas JSON formatas."
+    });
+  }
+
+  if (error.type === "entity.too.large") {
+    return res.status(413).json({
+      error: "Užklausos duomenys per dideli."
+    });
+  }
+
+  if (
+    error.type === "encoding.unsupported" ||
+    error.type === "charset.unsupported"
+  ) {
+    return res.status(415).json({
+      error: "Nepalaikoma užklausos koduotė."
+    });
+  }
+
+  console.error("Unhandled request error:", error.message);
+
+  return res.status(500).json({
+    error: "Vidinė serverio klaida."
+  });
+});
 
 app.listen(port, "0.0.0.0", () => {
   console.log(`TerraCare API paleista, portas: ${port}`);

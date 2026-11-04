@@ -1,181 +1,705 @@
 <?xml version='1.0' encoding='utf-8'?>
 <mxfile host="app.diagrams.net">
-  <diagram name="01 Kompiuteris" id="0">
-    <mxGraphModel page="1" pageWidth="1200" pageHeight="900" grid="1" gridSize="10">
+  <diagram name="01 Prisijungimas" id="0">
+    <mxGraphModel page="1" pageWidth="1200" pageHeight="1100" grid="1" gridSize="10">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
-        <mxCell id="2" value="TerraCare • Terariumų sąrašo wireframe • Vadovo vaizdas" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#eeeeee;strokeColor=#888888;fontColor=#262626;fontFamily=Arial;fontSize=20;fontStyle=1;spacing=12;">
-          <mxGeometry x="40" y="30" width="1120" height="45" as="geometry" />
+        <mxCell id="2" value="01 Prisijungimas • TerraCare • dabartinės sąsajos wireframe" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#eeeeee;fontSize=22;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="20" y="20" width="1160" height="55" />
         </mxCell>
-        <mxCell id="3" value="TerraCare     |     Terariumai     |     Augintiniai     |     Priežiūra     |     Atsijungti" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#dddddd;strokeColor=#888888;fontColor=#262626;fontFamily=Arial;fontSize=16;fontStyle=0;spacing=12;">
-          <mxGeometry x="40" y="100" width="1120" height="70" as="geometry" />
+        <mxCell id="3" value="TerraCare       Terariumai   Augintiniai   Priežiūra   Naudotojai*      Vardas / rolė    Atsijungti" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#ffffff;fontSize=16;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="40" y="100" width="1120" height="65" />
         </mxCell>
-        <mxCell id="4" value="Terariumai" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#FFFFFF;strokeColor=#888888;fontColor=#262626;fontFamily=Arial;fontSize=28;fontStyle=1;spacing=12;">
-          <mxGeometry x="70" y="200" width="350" height="55" as="geometry" />
+        <mxCell id="4" value="TerraCare    •    Zoologijos sodo terariumų ir augintinių priežiūra.             API dokumentacija ↗" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#dddddd;fontSize=16;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="40" y="970" width="1120" height="65" />
         </mxCell>
-        <mxCell id="5" value="+ Naujas terariumas" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#eeeeee;strokeColor=#888888;fontColor=#262626;fontFamily=Arial;fontSize=16;fontStyle=0;spacing=12;">
-          <mxGeometry x="850" y="200" width="280" height="55" as="geometry" />
+        <mxCell id="5" value="Neprisijungus navigacijoje rodoma „Prisijungti“. Registruojantis rolė nepasirenkama." vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#eeeeee;fontSize=14;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="40" y="1050" width="1120" height="40" />
         </mxCell>
-        <mxCell id="6" value="Paieška pagal pavadinimą…" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#FFFFFF;strokeColor=#888888;fontColor=#262626;fontFamily=Arial;fontSize=16;fontStyle=0;spacing=12;">
-          <mxGeometry x="70" y="285" width="790" height="50" as="geometry" />
+        <mxCell id="6" value="" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#fafafa;fontSize=16;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="340" y="190" width="520" height="660" />
         </mxCell>
-        <mxCell id="7" value="Ieškoti" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#eeeeee;strokeColor=#888888;fontColor=#262626;fontFamily=Arial;fontSize=16;fontStyle=0;spacing=12;">
-          <mxGeometry x="880" y="285" width="250" height="50" as="geometry" />
+        <mxCell id="7" value="Prisijungimas" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#ffffff;fontSize=28;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="365" y="210" width="470" height="65" />
         </mxCell>
-        <mxCell id="8" value="" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#FFFFFF;strokeColor=#888888;fontColor=#262626;fontFamily=Arial;fontSize=16;fontStyle=0;spacing=12;">
-          <mxGeometry x="70" y="370" width="340" height="330" as="geometry" />
+        <mxCell id="8" value="El. paštas&#10;[ įvedimo laukas ]" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#ffffff;fontSize=14;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="365" y="290" width="470" height="55" />
         </mxCell>
-        <mxCell id="9" value="PAVEIKSLĖLIS" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#eeeeee;strokeColor=#888888;fontColor=#262626;fontFamily=Arial;fontSize=14;fontStyle=0;spacing=12;">
-          <mxGeometry x="85" y="385" width="310" height="130" as="geometry" />
+        <mxCell id="9" value="Slaptažodis&#10;[ įvedimo laukas ]" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#ffffff;fontSize=14;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="365" y="380" width="470" height="55" />
         </mxCell>
-        <mxCell id="10" value="Varlių terariumas&#10;Temperatūra: 24–28 °C&#10;Drėgmė: 70–90 %" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#FFFFFF;strokeColor=#888888;fontColor=#262626;fontFamily=Arial;fontSize=16;fontStyle=0;spacing=12;">
-          <mxGeometry x="85" y="530" width="310" height="95" as="geometry" />
+        <mxCell id="10" value="Klaida / registracijos sėkmės pranešimas" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#ffffff;fontSize=13;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="365" y="480" width="470" height="40" />
         </mxCell>
-        <mxCell id="11" value="Peržiūrėti" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#eeeeee;strokeColor=#888888;fontColor=#262626;fontFamily=Arial;fontSize=16;fontStyle=0;spacing=12;">
-          <mxGeometry x="85" y="640" width="310" height="40" as="geometry" />
+        <mxCell id="11" value="Prisijungti" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#eeeeee;fontSize=14;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="365" y="535" width="470" height="45" />
         </mxCell>
-        <mxCell id="12" value="" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#FFFFFF;strokeColor=#888888;fontColor=#262626;fontFamily=Arial;fontSize=16;fontStyle=0;spacing=12;">
-          <mxGeometry x="430" y="370" width="340" height="330" as="geometry" />
-        </mxCell>
-        <mxCell id="13" value="PAVEIKSLĖLIS" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#eeeeee;strokeColor=#888888;fontColor=#262626;fontFamily=Arial;fontSize=14;fontStyle=0;spacing=12;">
-          <mxGeometry x="445" y="385" width="310" height="130" as="geometry" />
-        </mxCell>
-        <mxCell id="14" value="Driežų terariumas&#10;Temperatūra: 26–32 °C&#10;Drėgmė: 40–60 %" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#FFFFFF;strokeColor=#888888;fontColor=#262626;fontFamily=Arial;fontSize=16;fontStyle=0;spacing=12;">
-          <mxGeometry x="445" y="530" width="310" height="95" as="geometry" />
-        </mxCell>
-        <mxCell id="15" value="Peržiūrėti" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#eeeeee;strokeColor=#888888;fontColor=#262626;fontFamily=Arial;fontSize=16;fontStyle=0;spacing=12;">
-          <mxGeometry x="445" y="640" width="310" height="40" as="geometry" />
-        </mxCell>
-        <mxCell id="16" value="" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#FFFFFF;strokeColor=#888888;fontColor=#262626;fontFamily=Arial;fontSize=16;fontStyle=0;spacing=12;">
-          <mxGeometry x="790" y="370" width="340" height="330" as="geometry" />
-        </mxCell>
-        <mxCell id="17" value="PAVEIKSLĖLIS" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#eeeeee;strokeColor=#888888;fontColor=#262626;fontFamily=Arial;fontSize=14;fontStyle=0;spacing=12;">
-          <mxGeometry x="805" y="385" width="310" height="130" as="geometry" />
-        </mxCell>
-        <mxCell id="18" value="Vorų terariumas&#10;Temperatūra: 23–27 °C&#10;Drėgmė: 60–80 %" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#FFFFFF;strokeColor=#888888;fontColor=#262626;fontFamily=Arial;fontSize=16;fontStyle=0;spacing=12;">
-          <mxGeometry x="805" y="530" width="310" height="95" as="geometry" />
-        </mxCell>
-        <mxCell id="19" value="Peržiūrėti" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#eeeeee;strokeColor=#888888;fontColor=#262626;fontFamily=Arial;fontSize=16;fontStyle=0;spacing=12;">
-          <mxGeometry x="805" y="640" width="310" height="40" as="geometry" />
-        </mxCell>
-        <mxCell id="20" value="← Ankstesnis     1     Kitas →" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#FFFFFF;strokeColor=#888888;fontColor=#262626;fontFamily=Arial;fontSize=16;fontStyle=0;spacing=12;">
-          <mxGeometry x="380" y="735" width="440" height="45" as="geometry" />
-        </mxCell>
-        <mxCell id="21" value="TerraCare • Zoologijos sodo terariumų priežiūra     |     API dokumentacija" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#dddddd;strokeColor=#888888;fontColor=#262626;fontFamily=Arial;fontSize=14;fontStyle=0;spacing=12;">
-          <mxGeometry x="40" y="810" width="1120" height="60" as="geometry" />
+        <mxCell id="12" value="Neturite paskyros? Registruotis" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#ffffff;fontSize=16;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="365" y="595" width="470" height="40" />
         </mxCell>
       </root>
     </mxGraphModel>
   </diagram>
-  <diagram name="02 Telefonas" id="1">
-    <mxGraphModel page="1" pageWidth="440" pageHeight="1100" grid="1" gridSize="10">
+  <diagram name="02 Registracija" id="1">
+    <mxGraphModel page="1" pageWidth="1200" pageHeight="1100" grid="1" gridSize="10">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
-        <mxCell id="2" value="TerraCare                                      ☰" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#dddddd;strokeColor=#888888;fontColor=#262626;fontFamily=Arial;fontSize=20;fontStyle=1;spacing=12;">
-          <mxGeometry x="20" y="20" width="400" height="65" as="geometry" />
+        <mxCell id="2" value="02 Registracija • TerraCare • dabartinės sąsajos wireframe" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#eeeeee;fontSize=22;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="20" y="20" width="1160" height="55" />
         </mxCell>
-        <mxCell id="3" value="Terariumai" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#FFFFFF;strokeColor=#888888;fontColor=#262626;fontFamily=Arial;fontSize=26;fontStyle=1;spacing=12;">
-          <mxGeometry x="20" y="110" width="400" height="50" as="geometry" />
+        <mxCell id="3" value="TerraCare       Terariumai   Augintiniai   Priežiūra   Naudotojai*      Vardas / rolė    Atsijungti" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#ffffff;fontSize=16;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="40" y="100" width="1120" height="65" />
         </mxCell>
-        <mxCell id="4" value="+ Naujas terariumas" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#eeeeee;strokeColor=#888888;fontColor=#262626;fontFamily=Arial;fontSize=16;fontStyle=0;spacing=12;">
-          <mxGeometry x="20" y="175" width="400" height="45" as="geometry" />
+        <mxCell id="4" value="TerraCare    •    Zoologijos sodo terariumų ir augintinių priežiūra.             API dokumentacija ↗" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#dddddd;fontSize=16;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="40" y="970" width="1120" height="65" />
         </mxCell>
-        <mxCell id="5" value="Paieška…" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#FFFFFF;strokeColor=#888888;fontColor=#262626;fontFamily=Arial;fontSize=16;fontStyle=0;spacing=12;">
-          <mxGeometry x="20" y="240" width="285" height="45" as="geometry" />
+        <mxCell id="5" value="Neprisijungus navigacijoje rodoma „Prisijungti“. Registruojantis rolė nepasirenkama." vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#eeeeee;fontSize=14;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="40" y="1050" width="1120" height="40" />
         </mxCell>
-        <mxCell id="6" value="Ieškoti" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#eeeeee;strokeColor=#888888;fontColor=#262626;fontFamily=Arial;fontSize=14;fontStyle=0;spacing=12;">
-          <mxGeometry x="315" y="240" width="105" height="45" as="geometry" />
+        <mxCell id="6" value="" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#fafafa;fontSize=16;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="340" y="190" width="520" height="660" />
         </mxCell>
-        <mxCell id="7" value="" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#FFFFFF;strokeColor=#888888;fontColor=#262626;fontFamily=Arial;fontSize=16;fontStyle=0;spacing=12;">
-          <mxGeometry x="20" y="310" width="400" height="275" as="geometry" />
+        <mxCell id="7" value="Registracija" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#ffffff;fontSize=28;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="365" y="210" width="470" height="65" />
         </mxCell>
-        <mxCell id="8" value="PAVEIKSLĖLIS" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#eeeeee;strokeColor=#888888;fontColor=#262626;fontFamily=Arial;fontSize=16;fontStyle=0;spacing=12;">
-          <mxGeometry x="35" y="325" width="370" height="110" as="geometry" />
+        <mxCell id="8" value="Vardas&#10;[ įvedimo laukas ]" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#ffffff;fontSize=14;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="365" y="290" width="470" height="55" />
         </mxCell>
-        <mxCell id="9" value="Varlių terariumas&#10;Temperatūros ir drėgmės ribos" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#FFFFFF;strokeColor=#888888;fontColor=#262626;fontFamily=Arial;fontSize=16;fontStyle=0;spacing=12;">
-          <mxGeometry x="35" y="445" width="370" height="70" as="geometry" />
+        <mxCell id="9" value="El. paštas&#10;[ įvedimo laukas ]" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#ffffff;fontSize=14;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="365" y="380" width="470" height="55" />
         </mxCell>
-        <mxCell id="10" value="Peržiūrėti" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#eeeeee;strokeColor=#888888;fontColor=#262626;fontFamily=Arial;fontSize=16;fontStyle=0;spacing=12;">
-          <mxGeometry x="35" y="530" width="370" height="40" as="geometry" />
+        <mxCell id="10" value="Slaptažodis&#10;[ įvedimo laukas ]" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#ffffff;fontSize=14;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="365" y="470" width="470" height="55" />
         </mxCell>
-        <mxCell id="11" value="" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#FFFFFF;strokeColor=#888888;fontColor=#262626;fontFamily=Arial;fontSize=16;fontStyle=0;spacing=12;">
-          <mxGeometry x="20" y="605" width="400" height="275" as="geometry" />
+        <mxCell id="11" value="Pakartokite slaptažodį&#10;[ įvedimo laukas ]" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#ffffff;fontSize=14;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="365" y="560" width="470" height="55" />
         </mxCell>
-        <mxCell id="12" value="PAVEIKSLĖLIS" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#eeeeee;strokeColor=#888888;fontColor=#262626;fontFamily=Arial;fontSize=16;fontStyle=0;spacing=12;">
-          <mxGeometry x="35" y="620" width="370" height="110" as="geometry" />
+        <mxCell id="12" value="Klaida / registracijos sėkmės pranešimas" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#ffffff;fontSize=13;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="365" y="660" width="470" height="40" />
         </mxCell>
-        <mxCell id="13" value="Driežų terariumas&#10;Temperatūros ir drėgmės ribos" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#FFFFFF;strokeColor=#888888;fontColor=#262626;fontFamily=Arial;fontSize=16;fontStyle=0;spacing=12;">
-          <mxGeometry x="35" y="740" width="370" height="70" as="geometry" />
+        <mxCell id="13" value="Registruotis" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#eeeeee;fontSize=14;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="365" y="715" width="470" height="45" />
         </mxCell>
-        <mxCell id="14" value="Peržiūrėti" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#eeeeee;strokeColor=#888888;fontColor=#262626;fontFamily=Arial;fontSize=16;fontStyle=0;spacing=12;">
-          <mxGeometry x="35" y="825" width="370" height="40" as="geometry" />
-        </mxCell>
-        <mxCell id="15" value="← Ankstesnis     1     Kitas →" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#FFFFFF;strokeColor=#888888;fontColor=#262626;fontFamily=Arial;fontSize=14;fontStyle=0;spacing=12;">
-          <mxGeometry x="20" y="920" width="400" height="45" as="geometry" />
-        </mxCell>
-        <mxCell id="16" value="TerraCare&#10;Terariumų priežiūra&#10;API dokumentacija" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#dddddd;strokeColor=#888888;fontColor=#262626;fontFamily=Arial;fontSize=14;fontStyle=0;spacing=12;">
-          <mxGeometry x="20" y="985" width="400" height="85" as="geometry" />
+        <mxCell id="14" value="Jau turite paskyrą? Prisijungti" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#ffffff;fontSize=16;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="365" y="775" width="470" height="40" />
         </mxCell>
       </root>
     </mxGraphModel>
   </diagram>
-  <diagram name="03 Kurimo modalas" id="2">
-    <mxGraphModel page="1" pageWidth="800" pageHeight="850" grid="1" gridSize="10">
+  <diagram name="03 Terariumų sąrašas" id="2">
+    <mxGraphModel page="1" pageWidth="1200" pageHeight="1100" grid="1" gridSize="10">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
-        <mxCell id="2" value="" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#dddddd;strokeColor=#888888;fontColor=#262626;fontFamily=Arial;fontSize=16;fontStyle=0;spacing=12;">
-          <mxGeometry x="30" y="30" width="740" height="780" as="geometry" />
+        <mxCell id="2" value="03 Terariumų sąrašas • TerraCare • dabartinės sąsajos wireframe" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#eeeeee;fontSize=22;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="20" y="20" width="1160" height="55" />
         </mxCell>
-        <mxCell id="3" value="" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#FFFFFF;strokeColor=#888888;fontColor=#262626;fontFamily=Arial;fontSize=16;fontStyle=0;spacing=12;">
-          <mxGeometry x="100" y="70" width="600" height="690" as="geometry" />
+        <mxCell id="3" value="TerraCare       Terariumai   Augintiniai   Priežiūra   Naudotojai*      Vardas / rolė    Atsijungti" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#ffffff;fontSize=16;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="40" y="100" width="1120" height="65" />
         </mxCell>
-        <mxCell id="4" value="Naujas terariumas                            ×" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#FFFFFF;strokeColor=#888888;fontColor=#262626;fontFamily=Arial;fontSize=22;fontStyle=1;spacing=12;">
-          <mxGeometry x="125" y="90" width="550" height="55" as="geometry" />
+        <mxCell id="4" value="TerraCare    •    Zoologijos sodo terariumų ir augintinių priežiūra.             API dokumentacija ↗" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#dddddd;fontSize=16;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="40" y="970" width="1120" height="65" />
         </mxCell>
-        <mxCell id="5" value="Pavadinimas *" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#f5f5f5;strokeColor=#888888;fontColor=#262626;fontFamily=Arial;fontSize=14;fontStyle=0;spacing=12;">
-          <mxGeometry x="125" y="165" width="550" height="30" as="geometry" />
+        <mxCell id="5" value="Kūrimas, redagavimas ir šalinimas: manager / admin. Naudotojų navigacija*: tik admin." vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#eeeeee;fontSize=14;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="40" y="1050" width="1120" height="40" />
         </mxCell>
-        <mxCell id="6" value="" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#FFFFFF;strokeColor=#888888;fontColor=#262626;fontFamily=Arial;fontSize=16;fontStyle=0;spacing=12;">
-          <mxGeometry x="125" y="200" width="550" height="45" as="geometry" />
+        <mxCell id="6" value="Terariumai                                                   + Naujas terariumas" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#fafafa;fontSize=28;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="60" y="185" width="1080" height="65" />
         </mxCell>
-        <mxCell id="7" value="Temperatūros ribos (°C) *" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#f5f5f5;strokeColor=#888888;fontColor=#262626;fontFamily=Arial;fontSize=14;fontStyle=0;spacing=12;">
-          <mxGeometry x="125" y="255" width="550" height="30" as="geometry" />
+        <mxCell id="7" value="Kasdienė priežiūra prasideda nuo dėmesio&#10;&#10;Laikymo sąlygos ir paskutinio valymo informacija." vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#eeeeee;fontSize=21;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="60" y="270" width="750" height="160" />
         </mxCell>
-        <mxCell id="8" value="Min." vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#FFFFFF;strokeColor=#888888;fontColor=#262626;fontFamily=Arial;fontSize=16;fontStyle=0;spacing=12;">
-          <mxGeometry x="125" y="290" width="265" height="45" as="geometry" />
+        <mxCell id="8" value="NUOTRAUKA&#10;rupūžė • toad.jpg" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#dddddd;fontSize=20;align=center;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="830" y="270" width="310" height="160" />
         </mxCell>
-        <mxCell id="9" value="Maks." vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#FFFFFF;strokeColor=#888888;fontColor=#262626;fontFamily=Arial;fontSize=16;fontStyle=0;spacing=12;">
-          <mxGeometry x="410" y="290" width="265" height="45" as="geometry" />
+        <mxCell id="9" value="Paieška pagal pavadinimą&#10;[ įvedimo laukas ]" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#ffffff;fontSize=14;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="60" y="450" width="600" height="55" />
         </mxCell>
-        <mxCell id="10" value="Drėgmės ribos (%) *" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#f5f5f5;strokeColor=#888888;fontColor=#262626;fontFamily=Arial;fontSize=14;fontStyle=0;spacing=12;">
-          <mxGeometry x="125" y="345" width="550" height="30" as="geometry" />
+        <mxCell id="10" value="Ieškoti" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#eeeeee;fontSize=14;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="680" y="460" width="160" height="45" />
         </mxCell>
-        <mxCell id="11" value="Min." vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#FFFFFF;strokeColor=#888888;fontColor=#262626;fontFamily=Arial;fontSize=16;fontStyle=0;spacing=12;">
-          <mxGeometry x="125" y="380" width="265" height="45" as="geometry" />
+        <mxCell id="11" value="Rasta terariumų: 5" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#ffffff;fontSize=14;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="60" y="520" width="1080" height="40" />
         </mxCell>
-        <mxCell id="12" value="Maks." vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#FFFFFF;strokeColor=#888888;fontColor=#262626;fontFamily=Arial;fontSize=16;fontStyle=0;spacing=12;">
-          <mxGeometry x="410" y="380" width="265" height="45" as="geometry" />
+        <mxCell id="12" value="TERARIUMAS&#10;Pavadinimas&#10;&#10;Temperatūros ribos: 22–26 °C&#10;Drėgmės ribos: 60–80 %&#10;Paskutinis valymas: YYYY-MM-DD&#10;&#10;Pastabos" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#ffffff;fontSize=16;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="60" y="580" width="350" height="290" />
         </mxCell>
-        <mxCell id="13" value="Paskutinio valymo data" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#f5f5f5;strokeColor=#888888;fontColor=#262626;fontFamily=Arial;fontSize=14;fontStyle=0;spacing=12;">
-          <mxGeometry x="125" y="435" width="550" height="30" as="geometry" />
+        <mxCell id="13" value="Peržiūrėti   Redaguoti   Ištrinti" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#eeeeee;fontSize=14;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="70" y="810" width="330" height="45" />
         </mxCell>
-        <mxCell id="14" value="MMMM-MM-DD" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#FFFFFF;strokeColor=#888888;fontColor=#262626;fontFamily=Arial;fontSize=16;fontStyle=0;spacing=12;">
-          <mxGeometry x="125" y="470" width="550" height="45" as="geometry" />
+        <mxCell id="14" value="TERARIUMAS&#10;Pavadinimas&#10;&#10;Temperatūros ribos: 22–26 °C&#10;Drėgmės ribos: 60–80 %&#10;Paskutinis valymas: YYYY-MM-DD&#10;&#10;Pastabos" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#ffffff;fontSize=16;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="425" y="580" width="350" height="290" />
         </mxCell>
-        <mxCell id="15" value="Pastabos" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#f5f5f5;strokeColor=#888888;fontColor=#262626;fontFamily=Arial;fontSize=14;fontStyle=0;spacing=12;">
-          <mxGeometry x="125" y="525" width="550" height="30" as="geometry" />
+        <mxCell id="15" value="Peržiūrėti   Redaguoti   Ištrinti" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#eeeeee;fontSize=14;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="435" y="810" width="330" height="45" />
         </mxCell>
-        <mxCell id="16" value="" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#FFFFFF;strokeColor=#888888;fontColor=#262626;fontFamily=Arial;fontSize=16;fontStyle=0;spacing=12;">
-          <mxGeometry x="125" y="560" width="550" height="75" as="geometry" />
+        <mxCell id="16" value="TERARIUMAS&#10;Pavadinimas&#10;&#10;Temperatūros ribos: 22–26 °C&#10;Drėgmės ribos: 60–80 %&#10;Paskutinis valymas: YYYY-MM-DD&#10;&#10;Pastabos" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#ffffff;fontSize=16;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="790" y="580" width="350" height="290" />
         </mxCell>
-        <mxCell id="17" value="Atšaukti" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#FFFFFF;strokeColor=#888888;fontColor=#262626;fontFamily=Arial;fontSize=16;fontStyle=0;spacing=12;">
-          <mxGeometry x="355" y="680" width="150" height="45" as="geometry" />
+        <mxCell id="17" value="Peržiūrėti   Redaguoti   Ištrinti" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#eeeeee;fontSize=14;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="800" y="810" width="330" height="45" />
         </mxCell>
-        <mxCell id="18" value="Išsaugoti" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fillColor=#dddddd;strokeColor=#888888;fontColor=#262626;fontFamily=Arial;fontSize=16;fontStyle=0;spacing=12;">
-          <mxGeometry x="520" y="680" width="155" height="45" as="geometry" />
+        <mxCell id="18" value="← Ankstesnis         1 / 2         Kitas →" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#ffffff;fontSize=16;align=center;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="400" y="895" width="400" height="40" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram name="04 Terariumo informacija" id="3">
+    <mxGraphModel page="1" pageWidth="1200" pageHeight="1100" grid="1" gridSize="10">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="2" value="04 Terariumo informacija • TerraCare • dabartinės sąsajos wireframe" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#eeeeee;fontSize=22;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="20" y="20" width="1160" height="55" />
+        </mxCell>
+        <mxCell id="3" value="TerraCare       Terariumai   Augintiniai   Priežiūra   Naudotojai*      Vardas / rolė    Atsijungti" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#ffffff;fontSize=16;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="40" y="100" width="1120" height="65" />
+        </mxCell>
+        <mxCell id="4" value="TerraCare    •    Zoologijos sodo terariumų ir augintinių priežiūra.             API dokumentacija ↗" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#dddddd;fontSize=16;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="40" y="970" width="1120" height="65" />
+        </mxCell>
+        <mxCell id="5" value="Valymo datą keičia visos trys rolės. Augintinio kūrimas, redagavimas ir trynimas: manager / admin." vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#eeeeee;fontSize=14;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="40" y="1050" width="1120" height="40" />
+        </mxCell>
+        <mxCell id="6" value="← Visi terariumai" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#ffffff;fontSize=16;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="60" y="175" width="1080" height="30" />
+        </mxCell>
+        <mxCell id="7" value="Terariumo pavadinimas" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#fafafa;fontSize=28;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="60" y="215" width="1080" height="45" />
+        </mxCell>
+        <mxCell id="8" value="Temperatūros ribos     |     Drėgmės ribos     |     Paskutinis valymas&#10;&#10;Pastabos" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#eeeeee;fontSize=16;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="60" y="265" width="1080" height="140" />
+        </mxCell>
+        <mxCell id="9" value="Paskutinio valymo data&#10;[ įvedimo laukas ]" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#ffffff;fontSize=14;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="60" y="425" width="400" height="55" />
+        </mxCell>
+        <mxCell id="10" value="Atnaujinti valymo datą" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#eeeeee;fontSize=14;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="480" y="435" width="240" height="45" />
+        </mxCell>
+        <mxCell id="11" value="Augintiniai  [3]                                          + Naujas augintinis" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#ffffff;fontSize=24;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="60" y="510" width="1080" height="55" />
+        </mxCell>
+        <mxCell id="12" value="AUGINTINIS&#10;Vardas&#10;&#10;Rūšis&#10;Atvykimo data&#10;Pastabos" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#ffffff;fontSize=16;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="60" y="590" width="350" height="270" />
+        </mxCell>
+        <mxCell id="13" value="Profilis   Redaguoti   Ištrinti" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#eeeeee;fontSize=14;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="70" y="800" width="330" height="45" />
+        </mxCell>
+        <mxCell id="14" value="AUGINTINIS&#10;Vardas&#10;&#10;Rūšis&#10;Atvykimo data&#10;Pastabos" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#ffffff;fontSize=16;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="425" y="590" width="350" height="270" />
+        </mxCell>
+        <mxCell id="15" value="Profilis   Redaguoti   Ištrinti" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#eeeeee;fontSize=14;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="435" y="800" width="330" height="45" />
+        </mxCell>
+        <mxCell id="16" value="AUGINTINIS&#10;Vardas&#10;&#10;Rūšis&#10;Atvykimo data&#10;Pastabos" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#ffffff;fontSize=16;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="790" y="590" width="350" height="270" />
+        </mxCell>
+        <mxCell id="17" value="Profilis   Redaguoti   Ištrinti" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#eeeeee;fontSize=14;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="800" y="800" width="330" height="45" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram name="05 Augintinių sąrašas" id="4">
+    <mxGraphModel page="1" pageWidth="1200" pageHeight="1100" grid="1" gridSize="10">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="2" value="05 Augintinių sąrašas • TerraCare • dabartinės sąsajos wireframe" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#eeeeee;fontSize=22;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="20" y="20" width="1160" height="55" />
+        </mxCell>
+        <mxCell id="3" value="TerraCare       Terariumai   Augintiniai   Priežiūra   Naudotojai*      Vardas / rolė    Atsijungti" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#ffffff;fontSize=16;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="40" y="100" width="1120" height="65" />
+        </mxCell>
+        <mxCell id="4" value="TerraCare    •    Zoologijos sodo terariumų ir augintinių priežiūra.             API dokumentacija ↗" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#dddddd;fontSize=16;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="40" y="970" width="1120" height="65" />
+        </mxCell>
+        <mxCell id="5" value="Augintiniai" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#fafafa;fontSize=28;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="60" y="185" width="1080" height="65" />
+        </mxCell>
+        <mxCell id="6" value="Rūšis (tikslus pavadinimas)&#10;[ įvedimo laukas ]" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#ffffff;fontSize=14;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="60" y="280" width="650" height="55" />
+        </mxCell>
+        <mxCell id="7" value="Ieškoti" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#eeeeee;fontSize=14;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="740" y="290" width="170" height="45" />
+        </mxCell>
+        <mxCell id="8" value="AUGINTINIS&#10;Vardas&#10;&#10;Rūšis&#10;Atvykimo data&#10;Terariumo nuoroda&#10;Pastabos" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#ffffff;fontSize=16;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="60" y="390" width="350" height="340" />
+        </mxCell>
+        <mxCell id="9" value="Augintinio profilis" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#eeeeee;fontSize=14;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="70" y="665" width="330" height="45" />
+        </mxCell>
+        <mxCell id="10" value="AUGINTINIS&#10;Vardas&#10;&#10;Rūšis&#10;Atvykimo data&#10;Terariumo nuoroda&#10;Pastabos" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#ffffff;fontSize=16;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="425" y="390" width="350" height="340" />
+        </mxCell>
+        <mxCell id="11" value="Augintinio profilis" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#eeeeee;fontSize=14;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="435" y="665" width="330" height="45" />
+        </mxCell>
+        <mxCell id="12" value="AUGINTINIS&#10;Vardas&#10;&#10;Rūšis&#10;Atvykimo data&#10;Terariumo nuoroda&#10;Pastabos" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#ffffff;fontSize=16;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="790" y="390" width="350" height="340" />
+        </mxCell>
+        <mxCell id="13" value="Augintinio profilis" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#eeeeee;fontSize=14;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="800" y="665" width="330" height="45" />
+        </mxCell>
+        <mxCell id="14" value="← Ankstesnis         1 / 2         Kitas →" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#ffffff;fontSize=16;align=center;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="400" y="795" width="400" height="45" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram name="06 Augintinio profilis" id="5">
+    <mxGraphModel page="1" pageWidth="1200" pageHeight="1100" grid="1" gridSize="10">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="2" value="06 Augintinio profilis • TerraCare • dabartinės sąsajos wireframe" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#eeeeee;fontSize=22;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="20" y="20" width="1160" height="55" />
+        </mxCell>
+        <mxCell id="3" value="TerraCare       Terariumai   Augintiniai   Priežiūra   Naudotojai*      Vardas / rolė    Atsijungti" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#ffffff;fontSize=16;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="40" y="100" width="1120" height="65" />
+        </mxCell>
+        <mxCell id="4" value="TerraCare    •    Zoologijos sodo terariumų ir augintinių priežiūra.             API dokumentacija ↗" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#dddddd;fontSize=16;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="40" y="970" width="1120" height="65" />
+        </mxCell>
+        <mxCell id="5" value="Grįžimo nuoroda priklauso nuo atėjimo puslapio. Worker redaguoja / šalina tik savo priežiūros įrašus." vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#eeeeee;fontSize=14;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="40" y="1050" width="1120" height="40" />
+        </mxCell>
+        <mxCell id="6" value="← Atgal į sąrašą / terariumą" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#ffffff;fontSize=16;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="60" y="175" width="1080" height="30" />
+        </mxCell>
+        <mxCell id="7" value="Augintinio vardas" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#fafafa;fontSize=28;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="60" y="215" width="1080" height="45" />
+        </mxCell>
+        <mxCell id="8" value="Rūšis&#10;Atvykimo data   |   Terariumas (nuoroda)   |   Laikymo sąlygos&#10;&#10;Pastabos" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#eeeeee;fontSize=16;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="60" y="270" width="1080" height="170" />
+        </mxCell>
+        <mxCell id="9" value="Priežiūros istorija  [2]                          + Naujas priežiūros įrašas" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#ffffff;fontSize=23;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="60" y="475" width="1080" height="55" />
+        </mxCell>
+        <mxCell id="10" value="Maitinimas / Būklės stebėjimas / Kita priežiūra&#10;Atlikimo data ir laikas&#10;&#10;Įrašo pastabos" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#ffffff;fontSize=16;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="60" y="550" width="1080" height="155" />
+        </mxCell>
+        <mxCell id="11" value="Redaguoti     Ištrinti" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#eeeeee;fontSize=14;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="790" y="645" width="330" height="45" />
+        </mxCell>
+        <mxCell id="12" value="Maitinimas / Būklės stebėjimas / Kita priežiūra&#10;Atlikimo data ir laikas&#10;&#10;Įrašo pastabos" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#ffffff;fontSize=16;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="60" y="725" width="1080" height="155" />
+        </mxCell>
+        <mxCell id="13" value="Redaguoti     Ištrinti" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#eeeeee;fontSize=14;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="790" y="820" width="330" height="45" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram name="07 Priežiūros įrašų sąrašas" id="6">
+    <mxGraphModel page="1" pageWidth="1200" pageHeight="1100" grid="1" gridSize="10">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="2" value="07 Priežiūros įrašų sąrašas • TerraCare • dabartinės sąsajos wireframe" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#eeeeee;fontSize=22;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="20" y="20" width="1160" height="55" />
+        </mxCell>
+        <mxCell id="3" value="TerraCare       Terariumai   Augintiniai   Priežiūra   Naudotojai*      Vardas / rolė    Atsijungti" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#ffffff;fontSize=16;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="40" y="100" width="1120" height="65" />
+        </mxCell>
+        <mxCell id="4" value="TerraCare    •    Zoologijos sodo terariumų ir augintinių priežiūra.             API dokumentacija ↗" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#dddddd;fontSize=16;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="40" y="970" width="1120" height="65" />
+        </mxCell>
+        <mxCell id="5" value="Priežiūros įrašai" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#fafafa;fontSize=28;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="60" y="185" width="1080" height="65" />
+        </mxCell>
+        <mxCell id="6" value="Priežiūros tipas (select)&#10;[ įvedimo laukas ]" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#ffffff;fontSize=14;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="60" y="280" width="360" height="55" />
+        </mxCell>
+        <mxCell id="7" value="Augintinio ID (number)&#10;[ įvedimo laukas ]" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#ffffff;fontSize=14;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="440" y="280" width="320" height="55" />
+        </mxCell>
+        <mxCell id="8" value="Filtruoti      Išvalyti" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#eeeeee;fontSize=14;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="780" y="290" width="360" height="45" />
+        </mxCell>
+        <mxCell id="9" value="Rasta įrašų: 8  •  Pritaikyti filtrai" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#ffffff;fontSize=14;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="60" y="360" width="1080" height="40" />
+        </mxCell>
+        <mxCell id="10" value="Augintinis #ID&#10;Priežiūros tipas&#10;Atlikimo data ir laikas&#10;&#10;Pastabos" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#ffffff;fontSize=16;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="60" y="430" width="530" height="310" />
+        </mxCell>
+        <mxCell id="11" value="Peržiūrėti įrašą     Augintinio profilis" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#eeeeee;fontSize=14;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="70" y="675" width="510" height="45" />
+        </mxCell>
+        <mxCell id="12" value="Augintinis #ID&#10;Priežiūros tipas&#10;Atlikimo data ir laikas&#10;&#10;Pastabos" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#ffffff;fontSize=16;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="610" y="430" width="530" height="310" />
+        </mxCell>
+        <mxCell id="13" value="Peržiūrėti įrašą     Augintinio profilis" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#eeeeee;fontSize=14;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="620" y="675" width="510" height="45" />
+        </mxCell>
+        <mxCell id="14" value="← Ankstesnis         1 / 2         Kitas →" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#ffffff;fontSize=16;align=center;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="400" y="795" width="400" height="45" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram name="08 Naudotojų administravimas" id="7">
+    <mxGraphModel page="1" pageWidth="1200" pageHeight="1100" grid="1" gridSize="10">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="2" value="08 Naudotojų administravimas • TerraCare • dabartinės sąsajos wireframe" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#eeeeee;fontSize=22;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="20" y="20" width="1160" height="55" />
+        </mxCell>
+        <mxCell id="3" value="TerraCare       Terariumai   Augintiniai   Priežiūra   Naudotojai*      Vardas / rolė    Atsijungti" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#ffffff;fontSize=16;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="40" y="100" width="1120" height="65" />
+        </mxCell>
+        <mxCell id="4" value="TerraCare    •    Zoologijos sodo terariumų ir augintinių priežiūra.             API dokumentacija ↗" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#dddddd;fontSize=16;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="40" y="970" width="1120" height="65" />
+        </mxCell>
+        <mxCell id="5" value="Puslapis pasiekiamas tik admin. Savo paskyros teisių ir aktyvumo keitimas išjungtas." vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#eeeeee;fontSize=14;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="40" y="1050" width="1120" height="40" />
+        </mxCell>
+        <mxCell id="6" value="Naudotojai" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#fafafa;fontSize=28;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="60" y="185" width="1080" height="65" />
+        </mxCell>
+        <mxCell id="7" value="Vardas&#10;Rolė&#10;&#10;El. paštas&#10;Paskyros būsena: aktyvi&#10;Registracijos data" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#ffffff;fontSize=16;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="60" y="310" width="350" height="350" />
+        </mxCell>
+        <mxCell id="8" value="Keisti teises" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#eeeeee;fontSize=14;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="70" y="590" width="330" height="45" />
+        </mxCell>
+        <mxCell id="9" value="Vardas&#10;Rolė&#10;&#10;El. paštas&#10;Paskyros būsena: aktyvi&#10;Registracijos data" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#ffffff;fontSize=16;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="425" y="310" width="350" height="350" />
+        </mxCell>
+        <mxCell id="10" value="Keisti teises" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#eeeeee;fontSize=14;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="435" y="590" width="330" height="45" />
+        </mxCell>
+        <mxCell id="11" value="Vardas&#10;Rolė&#10;&#10;El. paštas&#10;Paskyros būsena: aktyvi&#10;Registracijos data" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#ffffff;fontSize=16;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="790" y="310" width="350" height="350" />
+        </mxCell>
+        <mxCell id="12" value="Keisti teises" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#eeeeee;fontSize=14;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="800" y="590" width="330" height="45" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram name="09 Telefonas – terariumai" id="8">
+    <mxGraphModel page="1" pageWidth="1200" pageHeight="1100" grid="1" gridSize="10">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="2" value="09 Telefonas – terariumai • TerraCare • dabartinės sąsajos wireframe" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#eeeeee;fontSize=22;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="20" y="20" width="1160" height="55" />
+        </mxCell>
+        <mxCell id="3" value="" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#fafafa;fontSize=16;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="40" y="100" width="390" height="890" />
+        </mxCell>
+        <mxCell id="4" value="♧ TerraCare                            ☰" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#ffffff;fontSize=20;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="40" y="100" width="390" height="65" />
+        </mxCell>
+        <mxCell id="5" value="TerraCare&#10;Terariumų ir augintinių priežiūra&#10;API dokumentacija ↗" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#dddddd;fontSize=13;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="40" y="910" width="390" height="80" />
+        </mxCell>
+        <mxCell id="6" value="Siaurame ekrane viena kortelių kolona.&#10;Paieškos mygtukas per visą plotį.&#10;Nuotrauka perkeliama po tekstu.&#10;Kortelės ir modalai telpa į ekrano plotį.&#10;Turinys slenkamas vertikaliai." vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#eeeeee;fontSize=14;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="480" y="190" width="680" height="160" />
+        </mxCell>
+        <mxCell id="7" value="Terariumai      + Naujas" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#ffffff;fontSize=22;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="55" y="180" width="360" height="60" />
+        </mxCell>
+        <mxCell id="8" value="Kasdienė priežiūra prasideda nuo dėmesio" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#eeeeee;fontSize=16;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="55" y="250" width="360" height="90" />
+        </mxCell>
+        <mxCell id="9" value="NUOTRAUKA" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#dddddd;fontSize=20;align=center;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="95" y="350" width="280" height="130" />
+        </mxCell>
+        <mxCell id="10" value="Paieška pagal pavadinimą&#10;[ įvedimo laukas ]" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#ffffff;fontSize=14;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="55" y="500" width="360" height="55" />
+        </mxCell>
+        <mxCell id="11" value="Ieškoti" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#eeeeee;fontSize=14;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="55" y="570" width="360" height="45" />
+        </mxCell>
+        <mxCell id="12" value="TERARIUMAS&#10;Pavadinimas&#10;Temperatūros ir drėgmės ribos&#10;Paskutinis valymas&#10;Pastabos&#10;&#10;Peržiūrėti  Redaguoti  Ištrinti" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#ffffff;fontSize=16;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="55" y="630" width="360" height="260" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram name="10 Telefonas – atvertas meniu" id="9">
+    <mxGraphModel page="1" pageWidth="1200" pageHeight="1100" grid="1" gridSize="10">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="2" value="10 Telefonas – atvertas meniu • TerraCare • dabartinės sąsajos wireframe" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#eeeeee;fontSize=22;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="20" y="20" width="1160" height="55" />
+        </mxCell>
+        <mxCell id="3" value="" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#fafafa;fontSize=16;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="40" y="100" width="390" height="890" />
+        </mxCell>
+        <mxCell id="4" value="♧ TerraCare                            ☰" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#ffffff;fontSize=20;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="40" y="100" width="390" height="65" />
+        </mxCell>
+        <mxCell id="5" value="TerraCare&#10;Terariumų ir augintinių priežiūra&#10;API dokumentacija ↗" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#dddddd;fontSize=13;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="40" y="910" width="390" height="80" />
+        </mxCell>
+        <mxCell id="6" value="Hamburgeris atidaro / uždaro meniu.&#10;Pasirinkus nuorodą meniu uždaromas.&#10;Naudotojai matomi tik administratoriui." vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#eeeeee;fontSize=14;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="480" y="190" width="680" height="160" />
+        </mxCell>
+        <mxCell id="7" value="Terariumai" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#eeeeee;fontSize=16;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="55" y="180" width="360" height="55" />
+        </mxCell>
+        <mxCell id="8" value="Augintiniai" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#eeeeee;fontSize=16;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="55" y="245" width="360" height="55" />
+        </mxCell>
+        <mxCell id="9" value="Priežiūra" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#eeeeee;fontSize=16;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="55" y="310" width="360" height="55" />
+        </mxCell>
+        <mxCell id="10" value="Naudotojai (tik admin)" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#eeeeee;fontSize=16;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="55" y="375" width="360" height="55" />
+        </mxCell>
+        <mxCell id="11" value="Vardas • Rolė" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#eeeeee;fontSize=16;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="55" y="440" width="360" height="55" />
+        </mxCell>
+        <mxCell id="12" value="Atsijungti" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#eeeeee;fontSize=16;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="55" y="505" width="360" height="55" />
+        </mxCell>
+        <mxCell id="13" value="Puslapio turinys&#10;&#10;Terariumų sąrašas" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#ffffff;fontSize=22;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="55" y="600" width="360" height="260" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram name="11 Terariumo modalas" id="10">
+    <mxGraphModel page="1" pageWidth="1200" pageHeight="1100" grid="1" gridSize="10">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="2" value="11 Terariumo modalas • TerraCare • dabartinės sąsajos wireframe" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#eeeeee;fontSize=22;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="20" y="20" width="1160" height="55" />
+        </mxCell>
+        <mxCell id="3" value="TerraCare       Terariumai   Augintiniai   Priežiūra   Naudotojai*      Vardas / rolė    Atsijungti" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#ffffff;fontSize=16;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="40" y="100" width="1120" height="65" />
+        </mxCell>
+        <mxCell id="4" value="TerraCare    •    Zoologijos sodo terariumų ir augintinių priežiūra.             API dokumentacija ↗" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#dddddd;fontSize=16;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="40" y="970" width="1120" height="65" />
+        </mxCell>
+        <mxCell id="5" value="Tas pats modalas naudojamas kūrimui ir redagavimui. Saugant valdikliai išjungiami." vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#eeeeee;fontSize=14;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="40" y="1050" width="1120" height="40" />
+        </mxCell>
+        <mxCell id="6" value="Puslapio fonas pritemdytas" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#dddddd;fontSize=16;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="40" y="170" width="1120" height="770" />
+        </mxCell>
+        <mxCell id="7" value="" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#ffffff;fontSize=16;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="290" y="200" width="620" height="720" />
+        </mxCell>
+        <mxCell id="8" value="Naujas / redaguoti terariumą     ×" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#ffffff;fontSize=24;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="310" y="215" width="580" height="60" />
+        </mxCell>
+        <mxCell id="9" value="Pavadinimas&#10;[ įvedimo laukas ]" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#ffffff;fontSize=14;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="320" y="290" width="560" height="55" />
+        </mxCell>
+        <mxCell id="10" value="Temperatūra: min. / maks. (number)&#10;[ įvedimo laukas ]" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#ffffff;fontSize=14;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="320" y="360" width="560" height="55" />
+        </mxCell>
+        <mxCell id="11" value="Drėgmė: min. / maks. (number)&#10;[ įvedimo laukas ]" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#ffffff;fontSize=14;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="320" y="430" width="560" height="55" />
+        </mxCell>
+        <mxCell id="12" value="Paskutinis valymas (date)&#10;[ įvedimo laukas ]" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#ffffff;fontSize=14;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="320" y="500" width="560" height="55" />
+        </mxCell>
+        <mxCell id="13" value="Pastabos (textarea)&#10;[ įvedimo laukas ]" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#ffffff;fontSize=14;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="320" y="570" width="560" height="55" />
+        </mxCell>
+        <mxCell id="14" value="Klaidos pranešimas (jei yra)" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#ffffff;fontSize=13;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="320" y="640" width="560" height="40" />
+        </mxCell>
+        <mxCell id="15" value="Atšaukti                           Išsaugoti" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#eeeeee;fontSize=14;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="320" y="695" width="560" height="45" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram name="12 Augintinio modalas" id="11">
+    <mxGraphModel page="1" pageWidth="1200" pageHeight="1100" grid="1" gridSize="10">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="2" value="12 Augintinio modalas • TerraCare • dabartinės sąsajos wireframe" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#eeeeee;fontSize=22;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="20" y="20" width="1160" height="55" />
+        </mxCell>
+        <mxCell id="3" value="TerraCare       Terariumai   Augintiniai   Priežiūra   Naudotojai*      Vardas / rolė    Atsijungti" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#ffffff;fontSize=16;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="40" y="100" width="1120" height="65" />
+        </mxCell>
+        <mxCell id="4" value="TerraCare    •    Zoologijos sodo terariumų ir augintinių priežiūra.             API dokumentacija ↗" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#dddddd;fontSize=16;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="40" y="970" width="1120" height="65" />
+        </mxCell>
+        <mxCell id="5" value="Terariumas nustatomas pagal kontekstą; pasirinkimo lauko nėra. Redaguojant duomenys gaunami iš API." vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#eeeeee;fontSize=14;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="40" y="1050" width="1120" height="40" />
+        </mxCell>
+        <mxCell id="6" value="Puslapio fonas pritemdytas" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#dddddd;fontSize=16;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="40" y="170" width="1120" height="770" />
+        </mxCell>
+        <mxCell id="7" value="" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#ffffff;fontSize=16;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="290" y="200" width="620" height="720" />
+        </mxCell>
+        <mxCell id="8" value="Naujas / redaguoti augintinį     ×" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#ffffff;fontSize=24;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="310" y="215" width="580" height="60" />
+        </mxCell>
+        <mxCell id="9" value="Vardas&#10;[ įvedimo laukas ]" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#ffffff;fontSize=14;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="320" y="290" width="560" height="55" />
+        </mxCell>
+        <mxCell id="10" value="Rūšis&#10;[ įvedimo laukas ]" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#ffffff;fontSize=14;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="320" y="360" width="560" height="55" />
+        </mxCell>
+        <mxCell id="11" value="Atvykimo data (date)&#10;[ įvedimo laukas ]" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#ffffff;fontSize=14;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="320" y="430" width="560" height="55" />
+        </mxCell>
+        <mxCell id="12" value="Pastabos (textarea)&#10;[ įvedimo laukas ]" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#ffffff;fontSize=14;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="320" y="500" width="560" height="55" />
+        </mxCell>
+        <mxCell id="13" value="Klaidos pranešimas (jei yra)" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#ffffff;fontSize=13;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="320" y="570" width="560" height="40" />
+        </mxCell>
+        <mxCell id="14" value="Atšaukti                           Išsaugoti" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#eeeeee;fontSize=14;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="320" y="625" width="560" height="45" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram name="13 Priežiūros modalas" id="12">
+    <mxGraphModel page="1" pageWidth="1200" pageHeight="1100" grid="1" gridSize="10">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="2" value="13 Priežiūros modalas • TerraCare • dabartinės sąsajos wireframe" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#eeeeee;fontSize=22;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="20" y="20" width="1160" height="55" />
+        </mxCell>
+        <mxCell id="3" value="TerraCare       Terariumai   Augintiniai   Priežiūra   Naudotojai*      Vardas / rolė    Atsijungti" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#ffffff;fontSize=16;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="40" y="100" width="1120" height="65" />
+        </mxCell>
+        <mxCell id="4" value="TerraCare    •    Zoologijos sodo terariumų ir augintinių priežiūra.             API dokumentacija ↗" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#dddddd;fontSize=16;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="40" y="970" width="1120" height="65" />
+        </mxCell>
+        <mxCell id="5" value="Augintinis nustatomas pagal profilį. Atlikimo laiką kuriant nustato backend." vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#eeeeee;fontSize=14;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="40" y="1050" width="1120" height="40" />
+        </mxCell>
+        <mxCell id="6" value="Puslapio fonas pritemdytas" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#dddddd;fontSize=16;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="40" y="170" width="1120" height="770" />
+        </mxCell>
+        <mxCell id="7" value="" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#ffffff;fontSize=16;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="290" y="200" width="620" height="720" />
+        </mxCell>
+        <mxCell id="8" value="Naujas / redaguoti įrašą     ×" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#ffffff;fontSize=24;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="310" y="215" width="580" height="60" />
+        </mxCell>
+        <mxCell id="9" value="Priežiūros tipas (select)&#10;[ įvedimo laukas ]" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#ffffff;fontSize=14;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="320" y="290" width="560" height="55" />
+        </mxCell>
+        <mxCell id="10" value="Pastabos (textarea)&#10;[ įvedimo laukas ]" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#ffffff;fontSize=14;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="320" y="360" width="560" height="55" />
+        </mxCell>
+        <mxCell id="11" value="Klaidos pranešimas (jei yra)" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#ffffff;fontSize=13;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="320" y="430" width="560" height="40" />
+        </mxCell>
+        <mxCell id="12" value="Atšaukti                           Išsaugoti" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#eeeeee;fontSize=14;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="320" y="485" width="560" height="45" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram name="14 Naudotojo teisių modalas" id="13">
+    <mxGraphModel page="1" pageWidth="1200" pageHeight="1100" grid="1" gridSize="10">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="2" value="14 Naudotojo teisių modalas • TerraCare • dabartinės sąsajos wireframe" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#eeeeee;fontSize=22;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="20" y="20" width="1160" height="55" />
+        </mxCell>
+        <mxCell id="3" value="TerraCare       Terariumai   Augintiniai   Priežiūra   Naudotojai*      Vardas / rolė    Atsijungti" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#ffffff;fontSize=16;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="40" y="100" width="1120" height="65" />
+        </mxCell>
+        <mxCell id="4" value="TerraCare    •    Zoologijos sodo terariumų ir augintinių priežiūra.             API dokumentacija ↗" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#dddddd;fontSize=16;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="40" y="970" width="1120" height="65" />
+        </mxCell>
+        <mxCell id="5" value="Tik admin. Pakeitus teises ar aktyvumą naudotojo sesijos atšaukiamos; perspėjimas pateikiamas modaliniame lange." vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#eeeeee;fontSize=14;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="40" y="1050" width="1120" height="40" />
+        </mxCell>
+        <mxCell id="6" value="Puslapio fonas pritemdytas" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#dddddd;fontSize=16;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="40" y="170" width="1120" height="770" />
+        </mxCell>
+        <mxCell id="7" value="" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#ffffff;fontSize=16;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="290" y="200" width="620" height="720" />
+        </mxCell>
+        <mxCell id="8" value="Naudotojo teisės     ×" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#ffffff;fontSize=24;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="310" y="215" width="580" height="60" />
+        </mxCell>
+        <mxCell id="9" value="Rolė: worker / manager / admin (select)&#10;[ įvedimo laukas ]" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#ffffff;fontSize=14;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="320" y="290" width="560" height="55" />
+        </mxCell>
+        <mxCell id="10" value="[✓] Paskyra aktyvi (checkbox)&#10;[ įvedimo laukas ]" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#ffffff;fontSize=14;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="320" y="360" width="560" height="55" />
+        </mxCell>
+        <mxCell id="11" value="Klaidos pranešimas (jei yra)" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#ffffff;fontSize=13;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="320" y="430" width="560" height="40" />
+        </mxCell>
+        <mxCell id="12" value="Atšaukti                           Išsaugoti" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#eeeeee;fontSize=14;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="320" y="485" width="560" height="45" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram name="15 Šalinimo patvirtinimas" id="14">
+    <mxGraphModel page="1" pageWidth="1200" pageHeight="1100" grid="1" gridSize="10">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="2" value="15 Šalinimo patvirtinimas • TerraCare • dabartinės sąsajos wireframe" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#eeeeee;fontSize=22;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="20" y="20" width="1160" height="55" />
+        </mxCell>
+        <mxCell id="3" value="TerraCare       Terariumai   Augintiniai   Priežiūra   Naudotojai*      Vardas / rolė    Atsijungti" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#ffffff;fontSize=16;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="40" y="100" width="1120" height="65" />
+        </mxCell>
+        <mxCell id="4" value="TerraCare    •    Zoologijos sodo terariumų ir augintinių priežiūra.             API dokumentacija ↗" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#dddddd;fontSize=16;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="40" y="970" width="1120" height="65" />
+        </mxCell>
+        <mxCell id="5" value="Terariumo, augintinio ir priežiūros įrašo šalinimo modalai. Susijusių įrašų klaida rodoma čia." vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#eeeeee;fontSize=14;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="40" y="1050" width="1120" height="40" />
+        </mxCell>
+        <mxCell id="6" value="Pritemdytas puslapis" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#dddddd;fontSize=16;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="40" y="170" width="1120" height="770" />
+        </mxCell>
+        <mxCell id="7" value="Ištrinti pasirinktą objektą?                       ×&#10;&#10;Objekto pavadinimas ir patvirtinimo tekstas&#10;&#10;Klaidos pranešimas, jei šalinimas neleidžiamas" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#ffffff;fontSize=16;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="290" y="300" width="620" height="350" />
+        </mxCell>
+        <mxCell id="8" value="Atšaukti                           Ištrinti" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#eeeeee;fontSize=14;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="320" y="565" width="560" height="45" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram name="16 Priežiūros įrašo peržiūra" id="15">
+    <mxGraphModel page="1" pageWidth="1200" pageHeight="1100" grid="1" gridSize="10">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="2" value="16 Priežiūros įrašo peržiūra • TerraCare • dabartinės sąsajos wireframe" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#eeeeee;fontSize=22;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="20" y="20" width="1160" height="55" />
+        </mxCell>
+        <mxCell id="3" value="TerraCare       Terariumai   Augintiniai   Priežiūra   Naudotojai*      Vardas / rolė    Atsijungti" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#ffffff;fontSize=16;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="40" y="100" width="1120" height="65" />
+        </mxCell>
+        <mxCell id="4" value="TerraCare    •    Zoologijos sodo terariumų ir augintinių priežiūra.             API dokumentacija ↗" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#dddddd;fontSize=16;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="40" y="970" width="1120" height="65" />
+        </mxCell>
+        <mxCell id="5" value="Duomenys gaunami GET /care-records/{id}. Kraunant rodomas būsenos tekstas, klaidos atveju – pakartojimo mygtukas." vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#eeeeee;fontSize=14;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="40" y="1050" width="1120" height="40" />
+        </mxCell>
+        <mxCell id="6" value="Pritemdytas puslapis" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#dddddd;fontSize=16;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="40" y="170" width="1120" height="770" />
+        </mxCell>
+        <mxCell id="7" value="Priežiūros įrašas                                  ×&#10;&#10;Priežiūros tipas&#10;Atlikimo data ir laikas&#10;Augintinio ID&#10;&#10;Pastabos" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#ffffff;fontSize=16;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="290" y="270" width="620" height="480" />
+        </mxCell>
+        <mxCell id="8" value="Augintinio profilis                 Uždaryti" vertex="1" parent="1" style="rounded=0;whiteSpace=wrap;html=0;fontFamily=Arial;fontSize=16;fontColor=#242424;strokeColor=#888888;fillColor=#ffffff;spacing=12;fillColor=#eeeeee;fontSize=14;align=left;verticalAlign=middle;">
+          <mxGeometry as="geometry" x="320" y="670" width="560" height="45" />
         </mxCell>
       </root>
     </mxGraphModel>
