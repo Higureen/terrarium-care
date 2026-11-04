@@ -4,9 +4,43 @@ const pool = require("../db");
 const jwt = require("jsonwebtoken");
 const crypto = require("node:crypto");
 const authenticate = require("../middleware/authenticate");
+const { rateLimit } = require("express-rate-limit");
+
 const router = express.Router();
 
-router.post("/register", async (req, res) => {
+function createLimiter(limit, message) {
+  return rateLimit({
+    windowMs: 15 * 60 * 1000,
+    limit,
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: {
+      error: message,
+    },
+  });
+}
+
+const registerLimiter = createLimiter(
+  10,
+  "Per daug registracijos bandymų. Bandykite po 15 minučių."
+);
+
+const loginLimiter = createLimiter(
+  30,
+  "Per daug prisijungimo bandymų. Bandykite po 15 minučių."
+);
+
+const refreshLimiter = createLimiter(
+  120,
+  "Per daug žetono atnaujinimo užklausų. Bandykite vėliau."
+);
+
+router.use((req, res, next) => {
+  res.set("Cache-Control", "no-store");
+  next();
+});
+
+router.post("/register", registerLimiter, async (req, res) => {
   const body = req.body;
 
   if (!body || typeof body !== "object" || Array.isArray(body)) {
@@ -89,7 +123,7 @@ router.post("/register", async (req, res) => {
   }
 });
 
-router.post("/login", async (req, res) => {
+router.post("/login", loginLimiter, async (req, res) => {
   const { email, password } = req.body ?? {};
 
   if (
@@ -129,7 +163,7 @@ router.post("/login", async (req, res) => {
 
     if (!passwordMatches || !user.is_active) {
       return res.status(401).json({
-        error: "Neteisingi prisijungimo duomenys arba paskyra neaktyvi."
+        error: "Neteisingas el. paštas arba slaptažodis.",
       });
     }
 
@@ -211,7 +245,7 @@ router.get("/me", authenticate, (req, res) => {
   return res.status(200).json(req.user);
 });
 
-router.post("/refresh", async (req, res) => {
+router.post("/refresh", refreshLimiter, async (req, res) => {
   res.set("Cache-Control", "no-store");
 
   const { refreshToken } = req.body ?? {};

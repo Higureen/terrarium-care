@@ -24,7 +24,15 @@ async function authenticate(req, res, next) {
       error: "Žetonas netinkamas arba jo galiojimas pasibaigęs."
     });
   }
-
+  if (
+    !payload ||
+    typeof payload !== "object" ||
+    !Number.isInteger(payload.exp)
+  ) {
+    return res.status(401).json({
+      error: "Netinkami žetono duomenys."
+    });
+  }
   const userId = Number(payload.sub);
   const validSessionId =
     typeof payload.sid === "string" &&

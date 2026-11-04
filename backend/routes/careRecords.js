@@ -230,9 +230,13 @@ router.post("/", async (req, res) => {
     });
   }
 
-  if (typeof notes !== "string" || notes.trim().length === 0) {
+  if (
+    typeof notes !== "string" ||
+    notes.trim().length === 0 ||
+    notes.includes("\u0000")
+  ) {
     return res.status(422).json({
-      error: "Priežiūros pastabos negali būti tuščios."
+      error: "Priežiūros pastabos negali būti tuščios ar turėti nulinio simbolio."
     });
   }
 
@@ -345,9 +349,13 @@ router.put("/:id", canModifyCareRecord, async (req, res) => {
     });
   }
 
-  if (typeof notes !== "string" || notes.trim().length === 0) {
+  if (
+    typeof notes !== "string" ||
+    notes.trim().length === 0 ||
+    notes.includes("\u0000")
+  ) {
     return res.status(422).json({
-      error: "Priežiūros pastabos negali būti tuščios."
+      error: "Priežiūros pastabos negali būti tuščios ar turėti nulinio simbolio."
     });
   }
 
