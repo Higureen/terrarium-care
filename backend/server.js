@@ -644,7 +644,7 @@ app.get(
       }
 
       const records = await pool.query(
-        `SELECT id, pet_id, care_type, performed_at, notes
+        `SELECT id, pet_id, care_type, performed_at, notes, created_by
          FROM care_records
          WHERE pet_id = $1
          ORDER BY performed_at DESC, id DESC`,

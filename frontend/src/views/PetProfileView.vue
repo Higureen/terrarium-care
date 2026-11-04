@@ -158,14 +158,20 @@ watch(
 
 <template>
   <section>
-    <RouterLink class="back-link" :to="profile
-      ? {
-        name: 'terrarium-details',
-        params: { id: profile.terrarium.id },
-      }
-      : '/terrariums'
-      ">
-      {{ profile ? "← Atgal į terariumą" : "← Visi terariumai" }}
+    <RouterLink v-if="route.query.from === 'care-records'" class="back-link" to="/care-records">
+      ← Priežiūros įrašai
+    </RouterLink>
+
+    <RouterLink v-else-if="route.query.from === 'pets'" class="back-link" to="/pets">
+      ← Visi augintiniai
+    </RouterLink>
+
+    <RouterLink v-else-if="profile" class="back-link" :to="`/terrariums/${profile.terrarium.id}`">
+      ← Į terariumą
+    </RouterLink>
+
+    <RouterLink v-else class="back-link" to="/terrariums">
+      ← Visi terariumai
     </RouterLink>
 
     <p v-if="loading" class="status-message" role="status">
@@ -269,7 +275,7 @@ watch(
           </div>
         </article>
       </div>
-       </template>
+    </template>
 
     <CareRecordCreateModal v-if="showCareCreate && profile" :pet-id="Number(profile.pet.id)" :record="editingRecord"
       @close="showCareCreate = false" @created="handleCareCreated" @updated="handleCareUpdated"

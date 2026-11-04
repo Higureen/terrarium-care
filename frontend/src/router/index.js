@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import TerrariumsView from '../views/TerrariumsView.vue'
 import LoginView from '../views/LoginView.vue'
-import { auth } from '../services/auth'
+import { auth, restoreSession } from "../services/auth";
 import RegisterView from '../views/RegisterView.vue'
 import TerrariumDetailsView from "../views/TerrariumDetailsView.vue";
 import PetProfileView from "../views/PetProfileView.vue";
@@ -41,20 +41,48 @@ const router = createRouter({
       component: PetProfileView,
       meta: { requiresAuth: true },
     },
+    {
+      path: "/users",
+      name: "users",
+      component: () => import("../views/UsersView.vue"),
+      meta: {
+        requiresAuth: true,
+        requiresAdmin: true,
+      },
+    },
+    {
+      path: "/pets",
+      name: "pets",
+      component: () => import("../views/PetsView.vue"),
+      meta: {
+        requiresAuth: true,
+      },
+    },
+    {
+      path: "/care-records",
+      name: "care-records",
+      component: () => import("../views/CareRecordsView.vue"),
+      meta: {
+        requiresAuth: true,
+      },
+    },
   ],
 })
 
-router.beforeEach((to) => {
-  if (to.meta.requiresAuth && !auth.accessToken) {
-    return { name: 'login' }
+router.beforeEach(async (to) => {
+  await restoreSession();
+
+  if (to.meta.requiresAuth && !auth.user) {
+    return { name: "login" };
   }
 
-  if (
-    ['login', 'register'].includes(to.name) &&
-    auth.accessToken
-  ) {
-    return { name: 'terrariums' }
+  if (to.meta.requiresAdmin && auth.user?.role !== "admin") {
+    return { name: "terrariums" };
   }
-})
+
+  if (["login", "register"].includes(to.name) && auth.user) {
+    return { name: "terrariums" };
+  }
+});
 
 export default router

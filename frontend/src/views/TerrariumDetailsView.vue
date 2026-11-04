@@ -4,6 +4,7 @@ import { RouterLink, useRoute, useRouter } from "vue-router";
 import { auth, apiFetch } from "../services/auth";
 import PetCreateModal from "../components/PetCreateModal.vue";
 import PetDeleteModal from "../components/PetDeleteModal.vue";
+import TerrariumCleaningForm from "../components/TerrariumCleaningForm.vue";
 
 const route = useRoute();
 const router = useRouter();
@@ -58,6 +59,11 @@ async function handlePetDeleted() {
   await loadDetails();
 }
 
+function handleCleaningUpdated(date) {
+  if (terrarium.value) {
+    terrarium.value.last_cleaned = date;
+  }
+}
 function handleUnauthorized() {
   showPetCreate.value = false;
   deletingPet.value = null;
@@ -148,11 +154,7 @@ watch(() => route.params.id, loadDetails, { immediate: true });
     <div v-else-if="error" class="form-error" role="alert">
       <p>{{ error }}</p>
 
-      <button
-        class="secondary-button"
-        type="button"
-        @click="loadDetails"
-      >
+      <button class="secondary-button" type="button" @click="loadDetails">
         Bandyti dar kartą
       </button>
     </div>
@@ -187,19 +189,17 @@ watch(() => route.params.id, loadDetails, { immediate: true });
           {{ terrarium.notes }}
         </p>
       </div>
-
+      <TerrariumCleaningForm :key="terrarium.id" :terrarium-id="Number(terrarium.id)"
+        :last-cleaned="terrarium.last_cleaned || ''" @updated="handleCleaningUpdated"
+        @unauthorized="handleUnauthorized" />
       <div class="page-heading pets-heading">
         <div class="section-heading">
           <h2>Augintiniai</h2>
           <span class="count-badge">{{ pets.length }}</span>
         </div>
 
-        <button
-          v-if="['manager', 'admin'].includes(auth.user?.role)"
-          class="primary-button"
-          type="button"
-          @click="openPetCreate"
-        >
+        <button v-if="['manager', 'admin'].includes(auth.user?.role)" class="primary-button" type="button"
+          @click="openPetCreate">
           + Naujas augintinis
         </button>
       </div>
@@ -209,11 +209,7 @@ watch(() => route.params.id, loadDetails, { immediate: true });
       </p>
 
       <div v-if="pets.length" class="terrarium-grid">
-        <article
-          v-for="pet in pets"
-          :key="pet.id"
-          class="terrarium-card"
-        >
+        <article v-for="pet in pets" :key="pet.id" class="terrarium-card">
           <div class="card-heading">
             <span class="card-label">AUGINTINIS</span>
             <h2>{{ pet.name }}</h2>
@@ -236,32 +232,19 @@ watch(() => route.params.id, loadDetails, { immediate: true });
           </p>
 
           <div class="card-actions">
-            <RouterLink
-              class="secondary-button button-link"
-              :to="{
-                name: 'pet-profile',
-                params: { id: pet.id },
-              }"
-            >
+            <RouterLink class="secondary-button button-link" :to="{
+              name: 'pet-profile',
+              params: { id: pet.id },
+            }">
               Profilis
             </RouterLink>
 
-            <template
-              v-if="['manager', 'admin'].includes(auth.user?.role)"
-            >
-              <button
-                class="secondary-button"
-                type="button"
-                @click="openPetEdit(pet)"
-              >
+            <template v-if="['manager', 'admin'].includes(auth.user?.role)">
+              <button class="secondary-button" type="button" @click="openPetEdit(pet)">
                 Redaguoti
               </button>
 
-              <button
-                class="danger-button"
-                type="button"
-                @click="openPetDelete(pet)"
-              >
+              <button class="danger-button" type="button" @click="openPetDelete(pet)">
                 Ištrinti
               </button>
             </template>
@@ -275,22 +258,11 @@ watch(() => route.params.id, loadDetails, { immediate: true });
       </div>
     </template>
 
-    <PetCreateModal
-      v-if="showPetCreate && terrarium"
-      :terrarium-id="Number(terrarium.id)"
-      :pet="editingPet"
-      @close="showPetCreate = false"
-      @created="handlePetCreated"
-      @updated="handlePetUpdated"
-      @unauthorized="handleUnauthorized"
-    />
+    <PetCreateModal v-if="showPetCreate && terrarium" :terrarium-id="Number(terrarium.id)" :pet="editingPet"
+      @close="showPetCreate = false" @created="handlePetCreated" @updated="handlePetUpdated"
+      @unauthorized="handleUnauthorized" />
 
-    <PetDeleteModal
-      v-if="deletingPet"
-      :pet="deletingPet"
-      @close="deletingPet = null"
-      @deleted="handlePetDeleted"
-      @unauthorized="handleUnauthorized"
-    />
+    <PetDeleteModal v-if="deletingPet" :pet="deletingPet" @close="deletingPet = null" @deleted="handlePetDeleted"
+      @unauthorized="handleUnauthorized" />
   </section>
 </template>
